@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lune Pulse · Merchant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Cormorant+Garamond:ital,wght@1,700&display=swap">
+<style>
+/* ============================================================
+   Lune Design System — tokens (colors · spacing · typography)
+   ============================================================ */
+:root{
+  /* ---- Brand core ---- */
+  --lune-emerald:#10A37F; --lune-teal:#002E2A; --lune-teal-700:#0A634D;
+  --lune-mint:#99F2AC; --lune-ink:#070312; --lune-sea:#469A93;
+
+  /* ---- Emerald ramp ---- */
+  --primary-100:#10A37F;
+  --primary-90:rgba(16,163,127,0.90); --primary-80:rgba(16,163,127,0.80);
+  --primary-70:rgba(16,163,127,0.70); --primary-60:rgba(16,163,127,0.60);
+  --primary-50:rgba(16,163,127,0.50); --primary-40:rgba(16,163,127,0.40);
+  --primary-30:rgba(16,163,127,0.30); --primary-20:rgba(16,163,127,0.20);
+  --primary-10:rgba(16,163,127,0.10);
+
+  /* ---- Neutral ramp ---- */
+  --neutral-0:#FFFFFF; --neutral-25:#F7F9F8; --neutral-50:#EEF2F1;
+  --neutral-100:#E2E8E6; --neutral-200:#C9D3D0; --neutral-300:#A7B4B0;
+  --neutral-400:#7E8E89; --neutral-500:#5C6B66; --neutral-600:#44524E;
+  --neutral-700:#2E3A36; --neutral-800:#1B2421; --neutral-900:#0E1513;
+  --neutral-950:#070312;
+
+  /* ---- Status ---- */
+  --status-success:#99F2AC; --status-success-ink:#063D1B;
+  --status-warning:#FBDA7D; --status-warning-ink:#5A4205;
+  --status-info:#5A9CB5; --status-info-ink:#0C3543;
+  --status-error:#F26076; --status-error-ink:#5C0C18;
+
+  /* ---- Request-status accents (campaign requests) ---- */
+  --req-review:#E08636;    --req-review-bg:#FBEEDF;    --req-review-ink:#B05E16;
+  --req-ready:#2F62E0;     --req-ready-bg:#E8EEFC;     --req-ready-ink:#234FC4;
+  --req-confirmed:#7C3AED; --req-confirmed-bg:#F0E8FC; --req-confirmed-ink:#6726C9;
+
+  /* ---- Category hues ---- */
+  --cat-dining:#FF7444; --cat-grocery:#E76F2E; --cat-shopping:#F26076;
+  --cat-wellness:#F49BAB; --cat-transport:#5A9CB5; --cat-travel:#6F8F72;
+  --cat-financial:#3852B4; --cat-savings:#A594F9; --cat-income:#0A634D;
+  --cat-household:#C4A484; --cat-student:#B7BDF7; --cat-misc:#758A93;
+
+  /* ---- Semantic aliases (light) ---- */
+  --bg-canvas:var(--neutral-25); --bg-surface:var(--neutral-0);
+  --bg-raised:var(--neutral-0); --bg-sunken:var(--neutral-50); --bg-inverse:var(--lune-ink);
+  --surface-card:var(--neutral-0); --surface-muted:var(--neutral-50); --surface-emerald:var(--primary-10);
+  --text-primary:var(--lune-teal); --text-secondary:var(--neutral-600); --text-tertiary:var(--neutral-400);
+  --text-on-emerald:var(--neutral-0); --text-on-inverse:var(--neutral-0); --text-link:var(--lune-emerald);
+  --border-subtle:var(--neutral-100); --border-default:var(--neutral-200);
+  --border-strong:var(--neutral-300); --border-emerald:var(--lune-emerald);
+  --accent:var(--lune-emerald); --accent-hover:#0E9173; --accent-press:#0B7C62;
+  --focus-ring:rgba(16,163,127,0.35);
+
+  /* ---- Spacing (4px base) ---- */
+  --space-0:0; --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-5:20px; --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px;
+  --space-16:64px; --space-20:80px; --space-24:96px; --space-32:128px;
+
+  /* ---- Radii ---- */
+  --radius-xs:4px; --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
+  --radius-xl:24px; --radius-2xl:32px; --radius-pill:999px;
+
+  /* ---- Borders ---- */
+  --border-hairline:1px; --border-thick:1.5px;
+
+  /* ---- Elevation ---- */
+  --shadow-xs:0 1px 2px rgba(7,3,18,0.06);
+  --shadow-sm:0 1px 3px rgba(7,3,18,0.08), 0 1px 2px rgba(7,3,18,0.04);
+  --shadow-md:0 4px 12px rgba(7,3,18,0.08), 0 2px 4px rgba(7,3,18,0.04);
+  --shadow-lg:0 12px 32px rgba(7,3,18,0.12), 0 4px 8px rgba(7,3,18,0.05);
+  --shadow-xl:0 24px 64px rgba(7,3,18,0.16);
+  --shadow-emerald:0 8px 24px rgba(16,163,127,0.28);
+
+  /* ---- Motion ---- */
+  --ease-standard:cubic-bezier(0.2,0,0,1);
+  --ease-emphasis:cubic-bezier(0.3,0.7,0,1);
+  --ease-out:cubic-bezier(0,0,0.2,1);
+  --dur-fast:120ms; --dur-base:200ms; --dur-slow:320ms;
+
+  /* ---- Typography ---- */
+  --font-sans:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-display:"Cormorant Garamond",ui-serif,Georgia,"Times New Roman",serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --weight-regular:400; --weight-medium:500; --weight-semibold:600; --weight-bold:700; --weight-extra:800;
+  --text-h1-size:36px; --text-h2-size:32px; --text-h3-size:28px; --text-h4-size:24px; --text-h5-size:20px;
+  --text-title1-size:18px; --text-title2-size:16px; --text-body-size:14px; --text-caption-size:12px;
+  --text-body-lh:1.5;
+  --tracking-tight:-0.02em; --tracking-normal:0; --tracking-wide:0.04em;
+}
+
+/* ---- base / reset ---- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+body {
+  margin: 0; font-family: var(--font-sans); font-size: var(--text-body-size);
+  line-height: var(--text-body-lh); font-weight: var(--weight-regular);
+  color: var(--text-primary); background: var(--bg-canvas);
+}
+h1,h2,h3,h4,h5,h6,p,figure { margin: 0; }
+a { color: var(--text-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+::selection { background: var(--lune-mint); color: var(--lune-teal); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-xs); }
+img, svg { display: block; max-width: 100%; }
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ============================================================
+   Lune Pulse — Merchant portal
+   ============================================================ */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar {
+  width: 264px; flex: 0 0 264px;
+  background: var(--bg-surface);
+  border-right: var(--border-hairline) solid var(--border-subtle);
+  display: flex; flex-direction: column;
+}
+.sb-top { padding: var(--space-6) var(--space-5); }
+.sb-top svg.logo-light, .sb-top svg.logo-ink { height: 34px; width: auto; }
+.sb-list { flex: 1; display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-2) var(--space-3) 0; }
+.nav-item {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%;
+  padding: 10px var(--space-3); border-radius: var(--radius-sm);
+  color: var(--text-secondary); font-size: 15px; font-weight: var(--weight-medium);
+  text-align: left;
+}
+.nav-item svg { width: 20px; height: 20px; flex: 0 0 20px; color: var(--neutral-400); }
+.nav-item:hover { background: var(--surface-muted); color: var(--text-primary); }
+.nav-item.active { background: var(--surface-emerald); color: var(--lune-teal-700); font-weight: var(--weight-semibold); }
+.nav-item.active svg { color: var(--lune-emerald); }
+
+.sb-bottom {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: var(--border-hairline) solid var(--border-subtle);
+}
+.avatar {
+  width: 40px; height: 40px; border-radius: var(--radius-pill); flex: 0 0 40px;
+  background: var(--lune-teal); color: var(--lune-mint);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: var(--weight-bold); font-size: 14px;
+}
+.sb-bottom .name { font-size: 14px; font-weight: var(--weight-semibold); color: var(--text-primary); line-height: 1.3; }
+.sb-bottom .sub { font-size: 12px; color: var(--text-tertiary); }
+
+/* Ink sidebar variant */
+.app[data-sidebar="ink"] .sidebar { background: var(--lune-teal); border-right-color: rgba(255,255,255,0.10); }
+.app[data-sidebar="ink"] .nav-item { color: rgba(255,255,255,0.72); }
+.app[data-sidebar="ink"] .nav-item svg { color: rgba(255,255,255,0.45); }
+.app[data-sidebar="ink"] .nav-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.app[data-sidebar="ink"] .nav-item.active { background: rgba(16,163,127,0.22); color: var(--lune-mint); }
+.app[data-sidebar="ink"] .nav-item.active svg { color: var(--lune-mint); }
+.app[data-sidebar="ink"] .sb-bottom { border-top-color: rgba(255,255,255,0.10); }
+.app[data-sidebar="ink"] .sb-bottom .name { color: #fff; }
+.app[data-sidebar="ink"] .sb-bottom .sub { color: rgba(255,255,255,0.55); }
+.app[data-sidebar="ink"] .avatar { background: var(--lune-emerald); color: #fff; }
+.sb-top .logo-ink { display: none; }
+.app[data-sidebar="ink"] .logo-light { display: none; }
+.app[data-sidebar="ink"] .logo-ink { display: block; }
+
+/* ---------- Main column ---------- */
+.main { flex: 1; overflow-y: auto; position: relative; }
+.screen { display: none; padding: var(--space-10) var(--space-8); max-width: 1320px; }
+.screen.active { display: block; }
+.screen-wide { max-width: 1440px; }
+
+/* ---------- Page heads ---------- */
+.page-head { margin-bottom: var(--space-6); }
+.page-head h1 { font-size: var(--text-h4-size); font-weight: var(--weight-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); }
+.page-head p { margin-top: var(--space-1); font-size: 15px; color: var(--text-tertiary); }
+.head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+
+.back-head { display: flex; align-items: flex-start; gap: var(--space-4); margin-bottom: var(--space-6); }
+.back-btn {
+  width: 40px; height: 40px; border-radius: var(--radius-pill); flex: 0 0 40px;
+  background: var(--bg-surface); border: var(--border-hairline) solid var(--border-subtle);
+  color: var(--text-secondary); display: flex; align-items: center; justify-content: center;
+  transition: all var(--dur-fast) var(--ease-standard);
+}
+.back-btn:hover { border-color: var(--border-emerald); color: var(--lune-emerald); }
+.back-head h1 { font-size: var(--text-h4-size); font-weight: var(--weight-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; line-height: 1.3; }
+.back-head .sub { margin-top: var(--space-1); font-size: 14px; color: var(--text-tertiary); }
+
+/* ---------- Status pills ---------- */
+.pill-status {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px 5px 9px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide); text-transform: uppercase; line-height: 1.3;
+  white-space: nowrap;
+}
+.pill-status .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill-status.live      { background: var(--status-success); color: var(--status-success-ink); }
+.pill-status.completed { background: var(--neutral-100); color: var(--neutral-600); }
+.pill-status.review    { background: var(--req-review-bg);    color: var(--req-review-ink); }
+.pill-status.ready     { background: var(--req-ready-bg);     color: var(--req-ready-ink); }
+.pill-status.approved  { background: var(--req-confirmed-bg); color: var(--req-confirmed-ink); }
+.pill-status.paid      { background: var(--status-success); color: var(--status-success-ink); }
+.pill-status.pending   { background: var(--status-warning); color: var(--status-warning-ink); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  padding: 10px 18px; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: var(--weight-semibold);
+  transition: all var(--dur-fast) var(--ease-standard);
+}
+.btn svg { width: 18px; height: 18px; }
+.btn-primary { background: var(--accent); color: var(--text-on-emerald); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:active { background: var(--accent-press); }
+.btn-ghost { background: var(--bg-surface); border: var(--border-hairline) solid var(--border-default); color: var(--text-primary); }
+.btn-ghost:hover { background: var(--surface-muted); }
+.btn-soft { background: var(--surface-emerald); color: var(--lune-teal-700); width: 100%; }
+.btn-soft:hover { background: var(--primary-20); }
+.btn-block { width: 100%; padding: 13px; }
+
+/* ---------- Tabs ---------- */
+.tabs {
+  display: inline-flex; gap: var(--space-1);
+  background: var(--bg-surface); border: var(--border-hairline) solid var(--border-subtle);
+  padding: var(--space-1); border-radius: var(--radius-md);
+  margin-bottom: var(--space-6); box-shadow: var(--shadow-xs);
+}
+.tab {
+  display: flex; align-items: center; gap: 7px; padding: 8px 14px;
+  border-radius: var(--radius-sm); font-size: 14px; font-weight: var(--weight-semibold);
+  color: var(--text-secondary);
+}
+.tab:hover { color: var(--text-primary); }
+.tab .count {
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--radius-pill);
+  background: var(--surface-muted); color: var(--text-secondary);
+  font-size: 11px; font-weight: var(--weight-bold);
+  display: flex; align-items: center; justify-content: center;
+}
+.tab.active { background: var(--accent); color: var(--text-on-emerald); }
+.tab.active .count { background: rgba(255,255,255,0.22); color: #fff; }
+
+/* ---------- Campaign cards ---------- */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+.offer-card {
+  display: flex; flex-direction: column; text-align: left;
+  border-radius: var(--radius-lg); background: var(--surface-card);
+  border: var(--border-hairline) solid var(--border-subtle);
+  overflow: hidden; box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard);
+}
+.offer-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.offer-hero { height: 132px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.offer-hero .cat-ic { width: 44px; height: 44px; }
+.offer-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.app[data-heroes="tint"] .offer-hero img { display: none; }
+.offer-body { padding: var(--space-5) var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-4); }
+.offer-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.offer-title-row h3 { flex: 1; font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); line-height: 1.4; }
+.offer-meta { display: flex; justify-content: space-between; gap: var(--space-2); }
+.offer-meta .lbl { font-size: 11px; font-weight: var(--weight-medium); color: var(--text-tertiary); letter-spacing: var(--tracking-wide); text-transform: uppercase; margin-bottom: 3px; }
+.offer-meta .val { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-primary); }
+
+.cat-ic { display: inline-flex; align-items: center; justify-content: center; }
+.cat-ic svg { width: 100%; height: 100%; display: block; }
+
+/* ---------- KPI cards ---------- */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
+.kpi {
+  background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle);
+  border-radius: var(--radius-lg); padding: var(--space-5);
+  display: flex; align-items: flex-start; justify-content: space-between; box-shadow: var(--shadow-xs);
+}
+.kpi .lbl { font-size: 13px; color: var(--text-tertiary); font-weight: var(--weight-medium); }
+.kpi .num { font-size: var(--text-h4-size); font-weight: var(--weight-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); margin-top: var(--space-2); }
+.kpi .note { font-size: 12px; color: var(--text-tertiary); margin-top: var(--space-1); }
+.kpi-ic {
+  width: 40px; height: 40px; border-radius: var(--radius-md); flex: 0 0 40px;
+  background: var(--surface-emerald); color: var(--lune-emerald);
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- Tables ---------- */
+.table-wrap {
+  background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle);
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-xs);
+}
+.table-title { padding: var(--space-4) var(--space-6); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); border-bottom: var(--border-hairline) solid var(--border-subtle); }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  text-align: left; font-size: 11px; font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide); color: var(--text-tertiary); text-transform: uppercase;
+  padding: var(--space-3) var(--space-6); background: var(--neutral-25);
+}
+tbody td { padding: 14px var(--space-6); font-size: 14px; color: var(--text-secondary); border-top: var(--border-hairline) solid var(--border-subtle); }
+tbody td.id { color: var(--text-primary); font-weight: var(--weight-semibold); }
+tbody tr.rowlink { cursor: pointer; }
+tbody tr.rowlink:hover { background: var(--neutral-25); }
+.icon-btn { color: var(--neutral-400); display: inline-flex; padding: 4px; border-radius: var(--radius-xs); }
+.icon-btn:hover { color: var(--lune-emerald); }
+.pager { display: flex; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-4); border-top: var(--border-hairline) solid var(--border-subtle); }
+.pager button {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-secondary);
+}
+.pager button:hover { background: var(--surface-muted); }
+.pager button.np { color: var(--lune-emerald); }
+.pager button.active { background: var(--accent); color: #fff; }
+
+/* ---------- Detail: two-column ---------- */
+.detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); gap: var(--space-6); align-items: start; }
+@media (max-width: 1100px) { .detail-grid { grid-template-columns: 1fr; } }
+.panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
+.preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
+.preview-body { padding: var(--space-5) var(--space-6); }
+.preview-hero { height: 170px; border-radius: var(--radius-md); background: var(--neutral-50) center/cover no-repeat; margin-bottom: var(--space-4); }
+.merchant-row { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+.merchant-logo {
+  width: 36px; height: 36px; border-radius: var(--radius-sm); flex: 0 0 36px;
+  background: var(--surface-emerald); display: flex; align-items: center; justify-content: center;
+}
+.merchant-row .mname { font-size: 15px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.chips { display: flex; gap: var(--space-1); margin-top: 3px; }
+.chip { font-size: 11px; font-weight: var(--weight-medium); padding: 2px 9px; border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-secondary); }
+.preview-body h2 { margin: var(--space-1) 0 var(--space-2); font-size: var(--text-title1-size); font-weight: var(--weight-bold); color: var(--text-primary); }
+.preview-body .desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: var(--space-3); }
+.terms { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.terms li { position: relative; padding-left: 18px; font-size: 13px; color: var(--text-secondary); }
+.terms li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--lune-emerald); }
+.preview-foot { display: flex; justify-content: space-between; align-items: center; padding: var(--space-4) var(--space-6); border-top: var(--border-hairline) solid var(--border-subtle); font-size: 13px; color: var(--text-secondary); }
+.preview-foot .on { color: var(--lune-teal-700); font-weight: var(--weight-semibold); }
+
+/* ===== Recommendation flow (Performance Overview + Review & Confirm) ===== */
+.rec-head { display: flex; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-8); }
+.rec-back { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--primary-10); border: none; color: var(--lune-teal-700); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background var(--dur-fast); }
+.rec-back:hover { background: var(--primary-20); }
+.rec-head .htxt h1 { font-size: 24px; font-weight: var(--weight-bold); color: var(--lune-teal); display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; line-height: 1.5; }
+.rec-head .htxt .viewlink { margin-top: 2px; background: none; border: none; padding: 0; cursor: pointer; font: inherit; font-size: 16px; font-weight: var(--weight-medium); color: var(--lune-teal-700); }
+.rec-head .htxt .viewlink:hover { text-decoration: underline; }
+.pill-recready { background: #EFF6FF; color: #2563EB; border: 1px solid #2563EB; border-radius: 35px; padding: 4px 12px; font-size: 10px; font-weight: var(--weight-semibold); letter-spacing: -0.1px; display: inline-flex; align-items: center; gap: 4px; }
+.pill-recready .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+.rec-card { border: 1px solid #DFE1E2; border-radius: var(--radius-md); overflow: hidden; background: var(--bg-surface); }
+.rec-body { padding: var(--space-8); display: flex; flex-direction: column; align-items: center; }
+.rec-inner { width: 100%; max-width: 972px; display: flex; flex-direction: column; gap: var(--space-8); align-items: center; }
+.rec-progress { display: flex; gap: var(--space-2); width: 100px; }
+.rec-progress i { flex: 1; height: 4px; border-radius: 99px; background: #E2E5E6; }
+.rec-progress i.on { background: var(--lune-teal-700); }
+.rec-h { text-align: center; }
+.rec-h h2 { font-size: 32px; font-weight: var(--weight-bold); color: #1C1C1A; letter-spacing: -0.4px; }
+.rec-h p { margin-top: var(--space-3); font-size: 14px; color: #6B6B69; }
+
+.rec-fields { width: 100%; display: flex; flex-direction: column; gap: var(--space-8); }
+.rec-label { font-size: 14px; font-weight: var(--weight-bold); color: #1C1C1A; margin-bottom: var(--space-3); }
+.goal-row { display: flex; gap: var(--space-2); }
+.goal-card { flex: 1; min-width: 0; display: flex; gap: 10px; align-items: flex-start; padding: var(--space-3); border: 1.5px solid #E2E5E6; border-radius: var(--radius-sm); background: var(--bg-surface); cursor: pointer; text-align: left; font: inherit; transition: background var(--dur-fast), border-color var(--dur-fast); }
+.goal-card .gcheck { flex: none; width: 16px; height: 16px; border: 1.5px solid #C2C6C9; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: transparent; margin-top: 1px; }
+.goal-card .gname { flex: 1; display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: var(--weight-semibold); color: #1C1C1A; }
+.goal-card .ginfo { color: #A7B4B0; display: flex; flex: none; }
+.goal-card.on { background: #E7F6F2; border-color: var(--lune-teal-700); }
+.goal-card.on .gname { color: var(--lune-teal-700); }
+.goal-card.on .gcheck { background: var(--lune-teal-700); border-color: var(--lune-teal-700); color: #fff; }
+
+.inp-row { display: flex; gap: var(--space-3); align-items: flex-end; }
+.inp-field { flex: 1; display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.inp-field > label { font-size: 12px; font-weight: var(--weight-medium); color: #7C8186; letter-spacing: -0.12px; display: flex; align-items: center; gap: 4px; }
+.inp-field > label .ginfo { color: #A7B4B0; display: flex; }
+.inp-box { display: flex; align-items: center; border: 1px solid #E2E5E6; border-radius: 10px; overflow: hidden; height: 48px; background: var(--bg-surface); }
+.inp-box:focus-within { border-color: var(--lune-teal-700); }
+.inp-box input, .inp-box select { flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 12px 16px; font: inherit; font-size: 14px; font-weight: var(--weight-bold); color: #1C1C1A; height: 100%; }
+.inp-box .suffix { flex: none; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: #EDF5F4; border-left: 1px solid #E2E5E6; font-size: 14px; font-weight: var(--weight-semibold); color: var(--lune-teal-700); }
+.inp-box.sel { padding-right: 12px; }
+.inp-box.sel select { appearance: none; cursor: pointer; }
+.inp-box .chev { flex: none; color: #52595F; display: flex; pointer-events: none; }
+
+.rec-results { width: 100%; background: var(--primary-10); border: 1px solid #DFE1E2; border-radius: var(--radius-sm); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-5); }
+.rec-results .rh b { display: block; font-size: 16px; font-weight: var(--weight-bold); color: #182129; }
+.rec-results .rh span { font-size: 14px; font-weight: var(--weight-medium); color: #7C8186; }
+.rec-results .rline { height: 1px; background: #DFE1E2; }
+.rec-results .ritems { display: flex; gap: var(--space-5); }
+.rec-results .ritem { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.rec-results .ritem .rk { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; font-weight: var(--weight-semibold); color: #0C151E; }
+.rec-results .ritem .rk svg { flex: none; }
+.rec-results .ritem .rk .ginfo { color: #A7B4B0; display: flex; }
+.rec-results .ritem .rv { font-size: 20px; font-weight: var(--weight-bold); color: var(--lune-teal-700); }
+.rec-results .rdiv { width: 1px; align-self: stretch; background: #DFE1E2; }
+
+/* ---------- Info tooltips (Figma copy) ---------- */
+.ginfo { position: relative; cursor: help; }
+.ginfo .tip {
+  position: absolute; bottom: calc(100% + 9px); left: 50%;
+  width: max-content; max-width: 300px;
+  background: #283632; color: #fff;
+  font-size: 12.5px; font-weight: var(--weight-medium); line-height: 1.5;
+  letter-spacing: 0; text-align: left; text-transform: none;
+  padding: 12px 14px; border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(7, 18, 16, .26);
+  opacity: 0; visibility: hidden; transform: translateX(-50%) translateY(5px);
+  transition: opacity var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+  z-index: 80; pointer-events: none; white-space: normal;
+}
+.ginfo .tip::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 7px solid transparent; border-top-color: #283632;
+}
+.ginfo:hover .tip, .ginfo:focus-visible .tip {
+  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
+.ginfo .tip b { display: block; margin-top: 10px; font-weight: var(--weight-bold); color: #fff; }
+.ginfo .tip b:first-child { margin-top: 0; }
+/* edge-align variants so wide bubbles don't clip off-screen */
+.ginfo .tip.tip-left  { left: 0; transform: translateX(-14px) translateY(5px); }
+.ginfo .tip.tip-left::after  { left: 20px; transform: none; }
+.ginfo:hover .tip.tip-left, .ginfo:focus-visible .tip.tip-left { transform: translateX(-14px) translateY(0); }
+.ginfo .tip.tip-right { left: auto; right: 0; transform: translateX(14px) translateY(5px); }
+.ginfo .tip.tip-right::after { left: auto; right: 20px; transform: none; }
+.ginfo:hover .tip.tip-right, .ginfo:focus-visible .tip.tip-right { transform: translateX(14px) translateY(0); }
+
+.rec-foot { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-3); padding: var(--space-4); border-top: 1px solid #DFE1E2; background: var(--bg-surface); }
+.rec-foot.split { justify-content: space-between; }
+.btn-next { background: var(--lune-teal-700); color: #fff; border: none; border-radius: var(--radius-xs); padding: 8px 12px 8px 16px; display: inline-flex; align-items: center; gap: var(--space-2); font: inherit; font-size: 14px; font-weight: var(--weight-semibold); cursor: pointer; }
+.btn-next:hover { background: #0B7259; }
+.btn-back2 { background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-default); border-radius: var(--radius-xs); padding: 9px 16px; display: inline-flex; align-items: center; gap: var(--space-2); font: inherit; font-size: 14px; font-weight: var(--weight-semibold); cursor: pointer; }
+.btn-back2:hover { background: var(--surface-muted); }
+
+.rec-toolbar { display: flex; align-items: center; justify-content: flex-end; width: 100%; position: relative; min-height: 32px; }
+.rec-toolbar .rec-progress { position: absolute; left: 50%; transform: translateX(-50%); }
+.btn-preview { background: var(--bg-surface); border: 1px solid var(--lune-teal-700); color: var(--lune-teal-700); border-radius: var(--radius-sm); padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 13px; font-weight: var(--weight-semibold); cursor: pointer; }
+.btn-preview.on { background: #E7F6F2; }
+
+.rec-review-form { width: 100%; max-width: 660px; display: flex; flex-direction: column; gap: var(--space-5); margin: 0 auto; }
+.media-wrap { margin-bottom: var(--space-10); }
+.media-upload { position: relative; width: 466px; max-width: 100%; margin: 0 auto; }
+.media-graphic { position: relative; background: #ECECED; background-size: cover; background-position: center; border-radius: var(--radius-md); height: 159px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #7C8186; cursor: pointer; text-align: center; overflow: hidden; }
+.media-graphic .mg-ph { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.media-graphic.filled .mg-ph { display: none; }
+.media-graphic .mg-change { display: none; position: absolute; right: 12px; bottom: 12px; background: rgba(255,255,255,0.92); border: 1px solid #DFE1E2; border-radius: var(--radius-sm); padding: 6px 12px; align-items: center; gap: 6px; font: inherit; font-size: 13px; font-weight: var(--weight-semibold); color: #182129; cursor: pointer; }
+.media-graphic.filled .mg-change { display: inline-flex; }
+.media-graphic .mg-t { font-size: 12px; font-weight: var(--weight-medium); letter-spacing: -0.12px; }
+.media-graphic .mg-s { font-size: 10px; }
+.media-graphic .mg-up { margin-top: var(--space-2); background: #fff; border: 1px solid #DFE1E2; border-radius: var(--radius-sm); padding: 8px 12px; display: inline-flex; gap: var(--space-2); align-items: center; font-size: 14px; font-weight: var(--weight-medium); color: #182129; }
+.media-logo { position: absolute; left: 22px; bottom: -30px; width: 101px; height: 101px; background: #fff; background-size: 62px auto; background-repeat: no-repeat; background-position: center; border: 1.26px solid #DFE1E2; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #7C8186; }
+.media-logo .ml-ph { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.media-logo.filled .ml-ph { display: none; }
+.media-logo .ml-t { font-size: 16px; font-weight: var(--weight-medium); }
+.media-logo .ml-badge { position: absolute; right: -8px; bottom: -8px; width: 32px; height: 32px; background: #fff; border: 1px solid #DFE1E2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #52595F; cursor: pointer; padding: 0; }
+.media-logo .ml-badge:hover { background: var(--surface-muted); }
+
+/* Asset picker modal */
+.modal-assets { width: 640px; max-width: calc(100vw - 32px); max-height: 86vh; overflow: auto; text-align: left; padding: var(--space-6); }
+.asset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+.asset-grid.logos { grid-template-columns: repeat(4, 1fr); }
+.asset-grid.offers { grid-template-columns: repeat(3, 1fr); }
+.offer-thumb { display: flex; flex-direction: column; gap: var(--space-2); border: 1.5px solid #E2E5E6; border-radius: var(--radius-md); padding: var(--space-2); background: var(--bg-surface); cursor: pointer; font: inherit; text-align: left; transition: border-color var(--dur-fast), transform var(--dur-fast); }
+.offer-thumb:hover { border-color: var(--lune-teal-700); transform: translateY(-2px); }
+.offer-thumb .ot-img { display: block; height: 80px; border-radius: var(--radius-sm); background-size: cover; background-position: center; }
+.offer-thumb .ot-label { font-size: 13px; font-weight: var(--weight-semibold); color: #1C1C1A; padding: 0 2px 2px; }
+.asset-thumb { border: 1.5px solid #E2E5E6; border-radius: var(--radius-sm); aspect-ratio: 8 / 3; background-size: cover; background-position: center; cursor: pointer; padding: 0; transition: border-color var(--dur-fast), transform var(--dur-fast); }
+.asset-thumb:hover { border-color: var(--lune-teal-700); transform: translateY(-2px); }
+.asset-thumb.logo { aspect-ratio: 1; background: #fff; display: flex; align-items: center; justify-content: center; padding: var(--space-3); }
+.asset-thumb.logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.asset-foot { margin-top: var(--space-5); display: flex; justify-content: flex-end; }
+.asset-upload-own { display: inline-flex; align-items: center; gap: var(--space-2); border: 1px dashed #C2C6C9; border-radius: var(--radius-sm); padding: 9px 16px; font-size: 14px; font-weight: var(--weight-semibold); color: var(--lune-teal-700); cursor: pointer; }
+.asset-upload-own:hover { background: var(--surface-emerald); border-color: var(--lune-teal-700); }
+
+.field-line { display: flex; flex-direction: column; gap: var(--space-2); }
+.field-line > label { font-size: 12px; color: #7C8186; font-weight: var(--weight-medium); }
+.field-line input, .field-line textarea { border: none; border-bottom: 1px solid #DFE1E2; outline: none; padding: 8px 0; font: inherit; font-size: 14px; color: #1C1C1A; background: transparent; resize: none; }
+.field-line input:focus, .field-line textarea:focus { border-bottom-color: var(--lune-teal-700); }
+.date-row { display: flex; gap: var(--space-3); }
+.date-row .inp-box { padding: 0 12px; gap: var(--space-2); }
+.date-row .inp-box .cal { color: #52595F; display: flex; flex: none; }
+.date-row .inp-box input, .date-row .inp-box select { padding: 12px 0; font-weight: var(--weight-medium); }
+
+.rec-preview-pane { width: 100%; display: flex; justify-content: center; }
+.cust-card { width: 394px; max-width: 100%; border: 1px solid #DFE1E2; border-radius: var(--radius-lg); padding: var(--space-4); }
+
+.modal-summary { width: 560px; max-width: calc(100vw - 32px); max-height: 86vh; overflow: auto; text-align: left; padding: var(--space-6); }
+.sum-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); }
+.sum-head h3 { font-size: 22px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.sum-head p { margin-top: 2px; font-size: 13px; color: var(--text-tertiary); }
+.sum-head .x { flex: none; }
+
+.req-panel { display: flex; flex-direction: column; gap: var(--space-4); }
+.req-intro { padding: var(--space-4) var(--space-5); }
+.req-intro h4 { font-size: 15px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.req-intro p { margin-top: 2px; font-size: 12px; color: var(--text-tertiary); }
+.req-block { background: var(--neutral-25); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); }
+.req-block h4 { font-size: 14px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.req-block .bsub { margin: 2px 0 var(--space-3); font-size: 12px; color: var(--text-tertiary); line-height: 1.4; }
+.kv { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); padding: 6px 0; }
+.kv .k { font-size: 13px; color: var(--text-tertiary); }
+.kv .v { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-primary); text-align: right; }
+.kv-chips { display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: flex-end; }
+.kv-chips .c { font-size: 11px; font-weight: var(--weight-semibold); padding: 3px 10px; border-radius: var(--radius-pill); background: var(--surface-emerald); color: var(--lune-teal-700); }
+.brand-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: var(--weight-semibold); padding: 3px 10px;
+  border-radius: var(--radius-pill); border: var(--border-hairline) solid var(--border-default);
+  background: var(--bg-surface); color: var(--text-secondary);
+}
+.brand-pill .bd { width: 10px; height: 10px; border-radius: 50%; }
+
+/* ---------- Empty state ---------- */
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 420px; }
+.empty .eic {
+  width: 56px; height: 56px; border-radius: var(--radius-pill);
+  background: var(--status-warning); color: var(--status-warning-ink);
+  display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);
+}
+.empty h2 { margin-bottom: var(--space-2); font-size: var(--text-h5-size); font-weight: var(--weight-bold); color: var(--text-primary); }
+.empty p { font-size: 14px; color: var(--text-tertiary); max-width: 420px; line-height: 1.5; }
+
+/* ---------- Request cards ---------- */
+.req-card {
+  background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle);
+  border-top: 4px solid var(--neutral-200);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+  padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-5); text-align: left;
+  transition: transform var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard);
+}
+.req-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.req-card.s-review    { border-top-color: var(--req-review); }
+.req-card.s-ready     { border-top-color: var(--req-ready); }
+.req-card.s-approved  { border-top-color: var(--req-confirmed); }
+.req-card .pill-status { text-transform: none; letter-spacing: 0; font-size: 12px; font-weight: var(--weight-semibold); align-self: flex-start; }
+.req-card-top { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.req-card-top .created { font-size: 12px; color: var(--text-tertiary); display: flex; align-items: center; gap: 5px; }
+.req-card-top .created svg { flex: 0 0 14px; }
+.req-card-top .created b { color: var(--text-secondary); font-weight: var(--weight-semibold); white-space: nowrap; }
+.req-card h3 { font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); line-height: 1.4; }
+
+/* ---------- Request board (kanban columns) ---------- */
+.req-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); align-items: start; }
+.req-col { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.req-col-head { display: flex; align-items: center; gap: var(--space-2); padding: 2px 4px; }
+.req-col-head .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 9px; }
+.req-col-head .lbl { font-size: 13px; font-weight: var(--weight-bold); color: var(--text-secondary); letter-spacing: var(--tracking-wide); text-transform: uppercase; }
+.req-col-head .num { font-size: 12px; font-weight: var(--weight-bold); color: var(--text-tertiary); background: var(--surface-muted); border-radius: var(--radius-pill); padding: 1px 8px; }
+.req-col.c-review  .dot { background: var(--req-review); }
+.req-col.c-ready   .dot { background: var(--req-ready); }
+.req-col.c-approved .dot { background: var(--req-confirmed); }
+.req-col-empty { font-size: 13px; color: var(--text-tertiary); padding: 18px 14px; text-align: center; border: 1px dashed var(--border-subtle); border-radius: var(--radius-lg); }
+@media (max-width: 900px) { .req-board { grid-template-columns: 1fr; } }
+
+/* ---------- Wizard ---------- */
+.wizard-card {
+  background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow-xs);
+  min-height: 560px; display: flex; flex-direction: column;
+}
+.wiz-progress { display: flex; gap: var(--space-1); margin: var(--space-6) var(--space-8) 0; }
+.wiz-progress i { flex: 1; height: 4px; border-radius: var(--radius-pill); background: var(--neutral-100); transition: background var(--dur-slow) var(--ease-emphasis); }
+.wiz-progress i.on { background: var(--lune-emerald); }
+.wiz-body { flex: 1; padding: var(--space-10) var(--space-10) var(--space-8); display: flex; flex-direction: column; align-items: center; }
+.wiz-q { font-size: var(--text-h3-size); font-weight: var(--weight-bold); color: var(--text-primary); text-align: center; letter-spacing: var(--tracking-tight); margin: var(--space-2) 0 var(--space-1); }
+.wiz-sub { font-size: 14px; color: var(--text-tertiary); text-align: center; margin-bottom: var(--space-8); }
+.wiz-step { display: none; width: 100%; flex-direction: column; align-items: center; }
+.wiz-step.active { display: flex; }
+
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-4); width: 100%; max-width: 980px; }
+.goal-opt {
+  position: relative; text-align: left;
+  border: var(--border-thick) solid var(--border-subtle); border-radius: var(--radius-lg);
+  padding: var(--space-4); background: var(--bg-surface);
+  display: flex; flex-direction: column; gap: var(--space-4);
+  transition: all var(--dur-fast) var(--ease-standard);
+}
+.goal-opt:hover { border-color: var(--primary-40); }
+.goal-opt.sel { border-color: var(--lune-teal-700); background: #E7F6F2; }
+.goal-opt .gic {
+  width: 56px; height: 56px; border-radius: var(--radius-md);
+  background: var(--surface-muted); color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+}
+.goal-opt.sel .gic { background: var(--primary-10); color: var(--lune-teal-700); }
+.goal-opt .gt { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.goal-opt .gt b { font-size: 16px; color: var(--text-primary); font-weight: var(--weight-bold); }
+.goal-opt.sel .gt b { color: var(--lune-teal-700); }
+.goal-opt .gt .badge { font-size: 11px; font-weight: var(--weight-medium); color: var(--lune-teal-700); background: var(--primary-10); padding: 4px 9px; border-radius: var(--radius-pill); white-space: nowrap; }
+.goal-opt.sel .gt .badge { background: var(--lune-teal-700); color: #fff; }
+.goal-opt .gd { font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+.check {
+  position: absolute; top: var(--space-4); right: var(--space-4);
+  width: 22px; height: 22px; border-radius: 50%;
+  border: var(--border-thick) solid var(--border-default); background: var(--bg-surface);
+  display: flex; align-items: center; justify-content: center; color: transparent;
+}
+.check svg { width: 12px; height: 12px; }
+.goal-opt.sel .check { border-color: var(--lune-emerald); background: var(--lune-emerald); color: #fff; }
+
+.pill-row { display: flex; gap: var(--space-3); flex-wrap: wrap; justify-content: center; }
+.pick-pill {
+  padding: 10px 20px; border-radius: var(--radius-pill);
+  border: var(--border-thick) solid var(--border-default); background: var(--bg-surface);
+  font-size: 14px; font-weight: var(--weight-semibold); color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease-standard); white-space: nowrap;
+  display: inline-flex; align-items: center; gap: var(--space-2);
+}
+.pick-pill:hover { border-color: var(--primary-40); color: var(--text-primary); }
+.pick-pill.sel { background: #E7F6F2; color: var(--lune-teal-700); border-color: var(--lune-teal-700); }
+.pick-pill .cat-ic { width: 16px; height: 16px; }
+.pick-pill .bd { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+.pill-row.wrap { max-width: 760px; }
+.reveal { display: none; flex-direction: column; align-items: center; gap: var(--space-5); margin-top: var(--space-6); }
+.reveal.show { display: flex; }
+.reveal .rlbl { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-secondary); }
+
+.text-input { width: 360px; max-width: 100%; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 14px; color: var(--text-primary); outline: none; background: var(--bg-surface); }
+.text-input:focus { border-color: var(--lune-emerald); box-shadow: 0 0 0 3px var(--focus-ring); }
+
+/* ---- Brand search (wizard step 2) ---- */
+.brand-search { width: 520px; max-width: 100%; display: flex; flex-direction: column; gap: var(--space-6); }
+.brand-search-box { position: relative; width: 100%; }
+.brand-search-box > svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text-tertiary); pointer-events: none; }
+.brand-search-input { width: 100%; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-pill); padding: 13px 16px 13px 44px; font-size: 14px; color: var(--text-primary); outline: none; background: var(--bg-surface); font-family: inherit; }
+.brand-search-input::placeholder { color: var(--text-tertiary); }
+.brand-search-input:focus { border-color: var(--lune-emerald); box-shadow: 0 0 0 3px var(--focus-ring); }
+.brand-results { position: absolute; top: calc(100% + 6px); left: 0; right: 0; max-height: 288px; overflow-y: auto; background: var(--bg-surface); border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); z-index: 20; display: none; padding: var(--space-2); text-align: left; }
+.brand-results.show { display: block; }
+.brand-result { display: flex; align-items: center; gap: var(--space-3); padding: 10px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; font-weight: var(--weight-medium); color: var(--text-secondary); }
+.brand-result:hover, .brand-result.active { background: #E7F6F2; color: var(--lune-teal-700); }
+.brand-result .bd { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+.brand-result mark { background: transparent; color: var(--lune-emerald); font-weight: var(--weight-bold); }
+.brand-empty { padding: 16px 12px; font-size: 13px; color: var(--text-tertiary); text-align: center; }
+.brand-selected:empty { display: none; }
+.brand-chip { display: inline-flex; align-items: center; gap: var(--space-2); padding: 8px 8px 8px 14px; border-radius: var(--radius-pill); background: #E7F6F2; color: var(--lune-teal-700); border: var(--border-thick) solid var(--lune-teal-700); font-size: 14px; font-weight: var(--weight-semibold); }
+.brand-chip .bd { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+.brand-chip .x { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; color: var(--lune-teal-700); opacity: .55; font-size: 16px; line-height: 1; cursor: pointer; }
+.brand-chip .x:hover { opacity: 1; background: rgba(0,46,42,.12); }
+
+.budget-amt { font-size: 26px; font-weight: var(--weight-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-sm); padding: var(--space-2) var(--space-6); margin-bottom: var(--space-5); }
+.slider-wrap { width: 640px; max-width: 100%; }
+.slider-wrap input[type=range] { width: 100%; accent-color: var(--lune-emerald); }
+.ticks { display: flex; justify-content: space-between; margin-top: var(--space-2); font-size: 11px; color: var(--text-tertiary); }
+
+.wiz-foot { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-8); border-top: var(--border-hairline) solid var(--border-subtle); }
+.wiz-foot .right { display: flex; gap: var(--space-3); }
+
+.success-ic { width: 64px; height: 64px; border-radius: var(--radius-pill); background: var(--status-success); color: var(--status-success-ink); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-4); }
+.next-box { background: var(--neutral-25); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-5) var(--space-6); width: 100%; max-width: 640px; margin-top: var(--space-2); }
+.next-box h4 { margin-bottom: var(--space-3); color: var(--lune-teal-700); font-size: 14px; font-weight: var(--weight-bold); }
+.next-step { display: flex; gap: var(--space-3); padding: var(--space-2) 0; }
+.next-step .n { width: 22px; height: 22px; flex: 0 0 22px; border-radius: 50%; background: var(--lune-emerald); color: #fff; font-size: 11px; font-weight: var(--weight-bold); display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.next-step b { font-size: 13px; color: var(--text-primary); }
+.next-step p { margin-top: 2px; font-size: 13px; color: var(--text-tertiary); line-height: 1.45; }
+
+/* ---------- Modals ---------- */
+.overlay { position: fixed; inset: 0; background: rgba(7,3,18,0.45); display: none; align-items: center; justify-content: center; z-index: 50; padding: var(--space-5); }
+.overlay.show { display: flex; }
+.modal { background: var(--bg-surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); width: 500px; max-width: 100%; padding: var(--space-8); }
+.modal-center { text-align: center; }
+.modal .ic { width: 72px; height: 72px; border-radius: var(--radius-pill); background: var(--surface-emerald); color: var(--lune-emerald); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-4); }
+.modal h2 { margin-bottom: var(--space-2); font-size: var(--text-h3-size); font-weight: var(--weight-bold); color: var(--text-primary); letter-spacing: var(--tracking-tight); }
+.modal .msub { margin-bottom: var(--space-5); font-size: 14px; color: var(--text-tertiary); line-height: 1.5; }
+.note-box { background: var(--neutral-25); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); text-align: left; margin-bottom: var(--space-5); }
+.note-box b { display: block; color: var(--lune-teal-700); font-size: 14px; margin-bottom: var(--space-2); }
+.note-box ul { margin: 0; padding-left: 18px; color: var(--text-secondary); font-size: 13px; display: flex; flex-direction: column; gap: var(--space-2); }
+.confirm-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-5); text-align: left; }
+.confirm-row .ck { font-size: 12px; color: var(--text-tertiary); }
+.confirm-row .cv { font-size: 15px; font-weight: var(--weight-bold); color: var(--text-primary); margin-top: 2px; }
+.modal-actions { display: flex; gap: var(--space-3); }
+.modal-actions .btn { flex: 1; padding: 13px; }
+.x { color: var(--neutral-400); display: flex; padding: 4px; border-radius: var(--radius-xs); }
+.x:hover { color: var(--text-primary); }
+
+/* ---------- Tweaks toolbar ---------- */
+.tweaks {
+  position: fixed; bottom: var(--space-5); right: var(--space-5); z-index: 60;
+  display: flex; gap: var(--space-4); align-items: center;
+  background: var(--bg-surface); border: var(--border-hairline) solid var(--border-subtle);
+  border-radius: var(--radius-pill); padding: var(--space-2) var(--space-4);
+  box-shadow: var(--shadow-lg);
+}
+.tweaks .grp { display: flex; align-items: center; gap: var(--space-2); }
+.tweaks .glab { font-size: 11px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-tertiary); }
+.tweaks .seg { display: inline-flex; background: var(--surface-muted); border-radius: var(--radius-pill); padding: 3px; }
+.tweaks .seg button { padding: 5px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: var(--weight-semibold); color: var(--text-secondary); }
+.tweaks .seg button.on { background: var(--accent); color: #fff; }
+.tweaks .divider { width: 1px; height: 26px; background: var(--border-subtle); }
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--neutral-200); border-radius: var(--radius-pill); border: 3px solid var(--bg-canvas); }
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; padding: 0; color: inherit; }
+input, textarea { font-family: inherit; }
+</style>
+</head>
+<body>
+<div class="app" id="app" data-sidebar="light" data-heroes="photo">
+
+  <aside class="sidebar">
+    <div class="sb-top">
+      <a href="index.html" title="Back to demo home" style="display:block;cursor:pointer;text-decoration:none">
+      <svg class="logo-light" width="680" height="280" viewBox="0 0 680 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lune Pulse · back to demo home">
+        <circle cx="140" cy="140" r="100" fill="#002E2A"></circle>
+        <path d="M203.435 62.7734C206.04 64.9098 208.559 67.1894 210.991 69.6123C212.423 71.0439 213.802 72.5094 215.129 74.0039C230.61 91.6137 240 114.71 240 140C240 195.228 195.228 240 140 240C112.908 240 88.3322 229.225 70.3232 211.729C70.0798 211.49 69.8363 211.25 69.5947 211.009L69.5703 210.984C67.1444 208.552 64.8652 206.032 62.7324 203.427C105.511 238.345 168.491 231.965 203.405 189.183C217.966 171.339 225.92 149.015 225.926 125.983C225.931 102.952 217.986 80.6242 203.435 62.7734Z" fill="#10A37F"></path>
+        <path d="M289.329 162.098C288.595 162.098 288 161.503 288 160.769V45.3288C288 44.5949 288.595 44 289.329 44H306.803C307.537 44 308.132 44.5949 308.132 45.3288V142.856C308.132 143.59 308.727 144.185 309.461 144.185H357.688C358.422 144.185 359.017 144.78 359.017 145.514V160.769C359.017 161.503 358.422 162.098 357.688 162.098H289.329Z" fill="#002E2A"></path>
+        <path d="M402.771 164C396.219 164 390.46 162.52 385.493 159.561C380.631 156.602 376.88 152.534 374.238 147.355C371.596 142.071 370.275 135.942 370.275 128.967V77.5085C370.275 76.7746 370.87 76.1797 371.603 76.1797H388.285C389.019 76.1797 389.614 76.7746 389.614 77.5085V127.223C389.614 131.028 390.354 134.357 391.833 137.21C393.419 140.063 395.585 142.283 398.333 143.868C401.08 145.347 404.251 146.087 407.844 146.087C411.437 146.087 414.607 145.295 417.355 143.709C420.103 142.124 422.216 139.905 423.696 137.052C425.281 134.092 426.074 130.658 426.074 126.748V77.5085C426.074 76.7746 426.669 76.1797 427.403 76.1797H444.084C444.818 76.1797 445.413 76.7746 445.413 77.5085V160.769C445.413 161.503 444.818 162.098 444.084 162.098H428.354C427.62 162.098 427.025 161.503 427.025 160.769V147.958C427.025 147.084 428.148 146.728 428.652 147.442C428.824 147.685 428.865 147.998 428.754 148.275C426.73 153.34 423.459 157.208 418.94 159.878C414.29 162.626 408.901 164 402.771 164Z" fill="#002E2A"></path>
+        <path d="M466.695 162.098C465.961 162.098 465.366 161.503 465.366 160.769V77.5085C465.366 76.7746 465.961 76.1797 466.695 76.1797H482.425C483.159 76.1797 483.754 76.7746 483.754 77.5085V90.3358C483.754 91.1432 482.712 91.4669 482.255 90.8015C482.102 90.5792 482.067 90.2954 482.167 90.0446C484.186 84.9584 487.41 81.0765 491.839 78.399C496.489 75.6513 501.878 74.2774 508.008 74.2774C514.349 74.2774 519.95 75.6513 524.811 78.399C529.778 81.1466 533.635 84.9511 536.383 89.8124C539.131 94.6737 540.505 100.275 540.505 106.616V160.769C540.505 161.503 539.91 162.098 539.176 162.098H522.494C521.76 162.098 521.165 161.503 521.165 160.769V111.53C521.165 107.514 520.372 104.079 518.787 101.226C517.308 98.2668 515.194 95.9947 512.446 94.4095C509.804 92.8243 506.687 92.0317 503.094 92.0317C499.501 92.0317 496.277 92.8243 493.424 94.4095C490.676 95.9947 488.51 98.2668 486.925 101.226C485.445 104.079 484.705 107.514 484.705 111.53V160.769C484.705 161.503 484.11 162.098 483.377 162.098H466.695Z" fill="#002E2A"></path>
+        <path d="M599.295 164C590.629 164 582.967 161.992 576.309 157.976C569.651 153.96 564.473 148.571 560.774 141.807C557.075 134.938 555.226 127.276 555.226 118.822C555.226 110.262 557.075 102.653 560.774 95.9947C564.579 89.2312 569.704 83.9472 576.151 80.1427C582.597 76.2325 589.836 74.2774 597.868 74.2774C604.42 74.2774 610.232 75.3871 615.305 77.6063C620.483 79.72 624.816 82.7318 628.304 86.642C631.897 90.5522 634.592 95.0436 636.388 100.116C638.291 105.083 639.242 110.367 639.242 115.968C639.242 117.448 639.189 118.98 639.083 120.565C639.003 121.695 638.829 122.763 638.564 123.769C638.418 124.322 637.905 124.687 637.333 124.687H572.248C571.514 124.687 570.919 124.092 570.919 123.358V110.956C570.919 110.222 571.514 109.627 572.248 109.627H623.329C624.61 109.627 625.149 111.261 624.121 112.024L620.981 114.352C619.997 115.081 618.58 114.192 618.69 112.973C619.014 109.385 618.572 106.104 617.366 103.128C615.781 99.1123 613.297 95.9947 609.915 93.7754C606.534 91.4505 602.518 90.288 597.868 90.288C593.324 90.288 589.255 91.4505 585.662 93.7754C582.174 95.9947 579.48 99.2708 577.577 103.604C575.685 107.808 574.943 112.901 575.351 118.883C575.356 118.948 575.355 119.013 575.351 119.077C574.944 124.638 575.739 129.52 577.736 133.723C579.744 137.95 582.65 141.226 586.454 143.551C590.259 145.77 594.592 146.88 599.453 146.88C604.526 146.88 608.753 145.823 612.135 143.709C615.273 141.712 617.855 139.202 619.881 136.178C620.265 135.605 621.011 135.384 621.63 135.69L635.11 142.362C635.739 142.674 636.02 143.423 635.719 144.057C634.025 147.616 631.553 150.829 628.304 153.696C624.711 156.867 620.431 159.403 615.464 161.305C610.602 163.102 605.213 164 599.295 164Z" fill="#002E2A"></path>
+        <path d="M288.49 235.313C288.219 235.313 288 235.094 288 234.823V193.177C288 192.906 288.219 192.687 288.49 192.687H303.906C306.805 192.687 309.361 193.221 311.573 194.289C313.824 195.319 315.579 196.844 316.837 198.866C318.096 200.85 318.726 203.272 318.726 206.133C318.726 208.955 318.077 211.378 316.78 213.399C315.521 215.383 313.786 216.909 311.573 217.977C309.361 219.045 306.805 219.579 303.906 219.579H296.272C296.001 219.579 295.782 219.798 295.782 220.069V234.823C295.782 235.094 295.562 235.313 295.292 235.313H288.49ZM295.782 212.223C295.782 212.493 296.001 212.713 296.272 212.713H304.021C305.432 212.713 306.653 212.446 307.683 211.912C308.713 211.339 309.514 210.557 310.086 209.566C310.658 208.574 310.944 207.43 310.944 206.133C310.944 204.798 310.658 203.653 310.086 202.7C309.514 201.708 308.713 200.945 307.683 200.411C306.653 199.839 305.432 199.553 304.021 199.553H296.272C296.001 199.553 295.782 199.772 295.782 200.043V212.223Z" fill="#10A37F"></path>
+        <path d="M342.095 236C338.815 236 335.897 235.313 333.341 233.94C330.823 232.567 328.84 230.679 327.39 228.276C325.941 225.873 325.216 223.145 325.216 220.094V193.177C325.216 192.906 325.436 192.687 325.706 192.687H332.508C332.778 192.687 332.998 192.906 332.998 193.177V219.693C332.998 221.448 333.379 223.031 334.142 224.442C334.943 225.853 336.03 226.96 337.403 227.761C338.777 228.524 340.341 228.905 342.095 228.905C343.888 228.905 345.452 228.524 346.787 227.761C348.16 226.96 349.228 225.853 349.991 224.442C350.792 223.031 351.193 221.448 351.193 219.693V193.177C351.193 192.906 351.412 192.687 351.683 192.687H358.484C358.755 192.687 358.974 192.906 358.974 193.177V220.094C358.974 223.145 358.25 225.873 356.8 228.276C355.351 230.679 353.348 232.567 350.792 233.94C348.275 235.313 345.376 236 342.095 236Z" fill="#10A37F"></path>
+        <path d="M367.805 235.313C367.534 235.313 367.315 235.094 367.315 234.823V193.177C367.315 192.906 367.534 192.687 367.805 192.687H374.607C374.877 192.687 375.097 192.906 375.097 193.177V227.957C375.097 228.228 375.316 228.447 375.587 228.447H392.859C393.129 228.447 393.349 228.667 393.349 228.937V234.823C393.349 235.094 393.129 235.313 392.859 235.313H367.805Z" fill="#10A37F"></path>
+        <path d="M414.174 236C411.466 236 408.948 235.504 406.621 234.512C404.333 233.521 402.349 232.147 400.671 230.393C399.129 228.707 397.974 226.769 397.208 224.577C397.125 224.339 397.243 224.08 397.474 223.979L403.078 221.549C403.328 221.441 403.617 221.558 403.731 221.805C404.75 224.033 406.171 225.808 407.995 227.131C409.94 228.505 412.133 229.191 414.575 229.191C415.948 229.191 417.13 228.981 418.122 228.562C419.152 228.104 419.934 227.494 420.468 226.731C421.04 225.968 421.326 225.052 421.326 223.984C421.326 222.726 420.945 221.696 420.182 220.895C419.457 220.055 418.351 219.407 416.863 218.949L408.681 216.317C405.363 215.287 402.864 213.743 401.186 211.683C399.507 209.623 398.668 207.201 398.668 204.416C398.668 201.975 399.26 199.82 400.442 197.951C401.663 196.081 403.341 194.632 405.477 193.602C407.651 192.534 410.131 192 412.915 192C415.471 192 417.817 192.458 419.953 193.373C422.089 194.251 423.92 195.49 425.446 197.092C426.905 198.552 428.016 200.26 428.778 202.217C428.87 202.456 428.756 202.723 428.522 202.827L422.996 205.294C422.741 205.408 422.443 205.285 422.331 205.029C421.497 203.123 420.304 201.641 418.751 200.583C417.073 199.4 415.128 198.809 412.915 198.809C411.618 198.809 410.474 199.038 409.482 199.495C408.491 199.915 407.709 200.525 407.136 201.326C406.602 202.089 406.335 203.005 406.335 204.073C406.335 205.255 406.717 206.304 407.48 207.22C408.243 208.097 409.406 208.784 410.97 209.28L418.809 211.74C422.204 212.846 424.74 214.372 426.419 216.317C428.135 218.263 428.993 220.666 428.993 223.527C428.993 225.968 428.364 228.123 427.105 229.992C425.846 231.861 424.111 233.33 421.898 234.398C419.686 235.466 417.111 236 414.174 236Z" fill="#10A37F"></path>
+        <path d="M437.062 235.313C436.792 235.313 436.572 235.094 436.572 234.823V193.177C436.572 192.906 436.792 192.687 437.062 192.687H464.405C464.676 192.687 464.895 192.906 464.895 193.177V199.063C464.895 199.333 464.676 199.553 464.405 199.553H444.844C444.573 199.553 444.354 199.772 444.354 200.043V209.991C444.354 210.262 444.573 210.481 444.844 210.481H463.261C463.531 210.481 463.751 210.701 463.751 210.971V216.857C463.751 217.128 463.531 217.347 463.261 217.347H444.844C444.573 217.347 444.354 217.567 444.354 217.837V227.957C444.354 228.228 444.573 228.447 444.844 228.447H464.405C464.676 228.447 464.895 228.667 464.895 228.937V234.823C464.895 235.094 464.676 235.313 464.405 235.313H437.062Z" fill="#10A37F"></path>
+        <path d="M532.895 190.85C532.895 190.142 532.106 189.745 531.568 190.183L523.366 196.851C523.168 197.012 523.053 197.258 523.053 197.519V230.48C523.053 230.741 523.168 230.987 523.366 231.148L531.568 237.817C532.106 238.255 532.895 237.858 532.895 237.15V190.85Z" fill="#10A37F"></path>
+        <path d="M515.399 190.85C515.399 190.142 514.61 189.745 514.071 190.183L504.777 197.74C504.579 197.9 504.464 198.147 504.464 198.407V229.592C504.464 229.852 504.579 230.098 504.777 230.259L514.071 237.817C514.609 238.255 515.399 237.858 515.399 237.15V190.85Z" fill="#10A37F"></path>
+        <path d="M496.809 190.85C496.809 190.142 496.02 189.745 495.482 190.183L485.197 198.545C485.006 198.7 484.895 198.933 484.895 199.18V228.819C484.895 229.065 485.006 229.299 485.197 229.454L495.482 237.817C496.02 238.255 496.809 237.858 496.809 237.15V190.85Z" fill="#10A37F"></path>
+      </svg>
+      <svg class="logo-ink" width="680" height="280" viewBox="0 0 680 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lune Pulse">
+        <circle cx="140" cy="140" r="100" fill="white"></circle>
+        <path d="M203.435 62.7734C206.04 64.9098 208.559 67.1894 210.991 69.6123C212.423 71.0439 213.802 72.5094 215.129 74.0039C230.61 91.6137 240 114.71 240 140C240 195.228 195.228 240 140 240C112.908 240 88.3322 229.225 70.3232 211.729C70.0798 211.49 69.8363 211.25 69.5947 211.009L69.5703 210.984C67.1444 208.552 64.8652 206.032 62.7324 203.427C105.511 238.345 168.491 231.965 203.405 189.183C217.966 171.339 225.92 149.015 225.926 125.983C225.931 102.952 217.986 80.6242 203.435 62.7734Z" fill="#00B68A"></path>
+        <path d="M289.329 162.098C288.595 162.098 288 161.503 288 160.769V45.3288C288 44.5949 288.595 44 289.329 44H306.803C307.537 44 308.132 44.5949 308.132 45.3288V142.856C308.132 143.59 308.727 144.185 309.461 144.185H357.688C358.422 144.185 359.017 144.78 359.017 145.514V160.769C359.017 161.503 358.422 162.098 357.688 162.098H289.329Z" fill="white"></path>
+        <path d="M402.771 164C396.219 164 390.46 162.52 385.493 159.561C380.631 156.602 376.88 152.534 374.238 147.355C371.596 142.071 370.275 135.942 370.275 128.967V77.5085C370.275 76.7746 370.87 76.1797 371.603 76.1797H388.285C389.019 76.1797 389.614 76.7746 389.614 77.5085V127.223C389.614 131.028 390.354 134.357 391.833 137.21C393.419 140.063 395.585 142.283 398.333 143.868C401.08 145.347 404.251 146.087 407.844 146.087C411.437 146.087 414.607 145.295 417.355 143.709C420.103 142.124 422.216 139.905 423.696 137.052C425.281 134.092 426.074 130.658 426.074 126.748V77.5085C426.074 76.7746 426.669 76.1797 427.403 76.1797H444.084C444.818 76.1797 445.413 76.7746 445.413 77.5085V160.769C445.413 161.503 444.818 162.098 444.084 162.098H428.354C427.62 162.098 427.025 161.503 427.025 160.769V147.958C427.025 147.084 428.148 146.728 428.652 147.442C428.824 147.685 428.865 147.998 428.754 148.275C426.73 153.34 423.459 157.208 418.94 159.878C414.29 162.626 408.901 164 402.771 164Z" fill="white"></path>
+        <path d="M466.695 162.098C465.961 162.098 465.366 161.503 465.366 160.769V77.5085C465.366 76.7746 465.961 76.1797 466.695 76.1797H482.425C483.159 76.1797 483.754 76.7746 483.754 77.5085V90.3358C483.754 91.1432 482.712 91.4669 482.255 90.8015C482.102 90.5792 482.067 90.2954 482.167 90.0446C484.186 84.9584 487.41 81.0765 491.839 78.399C496.489 75.6513 501.878 74.2774 508.008 74.2774C514.349 74.2774 519.95 75.6513 524.811 78.399C529.778 81.1466 533.635 84.9511 536.383 89.8124C539.131 94.6737 540.505 100.275 540.505 106.616V160.769C540.505 161.503 539.91 162.098 539.176 162.098H522.494C521.76 162.098 521.165 161.503 521.165 160.769V111.53C521.165 107.514 520.372 104.079 518.787 101.226C517.308 98.2668 515.194 95.9947 512.446 94.4095C509.804 92.8243 506.687 92.0317 503.094 92.0317C499.501 92.0317 496.277 92.8243 493.424 94.4095C490.676 95.9947 488.51 98.2668 486.925 101.226C485.445 104.079 484.705 107.514 484.705 111.53V160.769C484.705 161.503 484.11 162.098 483.377 162.098H466.695Z" fill="white"></path>
+        <path d="M599.295 164C590.629 164 582.967 161.992 576.309 157.976C569.651 153.96 564.473 148.571 560.774 141.807C557.075 134.938 555.226 127.276 555.226 118.822C555.226 110.262 557.075 102.653 560.774 95.9947C564.579 89.2312 569.704 83.9472 576.151 80.1427C582.597 76.2325 589.836 74.2774 597.868 74.2774C604.42 74.2774 610.232 75.3871 615.305 77.6063C620.483 79.72 624.816 82.7318 628.304 86.642C631.897 90.5522 634.592 95.0436 636.388 100.116C638.291 105.083 639.242 110.367 639.242 115.968C639.242 117.448 639.189 118.98 639.083 120.565C639.003 121.695 638.829 122.763 638.564 123.769C638.418 124.322 637.905 124.687 637.333 124.687H572.248C571.514 124.687 570.919 124.092 570.919 123.358V110.956C570.919 110.222 571.514 109.627 572.248 109.627H623.329C624.61 109.627 625.149 111.261 624.121 112.024L620.981 114.352C619.997 115.081 618.58 114.192 618.69 112.973C619.014 109.385 618.572 106.104 617.366 103.128C615.781 99.1123 613.297 95.9947 609.915 93.7754C606.534 91.4505 602.518 90.288 597.868 90.288C593.324 90.288 589.255 91.4505 585.662 93.7754C582.174 95.9947 579.48 99.2708 577.577 103.604C575.685 107.808 574.943 112.901 575.351 118.883C575.356 118.948 575.355 119.013 575.351 119.077C574.944 124.638 575.739 129.52 577.736 133.723C579.744 137.95 582.65 141.226 586.454 143.551C590.259 145.77 594.592 146.88 599.453 146.88C604.526 146.88 608.753 145.823 612.135 143.709C615.273 141.712 617.855 139.202 619.881 136.178C620.265 135.605 621.011 135.384 621.63 135.69L635.11 142.362C635.739 142.674 636.02 143.423 635.719 144.057C634.025 147.616 631.553 150.829 628.304 153.696C624.711 156.867 620.431 159.403 615.464 161.305C610.602 163.102 605.213 164 599.295 164Z" fill="white"></path>
+        <path d="M288.49 235.313C288.219 235.313 288 235.094 288 234.823V193.177C288 192.906 288.219 192.687 288.49 192.687H303.906C306.805 192.687 309.361 193.221 311.573 194.289C313.824 195.319 315.579 196.844 316.837 198.866C318.096 200.85 318.726 203.272 318.726 206.133C318.726 208.955 318.077 211.378 316.78 213.399C315.521 215.383 313.786 216.909 311.573 217.977C309.361 219.045 306.805 219.579 303.906 219.579H296.272C296.001 219.579 295.782 219.798 295.782 220.069V234.823C295.782 235.094 295.562 235.313 295.292 235.313H288.49ZM295.782 212.223C295.782 212.493 296.001 212.713 296.272 212.713H304.021C305.432 212.713 306.653 212.446 307.683 211.912C308.713 211.339 309.514 210.557 310.086 209.566C310.658 208.574 310.944 207.43 310.944 206.133C310.944 204.798 310.658 203.653 310.086 202.7C309.514 201.708 308.713 200.945 307.683 200.411C306.653 199.839 305.432 199.553 304.021 199.553H296.272C296.001 199.553 295.782 199.772 295.782 200.043V212.223Z" fill="#00B68A"></path>
+        <path d="M342.095 236C338.815 236 335.897 235.313 333.341 233.94C330.823 232.567 328.84 230.679 327.39 228.276C325.941 225.873 325.216 223.145 325.216 220.094V193.177C325.216 192.906 325.436 192.687 325.706 192.687H332.508C332.778 192.687 332.998 192.906 332.998 193.177V219.693C332.998 221.448 333.379 223.031 334.142 224.442C334.943 225.853 336.03 226.96 337.403 227.761C338.777 228.524 340.341 228.905 342.095 228.905C343.888 228.905 345.452 228.524 346.787 227.761C348.16 226.96 349.228 225.853 349.991 224.442C350.792 223.031 351.193 221.448 351.193 219.693V193.177C351.193 192.906 351.412 192.687 351.683 192.687H358.484C358.755 192.687 358.974 192.906 358.974 193.177V220.094C358.974 223.145 358.25 225.873 356.8 228.276C355.351 230.679 353.348 232.567 350.792 233.94C348.275 235.313 345.376 236 342.095 236Z" fill="#00B68A"></path>
+        <path d="M367.805 235.313C367.534 235.313 367.315 235.094 367.315 234.823V193.177C367.315 192.906 367.534 192.687 367.805 192.687H374.607C374.877 192.687 375.097 192.906 375.097 193.177V227.957C375.097 228.228 375.316 228.447 375.587 228.447H392.859C393.129 228.447 393.349 228.667 393.349 228.937V234.823C393.349 235.094 393.129 235.313 392.859 235.313H367.805Z" fill="#00B68A"></path>
+        <path d="M414.174 236C411.466 236 408.948 235.504 406.621 234.512C404.333 233.521 402.349 232.147 400.671 230.393C399.129 228.707 397.974 226.769 397.208 224.577C397.125 224.339 397.243 224.08 397.474 223.979L403.078 221.549C403.328 221.441 403.617 221.558 403.731 221.805C404.75 224.033 406.171 225.808 407.995 227.131C409.94 228.505 412.133 229.191 414.575 229.191C415.948 229.191 417.13 228.981 418.122 228.562C419.152 228.104 419.934 227.494 420.468 226.731C421.04 225.968 421.326 225.052 421.326 223.984C421.326 222.726 420.945 221.696 420.182 220.895C419.457 220.055 418.351 219.407 416.863 218.949L408.681 216.317C405.363 215.287 402.864 213.743 401.186 211.683C399.507 209.623 398.668 207.201 398.668 204.416C398.668 201.975 399.26 199.82 400.442 197.951C401.663 196.081 403.341 194.632 405.477 193.602C407.651 192.534 410.131 192 412.915 192C415.471 192 417.817 192.458 419.953 193.373C422.089 194.251 423.92 195.49 425.446 197.092C426.905 198.552 428.016 200.26 428.778 202.217C428.87 202.456 428.756 202.723 428.522 202.827L422.996 205.294C422.741 205.408 422.443 205.285 422.331 205.029C421.497 203.123 420.304 201.641 418.751 200.583C417.073 199.4 415.128 198.809 412.915 198.809C411.618 198.809 410.474 199.038 409.482 199.495C408.491 199.915 407.709 200.525 407.136 201.326C406.602 202.089 406.335 203.005 406.335 204.073C406.335 205.255 406.717 206.304 407.48 207.22C408.243 208.097 409.406 208.784 410.97 209.28L418.809 211.74C422.204 212.846 424.74 214.372 426.419 216.317C428.135 218.263 428.993 220.666 428.993 223.527C428.993 225.968 428.364 228.123 427.105 229.992C425.846 231.861 424.111 233.33 421.898 234.398C419.686 235.466 417.111 236 414.174 236Z" fill="#00B68A"></path>
+        <path d="M437.062 235.313C436.792 235.313 436.572 235.094 436.572 234.823V193.177C436.572 192.906 436.792 192.687 437.062 192.687H464.405C464.676 192.687 464.895 192.906 464.895 193.177V199.063C464.895 199.333 464.676 199.553 464.405 199.553H444.844C444.573 199.553 444.354 199.772 444.354 200.043V209.991C444.354 210.262 444.573 210.481 444.844 210.481H463.261C463.531 210.481 463.751 210.701 463.751 210.971V216.857C463.751 217.128 463.531 217.347 463.261 217.347H444.844C444.573 217.347 444.354 217.567 444.354 217.837V227.957C444.354 228.228 444.573 228.447 444.844 228.447H464.405C464.676 228.447 464.895 228.667 464.895 228.937V234.823C464.895 235.094 464.676 235.313 464.405 235.313H437.062Z" fill="#00B68A"></path>
+        <path d="M532.895 190.85C532.895 190.142 532.106 189.745 531.568 190.183L523.366 196.851C523.169 197.012 523.054 197.258 523.053 197.519V230.48C523.054 230.741 523.169 230.987 523.366 231.148L531.568 237.817C532.106 238.255 532.895 237.858 532.895 237.15V190.85Z" fill="#00B68A"></path>
+        <path d="M515.399 190.85C515.399 190.142 514.61 189.745 514.072 190.183L504.777 197.74C504.579 197.9 504.464 198.147 504.464 198.407V229.592C504.464 229.852 504.579 230.098 504.777 230.259L514.072 237.817C514.61 238.255 515.399 237.858 515.399 237.15V190.85Z" fill="#00B68A"></path>
+        <path d="M496.809 190.85C496.809 190.142 496.02 189.745 495.482 190.183L485.197 198.545C485.006 198.7 484.895 198.933 484.895 199.18V228.819C484.895 229.065 485.006 229.299 485.197 229.454L495.482 237.817C496.02 238.255 496.809 237.858 496.809 237.15V190.85Z" fill="#00B68A"></path>
+      </svg>
+      </a>
+    </div>
+    <nav class="sb-list">
+      <button class="nav-item active" data-nav="overview" id="nav-overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+        Overview
+      </button>
+      <button class="nav-item" data-nav="campaign-requests" id="nav-campaigns">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
+        Campaign Requests
+      </button>
+    </nav>
+    <div class="sb-bottom">
+      <div class="avatar">DJ</div>
+      <div>
+        <div class="name">Dennis Jedburgh</div>
+        <div class="sub">Marhaba Mart UAE · View profile</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===== OVERVIEW ===== -->
+    <section class="screen active" data-screen="overview">
+      <div class="page-head">
+        <h1>Hello, Marhaba Mart</h1>
+        <p>Track your live campaigns and offer performance</p>
+      </div>
+      <div class="tabs" id="overview-tabs">
+        <button class="tab active" data-filter="live">Live <span class="count"></span></button>
+        <button class="tab" data-filter="completed">Completed <span class="count"></span></button>
+        <button class="tab" data-filter="all">All <span class="count"></span></button>
+      </div>
+      <div class="card-grid" id="overview-grid"></div>
+    </section>
+
+    <!-- ===== CAMPAIGN REQUESTS ===== -->
+    <section class="screen" data-screen="campaign-requests">
+      <div class="head-row" style="margin-bottom: 8px;">
+        <div class="page-head" style="margin-bottom: 0;">
+          <h1>Campaign Requests</h1>
+          <p>Track your requests and manage recommended campaigns</p>
+        </div>
+        <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>New Request</button>
+      </div>
+      <div class="req-board" id="requests-board" style="margin-top: 20px;"></div>
+    </section>
+
+    <!-- ===== CAMPAIGN DETAIL ===== -->
+    <section class="screen screen-wide" data-screen="campaign-detail">
+      <div class="back-head">
+        <button class="back-btn" data-nav="campaign-requests" id="detail-back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <div>
+          <h1><span id="detail-title">Summer Grocery Cashback</span> <span id="detail-pill" class="pill-status ready"><span class="dot"></span>Recommendation ready</span></h1>
+          <p class="sub" id="detail-sub">Abu Dhabi Islamic Bank · 1 Jul – 31 Aug 2026</p>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="panel">
+          <div class="preview-head">Customer Preview</div>
+          <div class="preview-body">
+            <div class="preview-hero" style="background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=70');"></div>
+            <div class="merchant-row">
+              <div class="merchant-logo"><span class="cat-ic" data-icon="grocery" style="width: 18px; height: 18px; color: var(--lune-teal-700);"></span></div>
+              <div>
+                <div class="mname">Marhaba Mart</div>
+                <div class="chips"><span class="chip">Grocery</span><span class="chip">Supermarket</span></div>
+              </div>
+            </div>
+            <h2>Get 10% cashback on grocery purchases</h2>
+            <p class="desc">Earn 10% back on every grocery purchase at Marhaba Mart, online or in-store, paid directly to your card at the end of each month.</p>
+            <ul class="terms">
+              <li>Cashback cap AED 300 per customer per campaign</li>
+              <li>Minimum spend of AED 200 per transaction</li>
+              <li>30-day refund window applies</li>
+              <li>Valid 1 Jul – 31 Aug 2026</li>
+            </ul>
+          </div>
+          <div class="preview-foot"><span>1 Jul – 31 Aug 2026</span><span class="on">Online &amp; In-store</span></div>
+        </div>
+        <div class="req-panel">
+          <div class="panel req-intro">
+            <h4>Your Campaign Request</h4>
+            <p>These are the details you entered</p>
+          </div>
+          <div class="req-block">
+            <h4>Campaign Details</h4>
+            <div class="bsub">Basic information about your campaign</div>
+            <div class="kv"><span class="k">Goal</span><span class="v">Acquire new customers</span></div>
+            <div class="kv"><span class="k">Campaign Name</span><span class="v">Summer Grocery Cashback</span></div>
+            <div class="kv"><span class="k">Budget</span><span class="v">AED 200,000</span></div>
+          </div>
+          <div class="req-block">
+            <h4>Audience</h4>
+            <div class="bsub">We'll reach customers who already shop in these categories</div>
+            <div class="kv"><span class="k">Categories</span><span class="kv-chips"><span class="c">Grocery</span><span class="c">Bakery</span><span class="c">Beverages</span></span></div>
+          </div>
+          <div class="req-block">
+            <h4>Customer Info</h4>
+            <div class="bsub">Key insights about your target customers</div>
+            <div class="kv"><span class="k">Channel</span><span class="v">Online &amp; In-store</span></div>
+            <div class="kv"><span class="k">Avg purchase value</span><span class="v">AED 200</span></div>
+            <div class="kv"><span class="k">Average customer LTV</span><span class="v">AED 4,800</span></div>
+          </div>
+          <div class="req-block">
+            <h4>Activity</h4>
+            <div class="bsub"></div>
+            <div class="kv"><span class="k">Created on</span><span class="v">9 May 2026</span></div>
+            <div class="kv"><span class="k">Recommendation received</span><span class="v">11 May 2026</span></div>
+          </div>
+          <button class="btn btn-primary btn-block" id="detail-cta" onclick="openModal('modal-confirm')">Send for Approval</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RECOMMENDATION FLOW (Performance Overview + Review & Confirm) ===== -->
+    <section class="screen screen-wide" data-screen="recommendation">
+      <div class="rec-head">
+        <button class="rec-back" data-nav="campaign-requests"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <div class="htxt">
+          <h1><span id="rec-title">Summer Grocery Cashback Campaign</span> <span class="pill-recready"><span class="dot"></span>Recommendations ready</span></h1>
+          <button class="viewlink" onclick="openModal('modal-summary')">View your campaign requests</button>
+        </div>
+      </div>
+
+      <!-- STEP 1 — Campaign Performance Overview -->
+      <div class="rec-card" id="rec-step-1">
+        <div class="rec-body">
+          <div class="rec-inner">
+            <div class="rec-progress"><i class="on"></i><i></i></div>
+            <div class="rec-h">
+              <h2>Campaign Performance Overview</h2>
+              <p>Estimated results based on your targeting and offer settings.</p>
+            </div>
+            <div class="rec-fields">
+              <div>
+                <div class="rec-label">Goal</div>
+                <div class="goal-row" id="rec-goal-row"></div>
+              </div>
+              <div class="inp-row">
+                <div class="inp-field">
+                  <label>Budget</label>
+                  <div class="inp-box"><input id="rec-budget" value="20,000" oninput="updateEstimate()"><span class="suffix">AED</span></div>
+                </div>
+                <div class="inp-field">
+                  <label>Minimum Transaction Value <span class="ginfo" tabindex="0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span class="tip tip-left">The minimum amount a customer needs to spend to be eligible for cashback.</span></span></label>
+                  <div class="inp-box"><input id="rec-mintxn" value="200" oninput="updateEstimate()"><span class="suffix">AED</span></div>
+                </div>
+                <div class="inp-field">
+                  <label>Cashback Percentage (%)</label>
+                  <div class="inp-box"><input id="rec-cashpct" value="10%" oninput="updateEstimate()"><span class="suffix">%</span></div>
+                </div>
+                <div class="inp-field">
+                  <label>Cashback Cap <span class="ginfo" tabindex="0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span class="tip">This is the total cashback cap per customer for the entire campaign.</span></span></label>
+                  <div class="inp-box"><input value="300"><span class="suffix">AED</span></div>
+                </div>
+                <div class="inp-field">
+                  <label>Channel</label>
+                  <div class="inp-box sel">
+                    <select><option>Online</option><option>In-store</option><option>Online &amp; In-store</option></select>
+                    <span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></span>
+                  </div>
+                </div>
+              </div>
+              <div class="rec-results">
+                <div class="rh"><b>Estimated Performance</b><span>Based on card spend data across the Lune network</span></div>
+                <div class="rline"></div>
+                <div class="ritems">
+                  <div class="ritem">
+                    <div class="rk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Potential Reach <span class="ginfo" tabindex="0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span class="tip tip-left">Based on Lune Enrichment &amp; Merchant Level Targeting</span></span></div>
+                    <div class="rv" id="rv-reach">2,000 – 3,000</div>
+                  </div>
+                  <div class="rdiv"></div>
+                  <div class="ritem">
+                    <div class="rk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg> Potential Revenue <span class="ginfo" tabindex="0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span class="tip">This figure is illustrative only. It is calculated purely from the number of customers who meet your targeting criteria multiplied by the typical spend you provide. It is not based on market data, guaranteed outcomes, or historical performance. Actual revenue will depend on customer behaviour, redemption rates, and other factors outside of Lune's control.<b>Potential Reach × AED 200 minimum transaction value</b></span></span></div>
+                    <div class="rv" id="rv-rev">AED 400,000 – AED 600,000</div>
+                  </div>
+                  <div class="rdiv"></div>
+                  <div class="ritem">
+                    <div class="rk"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Revenue ceiling <span class="ginfo" tabindex="0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span class="tip tip-right"><b>(Budget / Cashback Rate)</b></span></span></div>
+                    <div class="rv" id="rv-ceiling">AED 200,000</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rec-foot">
+          <button class="btn-next" onclick="recNext()">Next <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+        </div>
+      </div>
+
+      <!-- STEP 2 — Review & Confirm Your Campaign -->
+      <div class="rec-card" id="rec-step-2" style="display:none;">
+        <div class="rec-body">
+          <div class="rec-inner">
+            <div class="rec-toolbar">
+              <div class="rec-progress"><i class="on"></i><i class="on"></i></div>
+              <button class="btn-preview" id="rec-preview-btn" onclick="togglePreview()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Customer Preview</button>
+            </div>
+
+            <div id="rec-form-view">
+              <div class="rec-h">
+                <h2>Review &amp; Confirm Your Campaign</h2>
+                <p>Check your offer details, creatives, and schedule before launch.</p>
+              </div>
+              <div class="rec-review-form">
+                <div class="media-wrap">
+                  <div class="media-upload">
+                    <div class="media-graphic" id="rec-graphic">
+                      <div class="mg-ph">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                        <div class="mg-t">Campaign Graphic</div>
+                        <div class="mg-s">Recommended 800×300px</div>
+                        <button type="button" class="mg-up" onclick="openAssets('graphic', event)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg> Upload</button>
+                      </div>
+                      <button type="button" class="mg-change" onclick="openAssets('graphic', event)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg> Change</button>
+                    </div>
+                    <div class="media-logo" id="rec-logo">
+                      <div class="ml-ph">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                        <div class="ml-t">Logo</div>
+                      </div>
+                      <button type="button" class="ml-badge" onclick="openAssets('logo', event)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="field-line"><label>Offer Name</label><input id="rec-offer-name" value="10% Cashback on Shopping"></div>
+                <div class="field-line"><label>Description</label><textarea id="rec-offer-desc" rows="2">Reward members for every purchase across Marhaba Mart stores with an exclusive cashback offer.</textarea></div>
+                <div class="date-row">
+                  <div class="inp-field">
+                    <label>Start Date</label>
+                    <div class="inp-box"><span class="cal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></span><input value="15 May 2026"></div>
+                  </div>
+                  <div class="inp-field">
+                    <label>End Date</label>
+                    <div class="inp-box"><span class="cal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></span><input value="15 Jun 2026"></div>
+                  </div>
+                  <div class="inp-field">
+                    <label>Refund Window</label>
+                    <div class="inp-box sel"><select><option>30 Days</option><option>14 Days</option><option>60 Days</option></select><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="rec-preview-view" style="display:none;">
+              <div class="rec-preview-pane">
+                <div class="cust-card">
+                  <div class="preview-hero" id="rec-prev-hero" style="background-image: url('assets/campaign-hero.png'); height:160px; border-radius: var(--radius-md);"></div>
+                  <div class="merchant-row">
+                    <div class="merchant-logo" id="rec-prev-logo"><span class="cat-ic" data-icon="shopping" style="width:18px;height:18px;color:var(--lune-teal-700);"></span></div>
+                    <div>
+                      <div class="mname">Marhaba Mart</div>
+                      <div class="chips" id="rec-prev-chips"><span class="chip">Shopping</span><span class="chip">Retail</span></div>
+                    </div>
+                  </div>
+                  <h2 id="rec-prev-title" style="font-size:18px;font-weight:var(--weight-bold);color:var(--lune-teal);margin-top:var(--space-3);">10% Cashback on Shopping</h2>
+                  <p class="desc" id="rec-prev-desc" style="margin-top:6px;font-size:13px;color:var(--text-secondary);">Reward members for every purchase across Marhaba Mart stores with an exclusive cashback offer.</p>
+                  <ul class="terms">
+                    <li>Cashback cap AED 300 per customer per campaign</li>
+                    <li>Minimum spend of AED 200 per transaction</li>
+                    <li>30-day refund window applies</li>
+                    <li>Valid 15 May – 15 Jun 2026</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rec-foot split">
+          <button class="btn-back2" onclick="recBack()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg> Back</button>
+          <button class="btn-next" onclick="openModal('modal-confirm')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg> Confirm Campaign</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REQUEST UNDER REVIEW (empty) ===== -->
+    <section class="screen" data-screen="request-empty">
+      <div class="back-head">
+        <button class="back-btn" data-nav="campaign-requests"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <div>
+          <h1><span id="empty-title">New Customer Acquisition — Q3</span> <span class="pill-status review"><span class="dot"></span>Under review</span></h1>
+          <p class="sub">Submitted 2 Jun 2026</p>
+        </div>
+      </div>
+      <div class="empty">
+        <div class="eic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></div>
+        <h2>Recommendations not ready yet</h2>
+        <p>Our team is preparing your personalised offers. You'll be notified once they're ready — usually within 2 working days.</p>
+      </div>
+    </section>
+    <!-- ===== WIZARD ===== -->
+    <section class="screen screen-wide" data-screen="wizard">
+      <div class="page-head"><h1>Request Campaign</h1><p>Create your campaign request in a few steps</p></div>
+      <div class="wizard-card">
+        <div class="wiz-progress" id="wiz-bar"></div>
+        <div class="wiz-body">
+
+          <div class="wiz-step active" data-step="1">
+            <h2 class="wiz-q">What do you want to achieve with Pulse?</h2>
+            <p class="wiz-sub">Choose your main goal — we'll tailor your campaign setup and recommendations</p>
+            <div class="goal-grid" id="goal-grid"></div>
+          </div>
+
+          <div class="wiz-step" data-step="2">
+            <h2 class="wiz-q">Where else do your ideal customers shop?</h2>
+            <p class="wiz-sub">We'll use this to target shoppers who are already spending in your category.</p>
+            <div class="brand-search">
+              <div class="brand-search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="text" id="brand-input" class="brand-search-input" placeholder="Search to add brands..." autocomplete="off">
+                <div class="brand-results" id="brand-results"></div>
+              </div>
+              <div class="pill-row wrap brand-selected" id="brand-row"></div>
+            </div>
+          </div>
+
+          <div class="wiz-step" data-step="3">
+            <h2 class="wiz-q">How much do customers usually spend per visit?</h2>
+            <p class="wiz-sub">A rough range is perfect — it helps us size the right reward</p>
+            <div class="pill-row" id="spend-row"></div>
+          </div>
+
+          <div class="wiz-step" data-step="4">
+            <h2 class="wiz-q">How often do your customers visit?</h2>
+            <p class="wiz-sub">Think of a typical customer over a month</p>
+            <div class="pill-row" id="freq-row"></div>
+          </div>
+
+          <div class="wiz-step" data-step="5">
+            <h2 class="wiz-q">Where do your sales happen?</h2>
+            <p class="wiz-sub">This tells us where to look when measuring your campaign's impact</p>
+            <div class="pill-row" id="channel-row"></div>
+          </div>
+
+          <div class="wiz-step" data-step="6">
+            <h2 class="wiz-q">Want to attract customers from other industries?</h2>
+            <p class="wiz-sub">We can tap into people who already spend at similar brands</p>
+            <div class="pill-row" id="industries-yn"></div>
+            <div class="reveal" id="industries-reveal">
+              <span class="rlbl">Which industries do you want to target?</span>
+              <div class="pill-row wrap" id="industries-row"></div>
+            </div>
+          </div>
+
+          <div class="wiz-step" data-step="7">
+            <h2 class="wiz-q">What's your typical campaign budget?</h2>
+            <p class="wiz-sub">Set your budget and we'll design the best campaign within it</p>
+            <div class="budget-amt">AED <span id="budget-val">50,000</span></div>
+            <div class="slider-wrap">
+              <input type="range" min="30000" max="300000" step="10000" value="50000" oninput="document.getElementById('budget-val').textContent = Number(this.value).toLocaleString();">
+              <div class="ticks"><span>30k</span><span>60k</span><span>90k</span><span>120k</span><span>150k</span><span>180k</span><span>210k</span><span>240k</span><span>270k</span><span>300k+</span></div>
+            </div>
+          </div>
+
+          <div class="wiz-step" data-step="8">
+            <h2 class="wiz-q">Give your campaign a name</h2>
+            <p class="wiz-sub">Optional, but useful — it makes the request easier to find later</p>
+            <input class="text-input" placeholder="e.g. Summer Grocery Cashback">
+          </div>
+
+          <div class="wiz-step" data-step="9">
+            <div class="success-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"></path></svg></div>
+            <h2 class="wiz-q" style="font-size: 26px;">Your preferences have been submitted</h2>
+            <p class="wiz-sub">We'll use your inputs to generate tailored campaign recommendations for your business</p>
+            <div class="next-box">
+              <h4>What happens next?</h4>
+              <div class="next-step"><span class="n">1</span><div><b>We review your inputs</b><p>Our team analyses your goals, budget, and target audience to shape the right campaign.</p></div></div>
+              <div class="next-step"><span class="n">2</span><div><b>We build your recommendations</b><p>Based on your goals and budget, we'll put together the best campaign options for you.</p></div></div>
+              <div class="next-step"><span class="n">3</span><div><b>You review and refine</b><p>Browse the recommended campaigns, adjust the details, and pick the one that fits.</p></div></div>
+              <div class="next-step"><span class="n">4</span><div><b>Send to Lune for approval</b><p>Once you're satisfied, submit it — we'll handle everything from there.</p></div></div>
+              <div class="next-step"><span class="n">5</span><div><b>Your campaign goes live</b><p>Once approved, your campaign is live and reaching the right customers.</p></div></div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 24px; padding: 13px 28px;" data-nav="campaign-requests" onclick="resetWizard()">Back to Campaign Requests</button>
+          </div>
+
+        </div>
+        <div class="wiz-foot" id="wiz-foot">
+          <button class="btn btn-ghost" data-nav="campaign-requests" onclick="resetWizard()">Cancel Request Creation</button>
+          <div class="right">
+            <button class="btn btn-ghost" id="wiz-back" onclick="wizStep(-1)" style="display: none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg>Back</button>
+            <button class="btn btn-primary" id="wiz-next" onclick="wizStep(1)">Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== MODALS ===== -->
+<div class="overlay" id="modal-confirm">
+  <div class="modal modal-center">
+    <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
+    <h2>Confirm Campaign</h2>
+    <div class="note-box"><b>Once submitted:</b><ul><li>You will not be able to make changes to the campaign</li><li>The campaign will be sent to the partner bank for approval</li><li>You will be notified once the campaign goes live</li></ul></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal('modal-confirm')">Cancel</button><button class="btn btn-primary" onclick="confirmCampaign();">Confirm Campaign</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-confirmed">
+  <div class="modal modal-center">
+    <div class="ic" style="background: var(--status-success); color: var(--status-success-ink);"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"></path></svg></div>
+    <h2>Campaign Confirmed</h2>
+    <p class="msub">Your campaign has been confirmed.<br>You will be notified once it goes live with the bank.</p>
+    <div class="confirm-row"><div><div class="ck">Campaign</div><div class="cv" id="confirmed-name">Summer Grocery Cashback</div></div><span class="pill-status approved"><span class="dot"></span>Approved</span></div>
+    <button class="btn btn-ghost btn-block" onclick="closeModal('modal-confirmed')">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="modal-summary">
+  <div class="modal modal-summary">
+    <div class="sum-head">
+      <div><h3>Your Campaign Request</h3><p>These are the details you submitted</p></div>
+      <button class="x" onclick="closeModal('modal-summary')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+      <div class="req-block">
+        <h4>Campaign Details</h4>
+        <div class="bsub">Basic information about your campaign</div>
+        <div class="kv"><span class="k">Goal</span><span class="v">Acquire new customers</span></div>
+        <div class="kv"><span class="k">Campaign Name</span><span class="v">Summer Grocery Cashback</span></div>
+        <div class="kv"><span class="k">Budget</span><span class="v">AED 20,000</span></div>
+      </div>
+      <div class="req-block">
+        <h4>Audience</h4>
+        <div class="bsub">We'll reach customers who already shop in these categories</div>
+        <div class="kv"><span class="k">Categories</span><span class="kv-chips"><span class="c">Grocery</span><span class="c">Bakery</span><span class="c">Beverages</span></span></div>
+      </div>
+      <div class="req-block">
+        <h4>Customer Info</h4>
+        <div class="bsub">Key insights about your target customers</div>
+        <div class="kv"><span class="k">Channel</span><span class="v">Online</span></div>
+        <div class="kv"><span class="k">Avg purchase value</span><span class="v">AED 200</span></div>
+        <div class="kv"><span class="k">Average customer LTV</span><span class="v">AED 4,800</span></div>
+      </div>
+      <div class="req-block">
+        <h4>Activity</h4>
+        <div class="bsub"></div>
+        <div class="kv"><span class="k">Created on</span><span class="v">9 May 2026</span></div>
+        <div class="kv"><span class="k">Recommendation received</span><span class="v">11 May 2026</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-assets">
+  <div class="modal modal-assets">
+    <div class="sum-head">
+      <div><h3 id="assets-title">Choose a campaign graphic</h3><p>Pick from your brand assets, or upload your own</p></div>
+      <button class="x" onclick="closeModal('modal-assets')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <div class="asset-grid" id="asset-grid"></div>
+    <div class="asset-foot">
+      <label class="asset-upload-own">
+        <input type="file" accept="image/*" hidden onchange="pickFile(event)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg>
+        Upload from device
+      </label>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Lune Pulse — Merchant demo data + app logic (self-contained)
+   ============================================================ */
+
+/* ---------- Category icons (inlined — no runtime fetch) ---------- */
+const ICON_SVGS = {
+  grocery: '<svg xmlns="http://www.w3.org/2000/svg" width="111.999" height="99.989" viewBox="0 0 111.999 99.989" fill="none"><path d="M 111 33.354 C 110.626 32.927 110.165 32.584 109.647 32.348 C 109.13 32.113 108.569 31.991 108 31.989 L 85.815 31.989 L 59 1.354 C 58.625 0.929 58.163 0.588 57.646 0.354 C 57.129 0.121 56.568 0 56 0 C 55.433 0 54.872 0.121 54.355 0.354 C 53.837 0.588 53.376 0.929 53 1.354 L 26.185 31.989 L 4 31.989 C 3.43 31.989 2.867 32.111 2.348 32.347 C 1.828 32.582 1.366 32.926 0.99 33.355 C 0.615 33.784 0.335 34.288 0.171 34.834 C 0.006 35.38 -0.04 35.954 0.035 36.519 L 7.57 93.049 C 7.833 94.968 8.78 96.727 10.238 98.002 C 11.695 99.277 13.564 99.983 15.5 99.989 L 96.5 99.989 C 98.437 99.983 100.306 99.277 101.763 98.002 C 103.22 96.727 104.167 94.968 104.43 93.049 L 111.965 36.519 C 112.04 35.953 111.992 35.378 111.825 34.832 C 111.659 34.286 111.378 33.782 111 33.354 Z M 32.8 83.989 C 32.665 83.997 32.53 83.997 32.395 83.989 C 31.4 83.994 30.439 83.628 29.699 82.962 C 28.96 82.297 28.495 81.379 28.395 80.389 L 25.595 52.389 C 25.489 51.334 25.807 50.279 26.478 49.458 C 27.15 48.636 28.12 48.115 29.175 48.009 C 30.231 47.903 31.285 48.221 32.107 48.892 C 32.928 49.563 33.449 50.534 33.555 51.589 L 36.355 79.589 C 36.467 80.644 36.156 81.7 35.489 82.525 C 34.822 83.351 33.855 83.877 32.8 83.989 Z M 60 79.989 C 60 81.05 59.579 82.068 58.829 82.818 C 58.079 83.568 57.061 83.989 56 83.989 C 54.939 83.989 53.922 83.568 53.172 82.818 C 52.422 82.068 52 81.05 52 79.989 L 52 51.989 C 52 50.928 52.422 49.911 53.172 49.161 C 53.922 48.411 54.939 47.989 56 47.989 C 57.061 47.989 58.079 48.411 58.829 49.161 C 59.579 49.911 60 50.928 60 51.989 L 60 79.989 Z M 36.815 31.989 L 56 10.064 L 75.185 31.989 L 36.815 31.989 Z M 86.38 52.389 L 83.58 80.389 C 83.481 81.375 83.02 82.289 82.285 82.954 C 81.551 83.619 80.596 83.988 79.605 83.989 C 79.47 83.997 79.335 83.997 79.2 83.989 C 78.678 83.937 78.17 83.782 77.708 83.533 C 77.245 83.285 76.836 82.947 76.503 82.541 C 76.171 82.134 75.922 81.666 75.77 81.163 C 75.619 80.66 75.568 80.132 75.62 79.609 L 78.42 51.609 C 78.526 50.554 79.047 49.583 79.869 48.912 C 80.69 48.241 81.745 47.923 82.8 48.029 C 83.856 48.135 84.826 48.656 85.497 49.478 C 86.169 50.299 86.486 51.354 86.38 52.409 L 86.38 52.389 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+  dining: '<svg xmlns="http://www.w3.org/2000/svg" width="92" height="100.065" viewBox="0 0 92 100.065" fill="none"><path d="M 92 4.065 L 92 96.065 C 92 97.126 91.579 98.143 90.828 98.893 C 90.078 99.643 89.061 100.065 88 100.065 C 86.939 100.065 85.922 99.643 85.172 98.893 C 84.421 98.143 84 97.126 84 96.065 L 84 72.065 L 60 72.065 C 58.939 72.065 57.922 71.643 57.172 70.893 C 56.421 70.143 56 69.126 56 68.065 C 56.186 58.483 57.396 48.949 59.61 39.625 C 64.5 19.38 73.77 5.81 86.425 0.39 C 87.033 0.129 87.697 0.024 88.356 0.083 C 89.015 0.141 89.649 0.363 90.201 0.727 C 90.754 1.091 91.207 1.587 91.521 2.169 C 91.835 2.752 92 3.403 92 4.065 Z M 43.945 3.41 C 43.867 2.885 43.685 2.38 43.409 1.926 C 43.134 1.472 42.771 1.077 42.341 0.765 C 41.912 0.453 41.425 0.229 40.908 0.107 C 40.391 -0.015 39.855 -0.033 39.331 0.054 C 38.807 0.142 38.306 0.332 37.857 0.615 C 37.408 0.899 37.019 1.268 36.714 1.703 C 36.409 2.138 36.194 2.629 36.081 3.148 C 35.967 3.666 35.959 4.203 36.055 4.725 L 39.945 28.065 L 28 28.065 L 28 4.065 C 28 3.004 27.579 1.987 26.828 1.236 C 26.078 0.486 25.061 0.065 24 0.065 C 22.939 0.065 21.922 0.486 21.172 1.236 C 20.421 1.987 20 3.004 20 4.065 L 20 28.065 L 8.055 28.065 L 11.945 4.725 C 12.041 4.203 12.033 3.666 11.919 3.148 C 11.806 2.629 11.591 2.138 11.286 1.703 C 10.981 1.268 10.592 0.899 10.143 0.615 C 9.694 0.332 9.193 0.142 8.669 0.054 C 8.145 -0.033 7.609 -0.015 7.092 0.107 C 6.575 0.229 6.088 0.453 5.659 0.765 C 5.229 1.077 4.866 1.472 4.591 1.926 C 4.315 2.38 4.133 2.885 4.055 3.41 L 0.055 27.41 C 0.019 27.626 0.001 27.845 0 28.065 C 0.008 33.734 2.02 39.218 5.679 43.547 C 9.339 47.877 14.411 50.773 20 51.725 L 20 96.065 C 20 97.126 20.421 98.143 21.172 98.893 C 21.922 99.643 22.939 100.065 24 100.065 C 25.061 100.065 26.078 99.643 26.828 98.893 C 27.579 98.143 28 97.126 28 96.065 L 28 51.725 C 33.589 50.773 38.661 47.877 42.321 43.547 C 45.98 39.218 47.992 33.734 48 28.065 C 47.999 27.845 47.981 27.626 47.945 27.41 L 43.945 3.41 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+  shopping: '<svg xmlns="http://www.w3.org/2000/svg" width="116.001" height="104" viewBox="0 0 116.001 104" fill="none"><path d="M 115.855 25.07 L 103.035 71.21 C 102.33 73.73 100.823 75.952 98.741 77.539 C 96.659 79.125 94.117 79.989 91.5 80 L 42.08 80 C 39.455 79.999 36.903 79.139 34.812 77.552 C 32.721 75.965 31.207 73.738 30.5 71.21 L 12.96 8 L 4 8 C 2.939 8 1.922 7.579 1.172 6.828 C 0.421 6.078 0 5.061 0 4 C 0 2.939 0.421 1.922 1.172 1.172 C 1.922 0.421 2.939 0 4 0 L 16 0 C 16.875 0 17.725 0.286 18.421 0.815 C 19.117 1.345 19.621 2.087 19.855 2.93 L 24.595 20 L 112 20 C 112.617 20 113.225 20.142 113.777 20.416 C 114.33 20.69 114.812 21.088 115.185 21.579 C 115.558 22.07 115.813 22.64 115.929 23.246 C 116.045 23.852 116.02 24.476 115.855 25.07 Z M 40 88 C 38.418 88 36.871 88.469 35.555 89.348 C 34.24 90.227 33.214 91.477 32.609 92.939 C 32.003 94.4 31.845 96.009 32.154 97.561 C 32.462 99.113 33.224 100.538 34.343 101.657 C 35.462 102.776 36.887 103.538 38.439 103.846 C 39.991 104.155 41.6 103.997 43.061 103.391 C 44.523 102.786 45.773 101.76 46.652 100.445 C 47.531 99.129 48 97.582 48 96 C 48 93.878 47.157 91.843 45.657 90.343 C 44.157 88.843 42.122 88 40 88 Z M 92 88 C 90.418 88 88.871 88.469 87.555 89.348 C 86.24 90.227 85.214 91.477 84.609 92.939 C 84.003 94.4 83.845 96.009 84.154 97.561 C 84.462 99.113 85.224 100.538 86.343 101.657 C 87.462 102.776 88.887 103.538 90.439 103.846 C 91.991 104.155 93.6 103.997 95.061 103.391 C 96.523 102.786 97.773 101.76 98.652 100.445 C 99.531 99.129 100 97.582 100 96 C 100 93.878 99.157 91.843 97.657 90.343 C 96.157 88.843 94.122 88 92 88 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+  travel: '<svg xmlns="http://www.w3.org/2000/svg" width="119.974" height="88.001" viewBox="0 0 119.974 88.001" fill="none"><path d="M 83.991 84.001 C 83.991 85.062 83.57 86.079 82.82 86.829 C 82.069 87.58 81.052 88.001 79.991 88.001 L 7.991 88.001 C 6.93 88.001 5.913 87.58 5.163 86.829 C 4.413 86.079 3.991 85.062 3.991 84.001 C 3.991 82.94 4.413 81.923 5.163 81.173 C 5.913 80.422 6.93 80.001 7.991 80.001 L 79.991 80.001 C 81.052 80.001 82.069 80.422 82.82 81.173 C 83.57 81.923 83.991 82.94 83.991 84.001 Z M 119.146 19.381 L 109.826 7.436 L 109.766 7.361 C 106.752 3.649 102.503 1.145 97.795 0.308 C 93.087 -0.53 88.235 0.355 84.126 2.801 L 58.341 18.191 L 31.371 8.271 C 30.47 7.935 29.477 7.935 28.576 8.271 L 24.991 9.636 L 24.831 9.701 C 23.605 10.227 22.529 11.052 21.703 12.101 C 20.877 13.149 20.327 14.387 20.101 15.703 C 19.876 17.018 19.984 18.369 20.414 19.633 C 20.845 20.896 21.585 22.032 22.566 22.936 L 33.491 33.531 L 23.406 39.631 L 9.276 34.861 C 8.276 34.524 7.183 34.596 6.236 35.061 L 4.736 35.796 C 3.536 36.332 2.487 37.156 1.681 38.194 C 0.875 39.233 0.337 40.454 0.115 41.749 C -0.107 43.045 -0.006 44.375 0.408 45.622 C 0.823 46.87 1.538 47.996 2.491 48.901 L 20.491 66.536 L 20.551 66.596 C 24.238 70.081 29.118 72.025 34.191 72.031 C 37.753 72.025 41.249 71.073 44.321 69.271 L 118.026 25.271 C 118.512 24.98 118.932 24.59 119.256 24.125 C 119.58 23.66 119.801 23.132 119.906 22.575 C 120.01 22.018 119.995 21.445 119.862 20.895 C 119.728 20.344 119.479 19.828 119.131 19.381 L 119.146 19.381 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+  transportation: '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="92" viewBox="0 0 120 92" fill="none"><path d="M 116 36 L 110.6 36 L 96.71 4.75 C 96.081 3.336 95.056 2.135 93.759 1.292 C 92.461 0.449 90.947 0 89.4 0 L 30.6 0 C 29.053 0 27.539 0.449 26.241 1.292 C 24.944 2.135 23.919 3.336 23.29 4.75 L 9.4 36 L 4 36 C 2.939 36 1.922 36.421 1.172 37.172 C 0.421 37.922 0 38.939 0 40 C 0 41.061 0.421 42.078 1.172 42.828 C 1.922 43.579 2.939 44 4 44 L 8 44 L 8 84 C 8 86.122 8.843 88.157 10.343 89.657 C 11.843 91.157 13.878 92 16 92 L 28 92 C 30.122 92 32.157 91.157 33.657 89.657 C 35.157 88.157 36 86.122 36 84 L 36 80 L 84 80 L 84 84 C 84 86.122 84.843 88.157 86.343 89.657 C 87.843 91.157 89.878 92 92 92 L 104 92 C 106.122 92 108.157 91.157 109.657 89.657 C 111.157 88.157 112 86.122 112 84 L 112 44 L 116 44 C 117.061 44 118.078 43.579 118.828 42.828 C 119.579 42.078 120 41.061 120 40 C 120 38.939 119.579 37.922 118.828 37.172 C 118.078 36.421 117.061 36 116 36 Z M 36 60 L 24 60 C 22.939 60 21.922 59.579 21.172 58.828 C 20.421 58.078 20 57.061 20 56 C 20 54.939 20.421 53.922 21.172 53.172 C 21.922 52.421 22.939 52 24 52 L 36 52 C 37.061 52 38.078 52.421 38.828 53.172 C 39.579 53.922 40 54.939 40 56 C 40 57.061 39.579 58.078 38.828 58.828 C 38.078 59.579 37.061 60 36 60 Z M 96 60 L 84 60 C 82.939 60 81.922 59.579 81.172 58.828 C 80.421 58.078 80 57.061 80 56 C 80 54.939 80.421 53.922 81.172 53.172 C 81.922 52.421 82.939 52 84 52 L 96 52 C 97.061 52 98.078 52.421 98.828 53.172 C 99.579 53.922 100 54.939 100 56 C 100 57.061 99.579 58.078 98.828 58.828 C 98.078 59.579 97.061 60 96 60 Z M 18.155 36 L 30.6 8 L 89.4 8 L 101.845 36 L 18.155 36 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+  wellness: '<svg xmlns="http://www.w3.org/2000/svg" width="112" height="95.977" viewBox="0 0 112 95.977" fill="none"><path d="M 112 31 C 112 66 60.105 94.33 57.895 95.5 C 57.313 95.813 56.661 95.977 56 95.977 C 55.339 95.977 54.687 95.813 54.105 95.5 C 52.43 94.6 22.33 78.155 7.765 55.055 C 7.577 54.752 7.473 54.405 7.465 54.049 C 7.456 53.693 7.542 53.341 7.715 53.03 C 7.888 52.718 8.141 52.459 8.448 52.278 C 8.754 52.097 9.104 52.001 9.46 52 L 28 52 C 28.659 52 29.307 51.838 29.888 51.528 C 30.469 51.217 30.964 50.768 31.33 50.22 L 36 43.22 L 48.67 62.22 C 49.155 62.948 49.866 63.497 50.694 63.782 C 51.521 64.068 52.419 64.074 53.25 63.8 C 54.131 63.503 54.884 62.913 55.385 62.13 L 62.14 52 L 72 52 C 72.548 52.001 73.091 51.89 73.595 51.672 C 74.098 51.455 74.551 51.136 74.926 50.736 C 75.302 50.336 75.59 49.864 75.775 49.347 C 75.96 48.831 76.036 48.282 76 47.735 C 75.91 46.707 75.436 45.751 74.671 45.058 C 73.906 44.365 72.907 43.987 71.875 44 L 60 44 C 59.341 44 58.693 44.162 58.112 44.472 C 57.531 44.783 57.036 45.232 56.67 45.78 L 52 52.78 L 39.33 33.78 C 38.845 33.052 38.134 32.503 37.306 32.218 C 36.479 31.932 35.581 31.926 34.75 32.2 C 33.869 32.497 33.116 33.087 32.615 33.87 L 25.86 44 L 3.765 44 C 3.338 44.001 2.921 43.865 2.576 43.613 C 2.232 43.36 1.977 43.003 1.85 42.595 C 0.644 38.847 0.02 34.937 0 31 C 0.009 22.781 3.278 14.902 9.09 9.09 C 14.902 3.278 22.781 0.009 31 0 C 41.325 0 50.365 4.44 56 11.945 C 61.635 4.44 70.675 0 81 0 C 89.219 0.009 97.098 3.278 102.91 9.09 C 108.722 14.902 111.991 22.781 112 31 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+  financial: '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="96.003" viewBox="0 0 120 96.003" fill="none"><path d="M 120 92.003 C 120 93.063 119.579 94.081 118.828 94.831 C 118.078 95.581 117.061 96.003 116 96.003 L 4 96.003 C 2.939 96.003 1.922 95.581 1.172 94.831 C 0.421 94.081 0 93.063 0 92.003 C 0 90.942 0.421 89.924 1.172 89.174 C 1.922 88.424 2.939 88.003 4 88.003 L 116 88.003 C 117.061 88.003 118.078 88.424 118.828 89.174 C 119.579 89.924 120 90.942 120 92.003 Z M 4.15 37.093 C 3.912 36.254 3.955 35.36 4.272 34.548 C 4.588 33.735 5.162 33.049 5.905 32.593 L 57.905 0.593 C 58.535 0.205 59.26 0 60 0 C 60.74 0 61.465 0.205 62.095 0.593 L 114.095 32.593 C 114.838 33.048 115.412 33.734 115.73 34.546 C 116.047 35.358 116.09 36.252 115.853 37.091 C 115.616 37.93 115.111 38.668 114.416 39.194 C 113.72 39.719 112.872 40.003 112 40.003 L 100 40.003 L 100 72.003 L 108 72.003 C 109.061 72.003 110.078 72.424 110.828 73.174 C 111.579 73.924 112 74.942 112 76.003 C 112 77.063 111.579 78.081 110.828 78.831 C 110.078 79.581 109.061 80.003 108 80.003 L 12 80.003 C 10.939 80.003 9.922 79.581 9.172 78.831 C 8.421 78.081 8 77.063 8 76.003 C 8 74.942 8.421 73.924 9.172 73.174 C 9.922 72.424 10.939 72.003 12 72.003 L 20 72.003 L 20 40.003 L 8 40.003 C 7.129 40.003 6.282 39.719 5.587 39.194 C 4.892 38.668 4.387 37.931 4.15 37.093 Z M 68 68.003 C 68 69.063 68.421 70.081 69.172 70.831 C 69.922 71.581 70.939 72.003 72 72.003 C 73.061 72.003 74.078 71.581 74.828 70.831 C 75.579 70.081 76 69.063 76 68.003 L 76 44.003 C 76 42.942 75.579 41.924 74.828 41.174 C 74.078 40.424 73.061 40.003 72 40.003 C 70.939 40.003 69.922 40.424 69.172 41.174 C 68.421 41.924 68 42.942 68 44.003 L 68 68.003 Z M 44 68.003 C 44 69.063 44.421 70.081 45.172 70.831 C 45.922 71.581 46.939 72.003 48 72.003 C 49.061 72.003 50.078 71.581 50.828 70.831 C 51.579 70.081 52 69.063 52 68.003 L 52 44.003 C 52 42.942 51.579 41.924 50.828 41.174 C 50.078 40.424 49.061 40.003 48 40.003 C 46.939 40.003 45.922 40.424 45.172 41.174 C 44.421 41.924 44 42.942 44 44.003 L 44 68.003 Z" fill="currentColor" fill-rule="nonzero"></path></svg>',
+};
+function catIcon(name, color, size) {
+  return `<span class="cat-ic" data-icon="${name}" style="width:${size}px;height:${size}px;color:${color};"></span>`;
+}
+function hydrateIcons(root) {
+  (root || document).querySelectorAll('.cat-ic[data-icon]').forEach((el) => {
+    const svg = ICON_SVGS[el.dataset.icon];
+    if (svg && !el.firstChild) el.innerHTML = svg;
+  });
+}
+hydrateIcons();
+new MutationObserver(() => hydrateIcons()).observe(document.body, { childList: true, subtree: true });
+
+/* ---------- Tweaks toolbar ---------- */
+function setTweak(key, val, btn) {
+  document.getElementById('app').dataset[key] = val;
+  btn.parentNode.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b === btn));
+}
+
+/* ---------- Confirm campaign (carry edited name into confirmation) ---------- */
+function confirmCampaign() {
+  const nm = document.getElementById('rec-offer-name');
+  const out = document.getElementById('confirmed-name');
+  if (nm && out && nm.value.trim()) out.textContent = nm.value.trim();
+  closeModal('modal-confirm');
+  openModal('modal-confirmed');
+}
+
+/* ---------- Router ---------- */
+function go(screen) {
+  document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.dataset.screen === screen));
+  const map = {
+    'overview': 'nav-overview',
+    'campaign-detail': 'nav-campaigns',
+    'request-empty': 'nav-campaigns',
+    'campaign-requests': 'nav-campaigns',
+    'wizard': 'nav-campaigns',
+    'recommendation': 'nav-campaigns',
+  };
+  document.querySelectorAll('.nav-item').forEach((n) => n.classList.remove('active'));
+  const active = document.getElementById(map[screen]);
+  if (active) active.classList.add('active');
+  document.querySelector('.main').scrollTop = 0;
+}
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-nav]');
+  if (t) go(t.dataset.nav);
+});
+
+/* ---------- Campaigns (overview) ---------- */
+const CAMPAIGNS = [
+  { name: 'Summer Grocery Cashback', cashback: '10%', dates: '1 Jul – 31 Aug', bank: 'Abu Dhabi Islamic Bank', icon: 'grocery', color: 'var(--cat-grocery)', status: 'live', img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=60' },
+  { name: 'Weekend Big Shop Bonus', cashback: '8%', dates: '1 May – 30 Jun', bank: 'Ajman Bank', icon: 'grocery', color: 'var(--cat-grocery)', status: 'live', img: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=60' },
+  { name: 'Back-to-School Essentials', cashback: '12%', dates: '15 Aug – 15 Sep', bank: 'American Express', icon: 'shopping', color: 'var(--cat-shopping)', status: 'live', img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=60' },
+  { name: 'Fresh Produce Boost', cashback: '9%', dates: '1 Jun – 31 Jul', bank: 'D360 Bank', icon: 'grocery', color: 'var(--cat-grocery)', status: 'live', img: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=800&q=60' },
+  { name: 'Online Order Cashback', cashback: '11%', dates: '10 Jun – 10 Jul', bank: 'Beyon Money', icon: 'shopping', color: 'var(--cat-shopping)', status: 'live', img: 'https://images.unsplash.com/photo-1601598851547-4302969d0614?auto=format&fit=crop&w=800&q=60' },
+  { name: 'Home Essentials Saver', cashback: '7%', dates: '1 Jul – 30 Sep', bank: 'Commercial Bank of Dubai', icon: 'shopping', color: 'var(--cat-shopping)', status: 'live', img: 'https://images.unsplash.com/photo-1584680226833-0d680d0a0794?auto=format&fit=crop&w=800&q=60' },
+  { name: 'Ramadan Essentials', cashback: '12%', dates: '1 Mar – 30 Mar', bank: 'Abu Dhabi Islamic Bank', icon: 'grocery', color: 'var(--cat-grocery)', status: 'completed', img: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=60' },
+  { name: 'New Year Pantry Restock', cashback: '9%', dates: '2 Jan – 31 Jan', bank: 'Ajman Bank', icon: 'grocery', color: 'var(--cat-grocery)', status: 'completed', img: 'https://images.unsplash.com/photo-1506617420156-8e4536971650?auto=format&fit=crop&w=800&q=60' },
+];
+
+const PILL = {
+  live: '<span class="pill-status live"><span class="dot"></span>Live</span>',
+  completed: '<span class="pill-status completed"><span class="dot"></span>Completed</span>',
+  review: '<span class="pill-status review"><span class="dot"></span>Under review</span>',
+  ready: '<span class="pill-status ready"><span class="dot"></span>Recommendation ready</span>',
+  approved: '<span class="pill-status approved"><span class="dot"></span>Campaign Confirmed</span>',
+};
+
+function tint(color) {
+  return `color-mix(in srgb, ${color} 12%, white)`;
+}
+
+function offerCard(c) {
+  return `<button class="offer-card" onclick="openCampaign(${CAMPAIGNS.indexOf(c)})">
+    <div class="offer-hero" style="background:${tint(c.color)};">${catIcon(c.icon, c.color, 44)}<img src="${c.img}" alt="" loading="lazy" onerror="this.remove();"></div>
+    <div class="offer-body">
+      <div class="offer-title-row"><h3>${c.name}</h3>${PILL[c.status]}</div>
+      <div class="offer-meta">
+        <div><div class="lbl">Cashback</div><div class="val">${c.cashback}</div></div>
+        <div><div class="lbl">Duration</div><div class="val">${c.dates}</div></div>
+        <div><div class="lbl">Bank</div><div class="val">${c.bank}</div></div>
+      </div>
+      <span class="btn btn-soft">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+    </div>
+  </button>`;
+}
+
+function renderOverview(filter) {
+  const list = CAMPAIGNS.filter((c) => filter === 'all' || c.status === filter);
+  document.getElementById('overview-grid').innerHTML = list.map(offerCard).join('');
+}
+
+/* ---------- Campaign requests ---------- */
+const REQUESTS = [
+  { name: 'Summer Grocery Cashback', goal: 'Acquire new customers', created: '9 May 2026', status: 'ready' },
+  { name: 'New Customer Acquisition — Q3', goal: 'Acquire new customers', created: '2 Jun 2026', status: 'review' },
+  { name: 'Ramadan Essentials Push', goal: 'Increase transaction frequency', created: '14 Feb 2026', status: 'approved' },
+  { name: 'Weekend Footfall Booster', goal: 'Win back lapsed customers', created: '21 Apr 2026', status: 'ready' },
+  { name: 'Lapsed Shopper Win-back', goal: 'Win back lapsed customers', created: '5 Jun 2026', status: 'review' },
+  { name: 'Eid Shopping Festival', goal: 'Grow average spend', created: '3 Mar 2026', status: 'approved' },
+];
+
+function reqCard(r) {
+  let nav;
+  if (r.status === 'review') nav = `onclick="document.getElementById('empty-title').textContent='${r.name}'; go('request-empty');"`;
+  else if (r.status === 'ready') nav = `onclick="openRecommendation('${r.name}')"`;
+  else nav = `onclick="openDetail('${r.name}', 'Abu Dhabi Islamic Bank', '1 Jul – 31 Aug', '${r.status}')"`;
+  return `<button class="req-card s-${r.status}" ${nav}>
+    <div class="req-card-top">${PILL[r.status]}<span class="created"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg>Created On <b>${r.created}</b></span></div>
+    <h3>${r.name}</h3>
+    <span class="btn btn-soft">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+  </button>`;
+}
+
+const REQ_COLUMNS = [
+  { status: 'review', label: 'Under review' },
+  { status: 'ready', label: 'Recommendations ready' },
+  { status: 'approved', label: 'Campaign approved' },
+];
+function renderRequests() {
+  document.getElementById('requests-board').innerHTML = REQ_COLUMNS.map((col) => {
+    const cards = REQUESTS.filter((r) => r.status === col.status);
+    const body = cards.length
+      ? cards.map(reqCard).join('')
+      : `<div class="req-col-empty">Nothing here yet</div>`;
+    return `<div class="req-col c-${col.status}">
+      <div class="req-col-head"><span class="dot"></span><span class="lbl">${col.label}</span><span class="num">${cards.length}</span></div>
+      ${body}
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Tab groups ---------- */
+function wireTabs(id, counts, render) {
+  const tabs = document.getElementById(id);
+  tabs.querySelectorAll('.tab').forEach((tab) => {
+    tab.querySelector('.count').textContent = counts[tab.dataset.filter];
+    tab.addEventListener('click', () => {
+      tabs.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      render(tab.dataset.filter);
+    });
+  });
+}
+wireTabs('overview-tabs', {
+  live: CAMPAIGNS.filter((c) => c.status === 'live').length,
+  completed: CAMPAIGNS.filter((c) => c.status === 'completed').length,
+  all: CAMPAIGNS.length,
+}, renderOverview);
+renderOverview('live');
+renderRequests();
+
+/* ---------- Detail screen ---------- */
+function openCampaign(i) {
+  const c = CAMPAIGNS[i];
+  openDetail(c.name, c.bank, c.dates, c.status, c.img);
+}
+function openDetail(name, bank, dates, status, img) {
+  document.getElementById('detail-title').textContent = name;
+  document.getElementById('detail-sub').textContent = `${bank} · ${dates} 2026`;
+  document.querySelector('.preview-hero').style.backgroundImage = `url('${img || 'assets/campaign-hero.png'}')`;
+  const pill = document.getElementById('detail-pill');
+  const mode = (status === 'live' || status === 'completed' || status === 'approved') ? status : 'ready';
+  pill.outerHTML = PILL[mode].replace('class="pill-status', 'id="detail-pill" class="pill-status');
+  document.getElementById('detail-cta').style.display = mode === 'ready' ? '' : 'none';
+  document.getElementById('detail-back').dataset.nav = mode === 'live' || mode === 'completed' ? 'overview' : 'campaign-requests';
+  go('campaign-detail');
+}
+
+/* ---------- Modals ---------- */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.overlay').forEach((o) => o.addEventListener('click', (e) => { if (e.target === o) o.classList.remove('show'); }));
+
+/* ---------- Recommendation flow (Performance Overview + Review & Confirm) ---------- */
+const REC_GOALS = ['Reach new customers', 'Reactivate lapsed customers', 'Increase spend per customer'];
+const REC_GOAL_TIPS = [
+  "Reach new customers who haven't shopped with you before",
+  "Reactivate lapsed customers who haven't visited recently",
+  'Increase spend per customer and drive repeat visits',
+];
+let recGoals = new Set([0]);
+const REC_CHECK = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6L9 17l-5-5"></path></svg>';
+const REC_INFO = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>';
+
+function renderGoals() {
+  document.getElementById('rec-goal-row').innerHTML = REC_GOALS.map((g, i) => {
+    const tipPos = i === 0 ? ' tip-left' : (i === REC_GOALS.length - 1 ? ' tip-right' : '');
+    return `
+    <button class="goal-card${recGoals.has(i) ? ' on' : ''}" onclick="toggleGoal(${i})">
+      <span class="gcheck">${REC_CHECK}</span>
+      <span class="gname">${g}</span>
+      <span class="ginfo" tabindex="0" onclick="event.stopPropagation()">${REC_INFO}<span class="tip${tipPos}">${REC_GOAL_TIPS[i]}</span></span>
+    </button>`;
+  }).join('');
+}
+function toggleGoal(i) {
+  if (recGoals.has(i)) { if (recGoals.size > 1) recGoals.delete(i); }
+  else recGoals.add(i);
+  renderGoals();
+  updateEstimate();
+}
+function recFmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function recNum(id) { const el = document.getElementById(id); return el ? (parseFloat(el.value.replace(/[^0-9.]/g, '')) || 0) : 0; }
+function updateEstimate() {
+  const k = recGoals.size;
+  const budget = recNum('rec-budget');
+  const minTxn = recNum('rec-mintxn');
+  const rate = recNum('rec-cashpct') / 100; // cashback rate as a fraction
+
+  // Potential Reach — driven by selected goals
+  const reachLow = 2000 * k, reachHigh = 2000 * k + 1000;
+  document.getElementById('rv-reach').textContent = `${recFmt(reachLow)} – ${recFmt(reachHigh)}`;
+
+  // Potential Revenue = Potential Reach × minimum transaction value
+  document.getElementById('rv-rev').textContent = `AED ${recFmt(reachLow * minTxn)} – AED ${recFmt(reachHigh * minTxn)}`;
+
+  // Revenue ceiling = Budget / Cashback Rate
+  document.getElementById('rv-ceiling').textContent = rate > 0 ? `AED ${recFmt(budget / rate)}` : '—';
+}
+function recShowStep(n) {
+  document.getElementById('rec-step-1').style.display = n === 1 ? '' : 'none';
+  document.getElementById('rec-step-2').style.display = n === 2 ? '' : 'none';
+  document.querySelector('.main').scrollTop = 0;
+}
+function recNext() { recShowStep(2); }
+function recBack() { recShowStep(1); }
+function previewOff() {
+  const btn = document.getElementById('rec-preview-btn');
+  if (btn) btn.classList.remove('on');
+  document.getElementById('rec-form-view').style.display = '';
+  document.getElementById('rec-preview-view').style.display = 'none';
+}
+function togglePreview() {
+  const on = document.getElementById('rec-preview-btn').classList.toggle('on');
+  document.getElementById('rec-form-view').style.display = on ? 'none' : '';
+  document.getElementById('rec-preview-view').style.display = on ? '' : 'none';
+}
+function openRecommendation(name) {
+  document.getElementById('rec-title').textContent = `${name} Campaign`;
+  recGoals = new Set([0]);
+  renderGoals();
+  updateEstimate();
+  recResetMedia();
+  recShowStep(1);
+  previewOff();
+  go('recommendation');
+}
+renderGoals();
+updateEstimate();
+
+/* ---------- Brand asset picker (campaign offer + logo) ---------- */
+/* Marhaba Mart runs offers across several merchant types — each carries its
+   own creative, copy, category chips and icon, applied to the live preview. */
+const OFFERS = {
+  dining: {
+    label: 'Dining', icon: 'dining', chips: ['Dining', 'Restaurants'],
+    title: '15% Cashback on Dining', desc: 'Reward members for every meal out with cashback at Marhaba Mart partner restaurants.',
+    img: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&h=300&q=70',
+  },
+  shopping: {
+    label: 'Shopping', icon: 'shopping', chips: ['Shopping', 'Retail'],
+    title: '10% Cashback on Shopping', desc: 'Drive footfall and repeat spend across Marhaba Mart fashion and retail stores.',
+    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&h=300&q=70',
+  },
+  gym: {
+    label: 'Gym', icon: 'wellness', chips: ['Fitness', 'Gym'],
+    title: 'AED 50 Back on Gym Memberships', desc: 'Encourage healthy habits with cashback on gym and fitness memberships.',
+    img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&h=300&q=70',
+  },
+  coffeeshop: {
+    label: 'Coffee Shop', icon: 'dining', chips: ['Coffee', 'Café'],
+    title: 'Buy 5 Get 1 Free Coffee', desc: 'Boost daily visits with a coffee loyalty reward across Marhaba Mart cafés.',
+    img: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&h=300&q=70',
+  },
+  wellness: {
+    label: 'Wellness', icon: 'wellness', chips: ['Wellness', 'Spa'],
+    title: '12% Cashback on Wellness', desc: 'Reward spa, salon and wellness spend across Marhaba Mart partner venues.',
+    img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&h=300&q=70',
+  },
+};
+// Merchant brand logos for the Marhaba Mart campaign creative
+const LOGO_ASSETS = [
+  { name: 'Carrefour', url: 'https://www.google.com/s2/favicons?domain=carrefour.fr&sz=256' },
+  { name: 'Waitrose', url: 'https://www.google.com/s2/favicons?domain=waitrose.com&sz=256' },
+  { name: 'Whole Foods Market', url: 'https://www.google.com/s2/favicons?domain=wholefoodsmarket.com&sz=256' },
+  { name: 'Nike', url: 'https://www.google.com/s2/favicons?domain=nike.com&sz=256' },
+  { name: 'Starbucks', url: 'https://www.google.com/s2/favicons?domain=starbucks.com&sz=256' },
+  { name: 'Sharaf DG', url: 'https://www.google.com/s2/favicons?domain=sharafdg.com&sz=256' },
+];
+let recAssetType = 'graphic';
+const DEFAULT_PREV_ICON = 'shopping';
+
+function openAssets(type, ev) {
+  if (ev) ev.stopPropagation();
+  recAssetType = type;
+  const grid = document.getElementById('asset-grid');
+  if (type === 'logo') {
+    document.getElementById('assets-title').textContent = 'Choose a logo';
+    grid.className = 'asset-grid logos';
+    grid.innerHTML = LOGO_ASSETS.map((a) =>
+      `<button type="button" class="asset-thumb logo" title="${a.name}" onclick="pickLogo(this.dataset.url)" data-url="${a.url}"><img src="${a.url}" alt="${a.name}"></button>`
+    ).join('');
+  } else {
+    document.getElementById('assets-title').textContent = 'Choose a campaign offer';
+    grid.className = 'asset-grid offers';
+    grid.innerHTML = Object.entries(OFFERS).map(([k, o]) =>
+      `<button type="button" class="offer-thumb" onclick="pickOffer('${k}')"><span class="ot-img" style="background-image:url('${o.img}')"></span><span class="ot-label">${o.label}</span></button>`
+    ).join('');
+  }
+  openModal('modal-assets');
+}
+function pickOffer(key) {
+  const o = OFFERS[key];
+  if (!o) return;
+  const g = document.getElementById('rec-graphic');
+  g.classList.add('filled');
+  g.style.backgroundImage = `url("${o.img}")`;
+  const nm = document.getElementById('rec-offer-name'); if (nm) nm.value = o.title;
+  const ds = document.getElementById('rec-offer-desc'); if (ds) ds.value = o.desc;
+  const h = document.getElementById('rec-prev-hero'); if (h) h.style.backgroundImage = `url("${o.img}")`;
+  document.getElementById('rec-prev-title').textContent = o.title;
+  document.getElementById('rec-prev-desc').textContent = o.desc;
+  document.getElementById('rec-prev-chips').innerHTML = o.chips.map((c) => `<span class="chip">${c}</span>`).join('');
+  const pl = document.getElementById('rec-prev-logo');
+  if (pl && !pl.classList.contains('logo-set')) { pl.style.backgroundImage = ''; pl.innerHTML = `<span class="cat-ic" data-icon="${o.icon}" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>`; }
+  closeModal('modal-assets');
+}
+function pickLogo(url) {
+  const l = document.getElementById('rec-logo');
+  l.classList.add('filled');
+  l.style.backgroundImage = `url("${url}")`;
+  const pl = document.getElementById('rec-prev-logo');
+  if (pl) { pl.classList.add('logo-set'); pl.style.backgroundImage = `url("${url}")`; pl.style.backgroundSize = 'contain'; pl.style.backgroundRepeat = 'no-repeat'; pl.style.backgroundPosition = 'center'; pl.innerHTML = ''; }
+  closeModal('modal-assets');
+}
+function pickFile(ev) {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  const isLogo = recAssetType === 'logo';
+  r.onload = () => {
+    if (isLogo) { pickLogo(r.result); return; }
+    const g = document.getElementById('rec-graphic');
+    g.classList.add('filled');
+    g.style.backgroundImage = `url("${r.result}")`;
+    const h = document.getElementById('rec-prev-hero');
+    if (h) h.style.backgroundImage = `url("${r.result}")`;
+    closeModal('modal-assets');
+  };
+  r.readAsDataURL(f);
+  ev.target.value = '';
+}
+function recResetMedia() {
+  const g = document.getElementById('rec-graphic');
+  if (g) { g.classList.remove('filled'); g.style.backgroundImage = ''; }
+  const l = document.getElementById('rec-logo');
+  if (l) { l.classList.remove('filled'); l.style.backgroundImage = ''; }
+  const h = document.getElementById('rec-prev-hero');
+  if (h) h.style.backgroundImage = "url('assets/campaign-hero.png')";
+  const pl = document.getElementById('rec-prev-logo');
+  if (pl) { pl.classList.remove('logo-set'); pl.style.backgroundImage = ''; pl.innerHTML = `<span class="cat-ic" data-icon="${DEFAULT_PREV_ICON}" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>`; }
+}
+
+/* ---------- Wizard ---------- */
+const GOALS = [
+  { title: 'Acquire new customers', badge: 'Best for growth', desc: "Reach customers who haven't transacted with your brand before", icon: '<circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path>' },
+  { title: 'Win back lapsed customers', badge: 'Best for reactivation', desc: "Re-engage customers who haven't visited in 90+ days", icon: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 4v4h4"></path>' },
+  { title: 'Increase transaction frequency', badge: 'Best for retention', desc: 'Encourage existing customers to visit more often', icon: '<path d="M3 17l6-6 4 4 8-8"></path><path d="M21 7v5h-5"></path>' },
+  { title: 'Grow average spend', badge: 'Best for revenue growth', desc: 'Drive higher-value purchases per visit', icon: '<rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path>' },
+];
+document.getElementById('goal-grid').innerHTML = GOALS.map((g, i) => `
+  <button class="goal-opt${i === 0 ? ' sel' : ''}" onclick="selectOne(this)">
+    <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6L9 17l-5-5"></path></svg></span>
+    <span class="gic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${g.icon}</svg></span>
+    <span style="display:flex;flex-direction:column;gap:4px;">
+      <span class="gt"><b>${g.title}</b><span class="badge">${g.badge}</span></span>
+      <span class="gd">${g.desc}</span>
+    </span>
+  </button>`).join('');
+
+/* ---------- Brand search (wizard step 2) ---------- */
+const BRANDS = [
+  // Grocery & convenience
+  'Lulu Hypermarket','Spinneys','Union Coop','Choithrams','Al Maya','Géant','West Zone Supermarket','Viva','Nesto Hypermarket','Grandiose','Aswaaq','All Day Fresh','Zoom','Circle K','Earth Supermarket','Megamart',
+  // Department & fashion
+  'Splash','Max Fashion','Centrepoint','Babyshop','Shoemart','Lifestyle','Home Centre','Redtag','Brands for Less','Matalan','Marks & Spencer','Debenhams','Zara','H&M','Mango','Bershka','Pull & Bear','Stradivarius','Massimo Dutti','Cotton On','American Eagle','Forever 21','Charles & Keith','Aldo','Nine West','Steve Madden',"Levi's",'GAP','Calvin Klein','Tommy Hilfiger','Lacoste','Uniqlo','Next','River Island','New Look','Defacto','LC Waikiki','Namshi',
+  // Sportswear
+  'Adidas','Nike','Puma','Sun & Sand Sports','Decathlon','Go Sport','Foot Locker','Skechers','Crocs','Under Armour','Columbia','The North Face','Reebok',
+  // Luxury & jewellery
+  "Bloomingdale's",'Harvey Nichols','Galeries Lafayette','Louis Vuitton','Gucci','Chanel','Dior','Prada','Burberry','Cartier','Tiffany & Co.','Rolex','Montblanc','Hugo Boss','Michael Kors','Coach','Kate Spade','Damas','Joyalukkas','Malabar Gold','Kalyan Jewellers','Pure Gold','Tanishq',
+  // Beauty
+  'Sephora','Faces','Wojooh','MAC','The Body Shop','Bath & Body Works','Rituals','Lush','Kiko Milano',"Victoria's Secret",'Boots','Paris Gallery','Rivoli',"L'Occitane",'The Ordinary','Huda Beauty',
+  // Electronics
+  'Sharaf DG','Jumbo Electronics','Emax',"Jacky's Electronics",'Plug Ins','Virgin Megastore','Apple','Samsung','Huawei','Xiaomi','Lenovo','Microsoft','Sony','LG','Panasonic','Dyson',
+  // Fast food / QSR
+  "McDonald's",'KFC','Burger King',"Hardee's",'Subway','Pizza Hut',"Domino's","Papa John's",'Texas Chicken','Popeyes','Five Guys','Shake Shack',"Wendy's","Carl's Jr.","Nando's","Chili's",'TGI Fridays','The Cheesecake Factory',"P.F. Chang's",'Din Tai Fung','Wagamama','Pret a Manger',
+  // Cafés & dessert
+  'Starbucks','Costa Coffee','Tim Hortons','Caribou Coffee',"Dunkin'",'% Arabica','Joe & The Juice','Paul','Bateel','Cinnabon','Krispy Kreme','Baskin Robbins','Cold Stone Creamery','Häagen-Dazs','Magnolia Bakery','SugarMoo',
+  // Local F&B
+  'Operation Falafel','Allo Beirut','Zaroob','Shawarmanji','Just Falafel','Wild Peeta','Salt','Pickl','Switch','Reem Al Bawadi','Automatic Restaurant','Al Safadi',
+  // Delivery & marketplaces
+  'Talabat','Deliveroo','Noon','Amazon.ae','Careem','InstaShop','Kibsons','El Grocer','Ubuy','SIVVI','Ounass',
+  // Telecom
+  'Etisalat','du','Virgin Mobile',
+  // Banks & fintech
+  'Emirates NBD','ADCB','First Abu Dhabi Bank','Mashreq','RAKBANK','Dubai Islamic Bank','Abu Dhabi Islamic Bank','Emirates Islamic','Commercial Bank of Dubai','HSBC','Citibank','Standard Chartered','Liv.','Wio Bank',
+  // Airlines & travel
+  'Emirates','Etihad Airways','flydubai','Air Arabia','Wizz Air Abu Dhabi','dnata Travel','Musafir','Cleartrip','Wego','Booking.com',
+  // Malls
+  'The Dubai Mall','Mall of the Emirates','Ibn Battuta Mall','Dubai Marina Mall','City Centre Deira','City Centre Mirdif','Yas Mall','Abu Dhabi Mall','Wafi Mall','Mercato','BurJuman','Dubai Festival City Mall','Nakheel Mall',
+  // Pharmacies & health
+  'Aster Pharmacy','Life Pharmacy','BinSina Pharmacy','Boots Pharmacy','Medicina Pharmacy','Supercare Pharmacy',
+  // Home & furniture
+  'IKEA','Home Box','Pan Emirates','Danube Home','2XL Furniture','The One','Pottery Barn','West Elm','Crate & Barrel','ID Design','Homes r Us','ACE Hardware',
+  // Kids & toys
+  'Hamleys','Toys R Us','Early Learning Centre','Mothercare','FirstCry','Mumzworld',
+  // Books, fitness, fuel, cinema, optics
+  'Kinokuniya',"Magrudy's",'Jashanmal','Fitness First','GymNation','Warehouse Gym',"Gold's Gym",'The Platform','ADNOC','ENOC','Emarat','EPPCO','VOX Cinemas','Reel Cinemas','Novo Cinemas','Roxy Cinemas','Grand Optics','Magrabi','Yateem Optician',
+];
+const BRAND_COLORS = ['var(--cat-shopping)','var(--cat-dining)','var(--cat-travel)','var(--cat-wellness)','var(--cat-transport)','var(--cat-financial)','var(--cat-grocery)','var(--cat-savings)','var(--cat-income)','var(--status-info)','var(--cat-household)','var(--cat-student)'];
+const brandColor = (name) => { let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0; return BRAND_COLORS[h % BRAND_COLORS.length]; };
+const escHtml = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const hiMatch = (name, q) => { const i = name.toLowerCase().indexOf(q); if (i < 0) return escHtml(name); return escHtml(name.slice(0, i)) + '<mark>' + escHtml(name.slice(i, i + q.length)) + '</mark>' + escHtml(name.slice(i + q.length)); };
+
+const DEFAULT_BRANDS = ['Lulu Hypermarket', 'Spinneys', 'Choithrams'];
+let selectedBrands = new Set(DEFAULT_BRANDS);
+let brandActive = -1;
+const brandInput = document.getElementById('brand-input');
+const brandResults = document.getElementById('brand-results');
+const brandRow = document.getElementById('brand-row');
+
+function renderSelectedBrands() {
+  brandRow.innerHTML = [...selectedBrands].map((name) =>
+    `<span class="brand-chip"><span class="bd" style="background:${brandColor(name)};"></span>${escHtml(name)}<span class="x" role="button" tabindex="0" aria-label="Remove ${escHtml(name)}" data-name="${escHtml(name)}">&times;</span></span>`).join('');
+}
+function renderBrandResults() {
+  const q = brandInput.value.trim().toLowerCase();
+  if (!q) { brandResults.classList.remove('show'); brandResults.innerHTML = ''; brandActive = -1; return; }
+  const matches = BRANDS.filter((n) => n.toLowerCase().includes(q) && !selectedBrands.has(n)).slice(0, 50);
+  brandResults.innerHTML = matches.length
+    ? matches.map((n, i) => `<div class="brand-result${i === brandActive ? ' active' : ''}" data-name="${escHtml(n)}"><span class="bd" style="background:${brandColor(n)};"></span>${hiMatch(n, q)}</div>`).join('')
+    : `<div class="brand-empty">No brands match "${escHtml(brandInput.value.trim())}"</div>`;
+  brandResults.classList.add('show');
+}
+function addBrand(name) { selectedBrands.add(name); brandInput.value = ''; brandActive = -1; renderSelectedBrands(); renderBrandResults(); brandInput.focus(); }
+
+brandInput.addEventListener('input', () => { brandActive = -1; renderBrandResults(); });
+brandInput.addEventListener('keydown', (e) => {
+  const items = [...brandResults.querySelectorAll('.brand-result')];
+  if (e.key === 'ArrowDown') { e.preventDefault(); brandActive = Math.min(brandActive + 1, items.length - 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); brandActive = Math.max(brandActive - 1, 0); }
+  else if (e.key === 'Enter') { e.preventDefault(); if (items[brandActive]) addBrand(items[brandActive].dataset.name); else if (items.length === 1) addBrand(items[0].dataset.name); return; }
+  else if (e.key === 'Escape') { brandInput.value = ''; renderBrandResults(); return; }
+  else return;
+  items.forEach((el, i) => el.classList.toggle('active', i === brandActive));
+  if (items[brandActive]) items[brandActive].scrollIntoView({ block: 'nearest' });
+});
+brandResults.addEventListener('mousedown', (e) => { const r = e.target.closest('.brand-result'); if (r) { e.preventDefault(); addBrand(r.dataset.name); } });
+brandRow.addEventListener('click', (e) => { const x = e.target.closest('.x'); if (x) { selectedBrands.delete(x.dataset.name); renderSelectedBrands(); renderBrandResults(); } });
+document.addEventListener('click', (e) => { if (!e.target.closest('.brand-search-box')) brandResults.classList.remove('show'); });
+function resetBrands() { selectedBrands = new Set(DEFAULT_BRANDS); brandInput.value = ''; renderSelectedBrands(); renderBrandResults(); }
+renderSelectedBrands();
+
+const mkPills = (id, options, selIdx, multi) => {
+  document.getElementById(id).innerHTML = options.map((o, i) =>
+    `<button class="pick-pill${i === selIdx ? ' sel' : ''}" onclick="${multi ? "this.classList.toggle('sel')" : 'selectOne(this)'}">${o}</button>`).join('');
+};
+mkPills('spend-row', ['Under AED 50', 'AED 50 – 100', 'AED 100 – 200', 'AED 200 – 500', 'AED 500+'], 3, false);
+mkPills('freq-row', ['Daily', '2–3 times a week', 'Once a week', 'A few times a month', 'Rarely'], 2, false);
+mkPills('channel-row', ['Online', 'In-store', 'Both Online & In-store'], 2, false);
+
+document.getElementById('industries-yn').innerHTML =
+  `<button class="pick-pill sel" onclick="selectOne(this); industriesReveal(true);">Yes</button>
+   <button class="pick-pill" onclick="selectOne(this); industriesReveal(false);">No</button>`;
+const INDUSTRIES = [
+  ['Dining', 'dining', 'var(--cat-dining)'], ['Shopping', 'shopping', 'var(--cat-shopping)'],
+  ['Travel', 'travel', 'var(--cat-travel)'], ['Wellness', 'wellness', 'var(--cat-wellness)'],
+  ['Transportation', 'transportation', 'var(--cat-transport)'], ['Financial Services', 'financial', 'var(--cat-financial)'],
+];
+document.getElementById('industries-row').innerHTML = INDUSTRIES.map(([name, icon, color], i) =>
+  `<button class="pick-pill${i < 2 ? ' sel' : ''}" onclick="this.classList.toggle('sel')">${catIcon(icon, color, 16)}${name}</button>`).join('');
+function industriesReveal(show) { document.getElementById('industries-reveal').classList.toggle('show', show); }
+industriesReveal(true);
+
+function selectOne(el) {
+  el.parentNode.querySelectorAll(':scope > button').forEach((b) => b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+let step = 1;
+const TOTAL = 9;
+document.getElementById('wiz-bar').innerHTML = '<i></i>'.repeat(TOTAL - 1);
+function renderWiz() {
+  document.querySelectorAll('.wiz-step').forEach((s) => s.classList.toggle('active', +s.dataset.step === step));
+  document.querySelectorAll('#wiz-bar i').forEach((seg, i) => seg.classList.toggle('on', i < step));
+  document.getElementById('wiz-back').style.display = step > 1 && step < TOTAL ? 'inline-flex' : 'none';
+  document.getElementById('wiz-foot').style.display = step === TOTAL ? 'none' : 'flex';
+  document.getElementById('wiz-next').innerHTML = (step === 8 ? 'Submit' : 'Next') +
+    ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>';
+}
+function wizStep(dir) {
+  step = Math.max(1, Math.min(TOTAL, step + dir));
+  renderWiz();
+  document.querySelector('.main').scrollTop = 0;
+}
+function resetWizard() { step = 1; renderWiz(); resetBrands(); }
+renderWiz();
+</script>
+</body>
+</html>
