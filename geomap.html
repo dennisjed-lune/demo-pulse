@@ -994,6 +994,8 @@ code, pre, kbd { font-family: var(--font-mono); }
 </head>
 <body>
 <a href="index.html" title="Back to demo home" style="position:fixed;top:18px;left:18px;z-index:99999;display:inline-flex;align-items:center;gap:7px;font:600 13px/1 'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;color:#0A634D;background:rgba(255,255,255,.92);border:1px solid #E2E8E6;padding:9px 14px;border-radius:999px;text-decoration:none;box-shadow:0 6px 20px rgba(7,3,18,.12);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)">&#8592;&nbsp;Demo home</a>
+<script>if(location.search.indexOf('preview')>-1)document.documentElement.classList.add('is-preview');</script>
+<style>.is-preview a[href="index.html"]{display:none!important}</style>
 <div id="root"></div>
 
 <!-- React + Babel (pinned) -->

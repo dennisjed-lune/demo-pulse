@@ -80,6 +80,9 @@ body{
 .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .thumb .tint{position:absolute;inset:0;background:linear-gradient(150deg,rgba(0,46,42,.62),rgba(7,3,18,.12))}
 .thumb.grad{background:linear-gradient(150deg,var(--lune-teal),var(--lune-emerald))}
+.thumb.live{height:auto;aspect-ratio:85/54;background:var(--neutral-900);position:relative;overflow:hidden}
+.thumb.live iframe{position:absolute;top:0;left:0;width:850px;height:540px;border:0;pointer-events:none;transform-origin:top left}
+.thumb.live::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(7,3,18,.06);border-radius:14px;pointer-events:none}
 .thumb .step{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--lune-teal);font-weight:800;font-size:12.5px}
 .thumb .ic{position:absolute;bottom:10px;left:11px;color:#fff;opacity:.94}
 .thumb .ic-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.96)}
@@ -195,8 +198,8 @@ body{
     <div class="cards">
 
       <a class="card" style="--accent:#6F8F72" href="expenses.html">
-        <div class="thumb grad">
-          <span class="ic-center"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg></span>
+        <div class="thumb live">
+          <iframe src="expenses.html?preview" title="Expenses preview" loading="lazy" tabindex="-1" aria-hidden="true" scrolling="no"></iframe>
         </div>
         <div class="body">
           <span class="role">Expenses</span>
@@ -221,8 +224,8 @@ body{
     <div class="cards">
 
       <a class="card" style="--accent:#469A93" href="geomap.html">
-        <div class="thumb grad">
-          <span class="ic-center"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.4 4 5.6 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.6-4-9s1.4-6.6 4-9z"/></svg></span>
+        <div class="thumb live">
+          <iframe src="geomap.html?preview" title="Geo map preview" loading="lazy" tabindex="-1" aria-hidden="true" scrolling="no"></iframe>
         </div>
         <div class="body">
           <span class="role">Geo</span>
@@ -239,5 +242,17 @@ body{
   <div class="foot">Lune demo · prototype environment · not connected to production data</div>
 
 </div>
+<script>
+  // Scale the live iframe previews to fill their thumbnail box (logical 850x540).
+  function sizeLivePreviews(){
+    document.querySelectorAll('.thumb.live').forEach(function(box){
+      var f = box.querySelector('iframe');
+      if (f) f.style.transform = 'scale(' + (box.clientWidth / 850) + ')';
+    });
+  }
+  window.addEventListener('load', sizeLivePreviews);
+  window.addEventListener('resize', sizeLivePreviews);
+  sizeLivePreviews();
+</script>
 </body>
 </html>
