@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lune Pulse — Demo Environment</title>
+<title>Lune — Demo Environment</title>
 <link rel="icon" type="image/png" href="assets/favicon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,98 +26,80 @@ body{
   font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
   color:var(--lune-teal);
   background:
-    radial-gradient(1100px 620px at 82% -8%, rgba(16,163,127,.16), transparent 60%),
-    radial-gradient(900px 520px at 8% 4%, rgba(70,154,147,.12), transparent 55%),
+    radial-gradient(1100px 620px at 82% -8%, rgba(16,163,127,.13), transparent 60%),
+    radial-gradient(900px 520px at 8% 4%, rgba(70,154,147,.10), transparent 55%),
     var(--neutral-25);
   -webkit-font-smoothing:antialiased;
   min-height:100vh;
 }
-.wrap{max-width:1080px;margin:0 auto;padding:34px 28px 72px}
+.wrap{max-width:1040px;margin:0 auto;padding:34px 28px 72px}
 
 /* ---- Top bar ---- */
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:54px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:46px}
 .brand{display:flex;align-items:center;gap:11px}
 .brand img{height:30px;width:auto}
 .brand .div{width:1px;height:22px;background:var(--neutral-200)}
 .brand .env{font-size:12.5px;font-weight:600;color:var(--neutral-500);letter-spacing:.02em}
-.livepill{
-  display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;
-  color:var(--lune-teal-700);background:rgba(16,163,127,.10);
-  border:1px solid rgba(16,163,127,.22);padding:7px 13px;border-radius:var(--radius-pill);
+.tagpill{
+  display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+  color:var(--neutral-500);background:var(--neutral-0);
+  border:1px solid var(--neutral-100);padding:7px 13px;border-radius:var(--radius-pill);
 }
-.livedot{width:8px;height:8px;border-radius:50%;background:var(--lune-emerald);box-shadow:0 0 0 0 rgba(16,163,127,.55);animation:pulse 2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,163,127,.5)}70%{box-shadow:0 0 0 9px rgba(16,163,127,0)}100%{box-shadow:0 0 0 0 rgba(16,163,127,0)}}
+.tagpill .dot{width:7px;height:7px;border-radius:50%;background:var(--lune-emerald)}
 
-/* ---- Hero ---- */
-.hero{margin-bottom:30px}
-.hero .eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--lune-emerald);margin:0 0 14px}
-.hero h1{font-size:clamp(34px,5vw,52px);line-height:1.04;font-weight:800;letter-spacing:-.02em;margin:0 0 16px;color:var(--lune-teal)}
-.hero h1 em{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;color:var(--lune-emerald)}
-.hero p{font-size:16.5px;line-height:1.55;color:var(--neutral-600);max-width:620px;margin:0}
+/* ---- Intro ---- */
+.intro{margin-bottom:40px;max-width:640px}
+.intro h1{font-size:clamp(30px,4.4vw,44px);line-height:1.06;font-weight:800;letter-spacing:-.02em;margin:0 0 14px;color:var(--lune-teal)}
+.intro h1 em{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;color:var(--lune-emerald)}
+.intro p{font-size:16px;line-height:1.55;color:var(--neutral-600);margin:0}
 
-/* ---- Flow strip ---- */
-.flow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 36px}
-.flow .node{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--neutral-600);background:var(--neutral-0);border:1px solid var(--neutral-100);padding:8px 14px;border-radius:var(--radius-pill);box-shadow:var(--shadow-card)}
-.flow .node b{color:var(--lune-teal)}
-.flow .num{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;background:var(--lune-emerald);color:#fff;font-size:11px;font-weight:700}
-.flow .arr{color:var(--neutral-300)}
+/* ---- Section ---- */
+.section{margin-top:44px}
+.sec-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sec-head .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--lune-emerald)}
+.sec-head h2{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:0;color:var(--lune-teal)}
+.sec-head p{font-size:13.5px;color:var(--neutral-500);margin:0;flex:1 1 240px;min-width:200px}
 
 /* ---- Cards ---- */
-.cards{display:flex;flex-direction:column;gap:18px}
+.cards{display:flex;flex-direction:column;gap:16px}
 .card{
-  display:grid;grid-template-columns:200px 1fr auto;gap:26px;align-items:center;
+  display:grid;grid-template-columns:170px 1fr auto;gap:24px;align-items:center;
   text-decoration:none;color:inherit;background:var(--neutral-0);
   border:1px solid var(--neutral-100);border-radius:var(--radius-card);
-  padding:22px;box-shadow:var(--shadow-card);
+  padding:20px;box-shadow:var(--shadow-card);
   transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,border-color .22s;
   position:relative;overflow:hidden;
 }
-.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,var(--lune-emerald));opacity:.0;transition:opacity .22s}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent,var(--lune-emerald));opacity:0;transition:opacity .22s}
 .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:var(--neutral-200)}
 .card:hover::before{opacity:1}
 .card:hover .enter{background:var(--lune-emerald);color:#fff}
 .card:hover .enter svg{transform:translateX(3px)}
 
-.thumb{position:relative;height:120px;border-radius:14px;overflow:hidden;background:var(--neutral-50)}
+.thumb{position:relative;height:108px;border-radius:14px;overflow:hidden;background:var(--neutral-50)}
 .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .thumb .tint{position:absolute;inset:0;background:linear-gradient(150deg,rgba(0,46,42,.62),rgba(7,3,18,.12))}
-.thumb .step{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--lune-teal);font-weight:800;font-size:13px}
-.thumb .ic{position:absolute;bottom:10px;left:11px;color:#fff;opacity:.92}
+.thumb.grad{background:linear-gradient(150deg,var(--lune-teal),var(--lune-emerald))}
+.thumb .step{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--lune-teal);font-weight:800;font-size:12.5px}
+.thumb .ic{position:absolute;bottom:10px;left:11px;color:#fff;opacity:.94}
+.thumb .ic-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.96)}
 
-.body .role{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent,var(--lune-emerald));margin-bottom:7px}
-.body h2{font-size:22px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--lune-teal)}
-.body p{font-size:14px;line-height:1.5;color:var(--neutral-600);margin:0 0 11px;max-width:430px}
+.body .role{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent,var(--lune-emerald));margin-bottom:6px}
+.body h3{font-size:20px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--lune-teal)}
+.body p{font-size:13.5px;line-height:1.5;color:var(--neutral-600);margin:0 0 11px;max-width:430px}
 .tags{display:flex;flex-wrap:wrap;gap:7px}
 .tag{font-size:11.5px;font-weight:600;color:var(--neutral-600);background:var(--neutral-50);border:1px solid var(--neutral-100);padding:4px 10px;border-radius:var(--radius-pill)}
 
 .enter{display:inline-flex;align-items:center;gap:9px;white-space:nowrap;font-size:13.5px;font-weight:700;color:var(--lune-teal);background:var(--neutral-50);border:1px solid var(--neutral-100);padding:11px 18px;border-radius:var(--radius-pill);transition:background .2s,color .2s}
 .enter svg{transition:transform .2s}
 
-/* ---- Flagship banner ---- */
-.flagship{
-  margin-top:30px;display:flex;align-items:center;gap:18px;
-  background:linear-gradient(120deg,var(--lune-teal),#063f37 70%);
-  border-radius:var(--radius-card);padding:18px 22px;color:#fff;
-  box-shadow:var(--shadow-card);position:relative;overflow:hidden;
-}
-.flagship::after{content:"";position:absolute;right:-40px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(153,242,172,.22),transparent 70%)}
-.flagship .fimg{width:64px;height:64px;border-radius:14px;object-fit:cover;flex:none;border:1px solid rgba(255,255,255,.18)}
-.flagship .ftxt{position:relative;z-index:1}
-.flagship .flab{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lune-mint);margin-bottom:4px}
-.flagship .ftitle{font-size:16px;font-weight:700;margin-bottom:3px}
-.flagship .fsub{font-size:13px;color:rgba(255,255,255,.78);line-height:1.45}
-.flagship .fmeta{margin-left:auto;position:relative;z-index:1;text-align:right;font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap}
-.flagship .fmeta b{display:block;font-size:18px;color:#fff;font-weight:800}
-
-.foot{margin-top:34px;font-size:12.5px;color:var(--neutral-400);text-align:center}
+.foot{margin-top:42px;font-size:12.5px;color:var(--neutral-400);text-align:center}
 
 @media (max-width:760px){
-  .card{grid-template-columns:1fr;gap:16px}
+  .card{grid-template-columns:1fr;gap:14px}
   .thumb{height:140px}
   .enter{width:100%;justify-content:center}
   .body p{max-width:none}
-  .flagship{flex-wrap:wrap}
-  .flagship .fmeta{margin-left:0;text-align:left}
 }
 </style>
 </head>
@@ -128,91 +110,107 @@ body{
     <div class="brand">
       <img src="assets/lune-logo.png" alt="Lune" />
       <span class="div"></span>
-      <span class="env">Pulse · Demo Environment</span>
+      <span class="env">Demo Environment</span>
     </div>
-    <span class="livepill"><span class="livedot"></span>Live campaign · synced across all three</span>
+    <span class="tagpill"><span class="dot"></span>Prototype · not production data</span>
   </div>
 
-  <div class="hero">
-    <p class="eyebrow">One campaign, three perspectives</p>
-    <h1>See a cashback campaign go <em>live</em><br/>from merchant to cardholder.</h1>
-    <p>Follow a single Pulse campaign as it moves through the platform — created by the merchant, approved by the issuing bank, then activated by the cardholder. Open each portal to see the same campaign, the same creative, in real time.</p>
+  <div class="intro">
+    <h1>Explore Lune, <em>live</em>.</h1>
+    <p>A collection of interactive Lune product prototypes. Open any demo to walk through it end to end.</p>
   </div>
 
-  <div class="flow">
-    <span class="node"><span class="num">1</span><b>Merchant</b> requests</span>
-    <span class="arr">→</span>
-    <span class="node"><span class="num">2</span><b>Bank</b> reviews &amp; approves</span>
-    <span class="arr">→</span>
-    <span class="node"><span class="num">3</span><b>Customer</b> activates</span>
-  </div>
-
-  <div class="cards">
-
-    <!-- 1 · MERCHANT -->
-    <a class="card" style="--accent:#E76F2E" href="merchant.html">
-      <div class="thumb">
-        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=70" alt="" loading="lazy" />
-        <div class="tint"></div>
-        <span class="step">1</span>
-        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9M9 13h6"/></svg></span>
-      </div>
-      <div class="body">
-        <span class="role"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9"/></svg>Pulse Merchant</span>
-        <h2>Marhaba Mart · Merchant Portal</h2>
-        <p>Where the merchant designs and requests a campaign. Set the goal, pick the creative, and submit a 10% grocery cashback offer to the bank for approval.</p>
-        <div class="tags"><span class="tag">Campaign builder</span><span class="tag">Offer creative</span><span class="tag">Performance</span></div>
-      </div>
-      <span class="enter">Enter portal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </a>
-
-    <!-- 2 · BANK -->
-    <a class="card" style="--accent:#10A37F" href="bank.html">
-      <div class="thumb">
-        <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=70" alt="" loading="lazy" />
-        <div class="tint"></div>
-        <span class="step">2</span>
-        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></span>
-      </div>
-      <div class="body">
-        <span class="role"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12"/></svg>Pulse Bank</span>
-        <h2>Pulse · Bank Campaign Review</h2>
-        <p>Where the bank picks up the incoming Marhaba Mart request in the Campaign Manager, checks audience and budget against enriched spend data, and approves it — pushing the offer live to eligible cardholders.</p>
-        <div class="tags"><span class="tag">Review pending</span><span class="tag">Audience &amp; budget</span><span class="tag">Approve &amp; launch</span></div>
-      </div>
-      <span class="enter">Enter portal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </a>
-
-    <!-- 3 · CUSTOMER -->
-    <a class="card" style="--accent:#469A93" href="customer.html">
-      <div class="thumb">
-        <img src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=600&q=70" alt="" loading="lazy" />
-        <div class="tint"></div>
-        <span class="step">3</span>
-        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 19h4"/></svg></span>
-      </div>
-      <div class="body">
-        <span class="role"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 19h4"/></svg>Pulse Customer</span>
-        <h2>Lune Pulse · Cardholder Wallet</h2>
-        <p>Where the cardholder sees the freshly-approved Marhaba Mart offer land in their banking app, activates it in one tap, and starts earning 10% cashback on groceries.</p>
-        <div class="tags"><span class="tag">Offer wallet</span><span class="tag">One-tap activate</span><span class="tag">Cashback tracker</span></div>
-      </div>
-      <span class="enter">Enter portal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-    </a>
-
-  </div>
-
-  <div class="flagship">
-    <img class="fimg" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=200&q=70" alt="" />
-    <div class="ftxt">
-      <div class="flab">Featured in this demo</div>
-      <div class="ftitle">Marhaba Mart — Summer Grocery Cashback</div>
-      <div class="fsub">The same campaign, creative and dates appear in all three portals so you can watch it move end to end.</div>
+  <!-- ============ PULSE ============ -->
+  <section class="section">
+    <div class="sec-head">
+      <span class="eyebrow">Pulse</span>
+      <h2>Cashback campaigns, end to end</h2>
+      <p>One campaign across three connected portals — merchant to bank to cardholder.</p>
     </div>
-    <div class="fmeta"><b>10%</b>cashback · groceries<br/>1 Jul – 31 Aug 2026</div>
-  </div>
 
-  <div class="foot">Lune Pulse demo · prototype environment · not connected to production data</div>
+    <div class="cards">
+
+      <!-- 1 · MERCHANT -->
+      <a class="card" style="--accent:#E76F2E" href="merchant.html">
+        <div class="thumb">
+          <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=70" alt="" loading="lazy" />
+          <div class="tint"></div>
+          <span class="step">1</span>
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 9l1.5-5h15L21 9M3 9h18M3 9v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9M9 13h6"/></svg></span>
+        </div>
+        <div class="body">
+          <span class="role">Merchant</span>
+          <h3>Marhaba Mart · Merchant Portal</h3>
+          <p>Design and request a campaign — set the goal, pick the creative, and submit a 10% grocery cashback offer for approval.</p>
+          <div class="tags"><span class="tag">Campaign builder</span><span class="tag">Offer creative</span><span class="tag">Performance</span></div>
+        </div>
+        <span class="enter">Enter <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <!-- 2 · BANK -->
+      <a class="card" style="--accent:#10A37F" href="bank.html">
+        <div class="thumb">
+          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=70" alt="" loading="lazy" />
+          <div class="tint"></div>
+          <span class="step">2</span>
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg></span>
+        </div>
+        <div class="body">
+          <span class="role">Bank</span>
+          <h3>Pulse · Campaign Review</h3>
+          <p>Pick up the incoming request in the Campaign Manager, check audience and budget against enriched spend data, and approve it live.</p>
+          <div class="tags"><span class="tag">Review pending</span><span class="tag">Audience &amp; budget</span><span class="tag">Approve &amp; launch</span></div>
+        </div>
+        <span class="enter">Enter <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+      <!-- 3 · CUSTOMER -->
+      <a class="card" style="--accent:#469A93" href="customer.html">
+        <div class="thumb">
+          <img src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?auto=format&fit=crop&w=600&q=70" alt="" loading="lazy" />
+          <div class="tint"></div>
+          <span class="step">3</span>
+          <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10 19h4"/></svg></span>
+        </div>
+        <div class="body">
+          <span class="role">Customer</span>
+          <h3>Lune Pulse · Cardholder Wallet</h3>
+          <p>See the freshly-approved offer land in the banking app, activate it in one tap, and start earning 10% cashback on groceries.</p>
+          <div class="tags"><span class="tag">Offer wallet</span><span class="tag">One-tap activate</span><span class="tag">Cashback tracker</span></div>
+        </div>
+        <span class="enter">Enter <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ============ PFM SDK ============ -->
+  <section class="section">
+    <div class="sec-head">
+      <span class="eyebrow">PFM SDK</span>
+      <h2>Personal finance, embedded</h2>
+      <p>Spending insights and expense tracking, delivered in-app through the Lune SDK.</p>
+    </div>
+
+    <div class="cards">
+
+      <a class="card" style="--accent:#6F8F72" href="expenses.html">
+        <div class="thumb grad">
+          <span class="ic-center"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="6" rx="1"/><rect x="12" y="7" width="3" height="10" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/></svg></span>
+        </div>
+        <div class="body">
+          <span class="role">Expenses</span>
+          <h3>Spending &amp; Expenses</h3>
+          <p>A drop-in personal finance experience — enriched transactions, category breakdowns, and monthly spending insights inside the banking app.</p>
+          <div class="tags"><span class="tag">Transaction enrichment</span><span class="tag">Categories</span><span class="tag">Insights</span></div>
+        </div>
+        <span class="enter">Enter <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="foot">Lune demo · prototype environment · not connected to production data</div>
 
 </div>
 </body>
