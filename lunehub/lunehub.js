@@ -855,12 +855,13 @@
     go(localStorage.getItem('lunehub.proto.view') || 'overview');
   });
 
-  // ?preview / ?embed → skip the sign-in gate and land on the dashboard (for landing-page thumbnails)
+  // ?preview / ?embed → land on the dashboard (for landing-page thumbnails); ?view=x deep-links a view
   var preview = /[?&](preview|embed)\b/.test(location.search);
-  if (preview) { setAuthed(true); go('dashboard'); }
-  // restore session — unless ?login=1 forces the sign-in screen
+  var deepView = (location.search.match(/[?&]view=([a-z-]+)/) || [])[1];
+  // DEMO MODE: no sign-in gate — straight into the platform (?login=1 still shows the old flow)
   var forceLogin = /[?&]login=1/.test(location.search);
-  var authed = false;
-  try { authed = localStorage.getItem(AUTH_KEY) === '1'; } catch (e) {}
-  if (!preview && authed && !forceLogin) { setAuthed(true); go(localStorage.getItem('lunehub.proto.view') || 'overview'); }
+  if (!forceLogin) {
+    setAuthed(true);
+    go(deepView || (preview ? 'dashboard' : (localStorage.getItem('lunehub.proto.view') || 'overview')));
+  }
 })();

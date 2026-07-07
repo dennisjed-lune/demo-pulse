@@ -83,6 +83,8 @@ body{
 .thumb.live{height:auto;aspect-ratio:85/54;background:var(--neutral-900);position:relative;overflow:hidden}
 .thumb.live iframe{position:absolute;top:0;left:0;width:850px;height:540px;border:0;pointer-events:none;transform-origin:top left}
 .thumb.live::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(7,3,18,.06);border-radius:14px;pointer-events:none}
+.thumb.shot{height:auto;aspect-ratio:85/54;background:#fff}
+.thumb.shot::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(7,3,18,.06);border-radius:14px;pointer-events:none}
 .thumb .step{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--lune-teal);font-weight:800;font-size:12.5px}
 .thumb .ic{position:absolute;bottom:10px;left:11px;color:#fff;opacity:.94}
 .thumb .ic-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.96)}
@@ -134,8 +136,8 @@ body{
     <div class="cards">
 
       <a class="card" style="--accent:#0A634D" href="lunehub/">
-        <div class="thumb live">
-          <iframe src="lunehub/index.html?preview" title="LuneHub preview" loading="lazy" tabindex="-1" aria-hidden="true" scrolling="no"></iframe>
+        <div class="thumb shot">
+          <img src="assets/lunehub-transactions.png" alt="LuneHub — enriched transactions" loading="lazy" />
         </div>
         <div class="body">
           <span class="role">Bank · Analytics</span>
