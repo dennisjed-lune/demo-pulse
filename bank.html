@@ -1917,7 +1917,7 @@ Object.assign(window, {
             </button>
           </div>
 
-          {pageRows.length === 0 ? (
+          {rows.length === 0 ? (
             <div className="empty-state">
               <Icon name="inbox" size={44} />
               <div style={{ fontWeight: 600, color: 'var(--ink-2)' }}>No campaigns found</div>
@@ -1943,7 +1943,7 @@ Object.assign(window, {
                 })}</tr>
               </thead>
               <tbody>
-                {pageRows.map(c => (
+                {rows.map(c => (
                   <tr key={c.id} tabIndex={0} onClick={() => onOpen(c.id)}
                       onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(c.id); } }}>
                     {cols.map(col => <Cell key={col.key} col={col} c={c} />)}
@@ -1956,20 +1956,8 @@ Object.assign(window, {
           {rows.length > 0 && (
             <div className="pager">
               <div className="pager-info">
-                Showing <b className="tnum">{pageRows.length}</b> of <b className="tnum">{rows.length}</b>
+                Showing <b className="tnum">{rows.length}</b>
                 {searching ? ' results' : ' campaigns'}
-              </div>
-              <div className="pager-ctl">
-                <button className="pg-btn" disabled={safePage === 1} onClick={() => setPage(safePage - 1)}>
-                  <Icon name="chevL" size={16} />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).slice(0, 5).map(p => (
-                  <button key={p} className={'pg-btn' + (p === safePage ? ' active' : '')} onClick={() => setPage(p)}>{p}</button>
-                ))}
-                {totalPages > 5 && <span className="pager-info">…</span>}
-                <button className="pg-btn" disabled={safePage === totalPages} onClick={() => setPage(safePage + 1)}>
-                  <Icon name="chevR" size={16} />
-                </button>
               </div>
             </div>
           )}
