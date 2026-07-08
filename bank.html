@@ -877,27 +877,53 @@ window.__resources = {
 
   // ---- filler campaigns for pagination realism ---------------
   // [name, category, status] \u2014 the full merchant roster shown in the bank Campaign Manager.
+  // Every merchant sits in Review Pending (the Campaign Manager landing) so the
+  // list is full. Retail groups are broken out into their individual brands —
+  // each brand is its own campaign, never the group.
   const merchants = [
-    ['Expedia','travel','live'],
-    ['Eyewa','fashion','live'],
-    ['The Meal','food','live'],
-    ['Ajmal Perfumes','beauty','live'],
-    ['Rayna Tours','travel','live'],
-    ['Reebok','fashion','live'],
-    ['Beyond the Beach','fashion','live'],
-    ['Sharaf DG','elec','live'],
+    // Direct merchants
+    ['Expedia','travel','pending'],
+    ['Eyewa','fashion','pending'],
+    ['The Meal','food','pending'],
     ['Yango Drive','travel','pending'],
-    ['Jashanmal Group','fashion','pending'],
-    ['Throwmenot','home','pending'],
-    ['Beside Group','fashion','pending'],
+    ['Rayna Tours','travel','pending'],
+    ['Reebok','fashion','pending'],
+    ['Beyond the Beach','fashion','pending'],
+    ['Sharaf DG','elec','pending'],
+    ['Ajmal Perfumes','beauty','pending'],
+    ['Swiss Arabian','beauty','pending'],
+    ['BinSina','beauty','pending'],
     ['Washmen','home','pending'],
-    ['Al Yasra Group','fashion','completed'],
-    ['Chalhoub Group','fashion','completed'],
-    ['Al Tayer Group','fashion','completed'],
-    ['Swiss Arabian','beauty','completed'],
-    ['BinSina','beauty','completed'],
-    ['Stake','home','rejected'],
-    ['Zed','home','rejected'],
+    ['Throwmenot','home','pending'],
+    ['Stake','home','pending'],
+    ['Zed','home','pending'],
+    // Jashanmal Group brands
+    ['Clarks','fashion','pending'],
+    ['Dune London','fashion','pending'],
+    ['Samsonite','fashion','pending'],
+    ['Tumi','fashion','pending'],
+    ['Bang & Olufsen','elec','pending'],
+    // Chalhoub Group brands
+    ['Level Shoes','fashion','pending'],
+    ['Faces','beauty','pending'],
+    ['Wojooh','beauty','pending'],
+    ['Sephora','beauty','pending'],
+    ['Tanagra','home','pending'],
+    // Al Yasra Fashion brands
+    ['DKNY','fashion','pending'],
+    ['Ecco','fashion','pending'],
+    ['Nine West','fashion','pending'],
+    ['Steve Madden','fashion','pending'],
+    // Beside Group brands
+    ['Diesel','fashion','pending'],
+    ['Scotch & Soda','fashion','pending'],
+    ['Puma','fashion','pending'],
+    ['G-Star RAW','fashion','pending'],
+    // Al Tayer Group brands
+    ["Bloomingdale's",'fashion','pending'],
+    ['Harvey Nichols','fashion','pending'],
+    ['Ounass','fashion','pending'],
+    ['Areej','beauty','pending'],
   ];
   const campNames = [
     'Spring Saver','Loyalty Lift','Weekend Burst','Festival Push','Cashback Sprint',
