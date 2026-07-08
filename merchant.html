@@ -1493,14 +1493,16 @@ const OFFERS = {
     img: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&h=300&q=70',
   },
 };
-// Well-known electronics brands Jumbo carries, for the campaign creative logo picker
+// Well-known electronics brands Jumbo carries, for the campaign creative logo
+// picker. Logos served by logo.dev (publishable key).
+const LOGO_DEV = (domain) => `https://img.logo.dev/${domain}?token=pk_PCfI5A2ISc2tZmQNIql7Ww&size=256&format=png&retina=true`;
 const LOGO_ASSETS = [
-  { name: 'Samsung', url: 'https://www.google.com/s2/favicons?domain=samsung.com&sz=256' },
-  { name: 'Sony', url: 'https://www.google.com/s2/favicons?domain=sony.com&sz=256' },
-  { name: 'Apple', url: 'https://www.google.com/s2/favicons?domain=apple.com&sz=256' },
-  { name: 'Bose', url: 'https://www.google.com/s2/favicons?domain=bose.com&sz=256' },
-  { name: 'JBL', url: 'https://www.google.com/s2/favicons?domain=jbl.com&sz=256' },
-  { name: 'Sharaf DG', url: 'https://www.google.com/s2/favicons?domain=sharafdg.com&sz=256' },
+  { name: 'Samsung', url: LOGO_DEV('samsung.com') },
+  { name: 'Sony', url: LOGO_DEV('sony.com') },
+  { name: 'Apple', url: LOGO_DEV('apple.com') },
+  { name: 'Bose', url: LOGO_DEV('bose.com') },
+  { name: 'JBL', url: LOGO_DEV('jbl.com') },
+  { name: 'Sharaf DG', url: LOGO_DEV('sharafdg.com') },
 ];
 let recAssetType = 'graphic';
 const DEFAULT_PREV_ICON = 'shopping';

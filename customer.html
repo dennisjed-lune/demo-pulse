@@ -1119,6 +1119,24 @@ Object.assign(window, { PULSE_OFFERS, PULSE_ACTIVITY, PULSE_STEPS_23, PULSE_SEED
 
 <!-- pulse-components.jsx -->
 <script type="text/babel" data-presets="react">
+// Real brand logos via logo.dev, with the letter monogram as fallback.
+const PULSE_DOMAINS = {
+  'Expedia': 'expedia.com', 'Eyewa': 'eyewa.com', 'The Meal': 'themeal.ae',
+  'Ajmal Perfumes': 'ajmalperfume.com', 'Rayna Tours': 'raynatours.com', 'Reebok': 'reebok.com',
+  'Beyond the Beach': 'beyondthebeach.com', 'Sharaf DG': 'sharafdg.com',
+};
+function PBrandLogo({ offer }) {
+  const [failed, setFailed] = React.useState(false);
+  const d = PULSE_DOMAINS[offer.brand];
+  if (d && !failed) {
+    return <img src={`https://img.logo.dev/${d}?token=pk_PCfI5A2ISc2tZmQNIql7Ww&size=64&format=png&retina=true`}
+                alt={offer.brand}
+                style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff', borderRadius: 'inherit' }}
+                onError={() => setFailed(true)} />;
+  }
+  return offer.initial;
+}
+
 function PBanner() {
   return (
     <div className="p-banner" data-comment-anchor="activation-banner">
@@ -1134,7 +1152,7 @@ function PBanner() {
 function PBrandChip({ offer }) {
   return (
     <div className="p-chip">
-      <div className="p-chip-logo">{offer.initial}</div>
+      <div className="p-chip-logo"><PBrandLogo offer={offer} /></div>
       <span className="p-chip-name">{offer.brand}</span>
     </div>
   );
@@ -1188,7 +1206,7 @@ function POfferCard({ offer, layout, state, justActivated, feedback, onActivate,
           <div className="p-hero">{newBadge}<img src={offer.img} alt={offer.brand} loading="lazy" /></div>
           <div className="p-split-info">
             <div className="p-split-brandline">
-              <div className="p-chip-logo">{offer.initial}</div>
+              <div className="p-chip-logo"><PBrandLogo offer={offer} /></div>
               <span className="p-split-brand">{offer.brand}</span>
             </div>
             <h3 className="p-split-headline">{offer.headline}</h3>
