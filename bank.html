@@ -499,8 +499,12 @@ input, textarea { font-family: inherit; }
 .kpi-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--kpi-accent, var(--brand)); flex: none; }
 
 /* ---------- List card ---------- */
-.list-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl2); box-shadow: var(--shadow-sm); overflow: hidden; }
-.toolbar { display: flex; align-items: center; gap: 14px; padding: calc(var(--u)*1.75) calc(var(--u)*2.25); border-bottom: 1px solid var(--line-soft); }
+.list-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl2); box-shadow: var(--shadow-sm); overflow: visible; }
+/* Toolbar sticks just below the breadcrumb bar (71px); the table header sticks
+   just below the toolbar so column headers float while rows scroll. */
+.toolbar { display: flex; align-items: center; gap: 14px; padding: calc(var(--u)*1.75) calc(var(--u)*2.25); border-bottom: 1px solid var(--line-soft);
+  position: sticky; top: 71px; z-index: 12; background: var(--surface);
+  border-top-left-radius: var(--radius-xl2); border-top-right-radius: var(--radius-xl2); }
 .tabs { display: flex; gap: 3px; background: var(--brand-tint); padding: 4px; border-radius: var(--radius); }
 .tab {
   padding: 8px 15px; border-radius: var(--radius-sm);
@@ -527,8 +531,10 @@ input, textarea { font-family: inherit; }
 .tbl thead th {
   text-align: left; font-size: 11px; font-weight: 700; letter-spacing: var(--tracking-wide);
   text-transform: uppercase; color: var(--ink-3);
-  padding: calc(var(--u)*1.5) calc(var(--u)*2.25); border-bottom: 1px solid var(--line-soft);
+  padding: calc(var(--u)*1.5) calc(var(--u)*2.25);
   white-space: nowrap; background: var(--surface-2);
+  position: sticky; top: 140px; z-index: 11;
+  box-shadow: inset 0 -1px 0 var(--line-soft);
 }
 .tbl thead th.num, .tbl tbody td.num { text-align: right; }
 .tbl tbody td { padding: 0 calc(var(--u)*2.25); border-bottom: 1px solid var(--line-soft); height: var(--row-h); font-size: 14px; vertical-align: middle; }
@@ -849,10 +855,10 @@ window.__resources = {
     'The Meal': 'themeal.ae', 'Yango Drive': 'yango.com', 'Rayna Tours': 'raynatours.com',
     'Reebok': 'reebok.com', 'Beyond the Beach': 'beyondthebeach.com', 'Sharaf DG': 'sharafdg.com',
     'Ajmal Perfumes': 'ajmalperfume.com', 'Swiss Arabian': 'swissarabian.com', 'BinSina': 'binsina.ae',
-    'Washmen': 'washmen.com', 'Throwmenot': 'throwmenot.com', 'Stake': 'getstake.com', 'Zed': 'zed.com',
+    'Washmen': 'washmen.com', 'Stake': 'getstake.com',
     'Clarks': 'clarks.com', 'Dune London': 'dunelondon.com', 'Samsonite': 'samsonite.com',
     'Tumi': 'tumi.com', 'Bang & Olufsen': 'bang-olufsen.com', 'Level Shoes': 'levelshoes.com',
-    'Faces': 'faces.com', 'Wojooh': 'wojooh.com', 'Sephora': 'sephora.com', 'Tanagra': 'tanagra.com',
+    'Faces': 'faces.com', 'Sephora': 'sephora.com',
     'DKNY': 'dkny.com', 'Ecco': 'ecco.com', 'Nine West': 'ninewest.com', 'Steve Madden': 'stevemadden.com',
     'Diesel': 'diesel.com', 'Scotch & Soda': 'scotch-soda.com', 'Puma': 'puma.com', 'G-Star RAW': 'g-star.com',
     "Bloomingdale's": 'bloomingdales.ae', 'Harvey Nichols': 'harveynichols.com', 'Ounass': 'ounass.ae', 'Areej': 'areej.ae',
