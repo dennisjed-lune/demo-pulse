@@ -859,145 +859,45 @@ window.__resources = {
   // ---- HERO + detailed campaigns (PRD examples) -------------
   const detailed = [
     mk({
-      merchant: 'Marhaba Mart', campaign: 'Summer Grocery Cashback', cat: 'grocery',
+      merchant: 'Jumbo', campaign: 'Summer Electronics Cashback', cat: 'elec',
       status: 'pending', cashback: 10, budget: 180000, audience: 212640,
       createdOn: '14 Jun 2026', received: '14 Jun, 10:48 GST', cap: 300,
-      start: '1 Jul 2026', end: '31 Aug 2026', refundWindow: 14, ref: 'MM-2606-A',
+      start: '1 Jul 2026', end: '31 Aug 2026', refundWindow: 14, ref: 'JB-2606-A',
       summary: [
-        ['t','10% cashback'], ['n',' at '], ['t','Marhaba Mart'], ['n',', capped at '],
-        ['t','AED 300 per cardholder'], ['n',', on grocery baskets above AED 50 across the summer season.'],
+        ['t','10% cashback'], ['n',' at '], ['t','Jumbo'], ['n',', capped at '],
+        ['t','AED 300 per cardholder'], ['n',', on electronics purchases above AED 200 across the summer season.'],
       ],
       conditions: [
-        'Spends on groceries — AED 500+ per month',
-        'Shops groceries 4+ times per month',
-        'Spends at Spinneys, Lulu or Al Maya in last 90 days',
+        'Spends on electronics — AED 1,000+ per quarter',
+        'Made 2+ electronics purchases in last 6 months',
+        'Spends at Sharaf DG, Emax or Eros in last 90 days',
       ],
-    }),
-    mk({
-      merchant: 'Noon Food', campaign: 'Iftar Boost', cat: 'food',
-      status: 'pending', cashback: 15, budget: 120000, audience: 184210,
-      createdOn: '2 May 2026', received: '2 May, 09:14 GST', cap: 750,
-      start: '8 May 2026', end: '30 Jun 2026', refundWindow: 14, ref: 'NF-2604-A',
-      summary: [
-        ['t','15% cashback'], ['n',' at '], ['t','Noon Food'], ['n',', capped at '],
-        ['t','AED 750 per cardholder'], ['n',', served in-app to '],
-        ['t','184,210 frequent food-delivery spenders'], ['n',' for the Ramadan window.'],
-      ],
-      conditions: [
-        'Spends on food delivery — AED 300+ in last 30 days',
-        'Orders food delivery 6+ times per month',
-        'No spend at Noon Food in last 60 days',
-      ],
-    }),
-    mk({
-      merchant: 'Carrefour', campaign: 'Ramadan Pantry', cat: 'grocery',
-      status: 'pending', cashback: 8, budget: 200000, audience: 275400,
-      createdOn: '3 May 2026', received: '3 May, 11:02 GST', cap: 400,
-      start: '10 May 2026', end: '24 Jun 2026', refundWindow: 14, ref: 'CF-2605-B',
-      summary: [
-        ['t','8% cashback'], ['n',' at '], ['t','Carrefour'], ['n',', capped at '],
-        ['t','AED 400 per cardholder'], ['n',', for grocery baskets above AED 250 across the Ramadan pantry season.'],
-      ],
-      conditions: [
-        'Spends on groceries — AED 250+ per basket',
-        'Shops groceries weekly in last 30 days',
-        'Spends at Carrefour or hypermarkets in last 90 days',
-      ],
-    }),
-    mk({
-      merchant: 'Namshi', campaign: 'Eid Wardrobe', cat: 'fashion',
-      status: 'pending', cashback: 12, budget: 95000, audience: 142800,
-      createdOn: '4 May 2026', received: '4 May, 14:36 GST', cap: 300,
-      start: '12 May 2026', end: '15 Jun 2026', refundWindow: 21, ref: 'NM-2606-C',
-      summary: [
-        ['t','12% cashback'], ['n',' at '], ['t','Namshi'], ['n',', capped at '],
-        ['t','AED 300 per cardholder'], ['n',', targeting fashion-active cardholders ahead of Eid.'],
-      ],
-      conditions: [
-        'Spends on fashion — AED 500+ in last 90 days',
-        'Makes 2+ fashion purchases per quarter',
-        'No spend at Namshi in last 45 days',
-      ],
-    }),
-    mk({
-      merchant: 'Talabat', campaign: 'Late Night Cravings', cat: 'food',
-      status: 'live', cashback: 14, budget: 150000, audience: 168900,
-      liveOn: '1 May 2026', createdOn: '24 Apr 2026', cap: 500,
-      start: '1 May 2026', end: '20 Jun 2026', refundWindow: 14, ref: 'TL-2604-D',
-      acceptedBy: 'Layla Haddad', acceptedAt: '28 Apr 2026 · 16:20 GST',
-      activated: 38947,
-      perf: { views: 96320, daysElapsed: 8, daysTotal: 50, wkActivated: 18, wkViews: 22 },
-      summary: [
-        ['t','14% cashback'], ['n',' at '], ['t','Talabat'], ['n',', capped at '],
-        ['t','AED 500 per cardholder'], ['n',', on orders placed between 22:00–04:00 GST.'],
-      ],
-      conditions: ['Spends on food delivery — AED 200+ in last 30 days', 'Orders food delivery 8+ times per month', 'Spends after 22:00 GST in last 30 days'],
-    }),
-    mk({
-      merchant: 'Sharaf DG', campaign: 'Tech Upgrade', cat: 'elec',
-      status: 'live', cashback: 6, budget: 320000, audience: 98400,
-      liveOn: '28 Apr 2026', createdOn: '20 Apr 2026', cap: 1000,
-      start: '28 Apr 2026', end: '28 Jun 2026', refundWindow: 30, ref: 'SD-2604-E',
-      acceptedBy: 'Layla Haddad', acceptedAt: '25 Apr 2026 · 10:05 GST',
-      activated: 11420,
-      perf: { views: 41200, daysElapsed: 12, daysTotal: 61, wkActivated: 9, wkViews: 12 },
-      summary: [
-        ['t','6% cashback'], ['n',' at '], ['t','Sharaf DG'], ['n',', capped at '],
-        ['t','AED 1,000 per cardholder'], ['n',', on electronics purchases above AED 1,500.'],
-      ],
-      conditions: ['Spends on electronics — AED 1,500+ in last 180 days', 'Made 1+ electronics purchase in last 6 months'],
-    }),
-    mk({
-      merchant: 'Faces', campaign: 'Glow Season', cat: 'beauty',
-      status: 'completed', cashback: 10, budget: 80000, audience: 121000,
-      closedOn: '30 Apr 2026', activated: 82923, createdOn: '1 Mar 2026', cap: 250,
-      start: '15 Mar 2026', end: '30 Apr 2026', refundWindow: 14, ref: 'FC-2603-F',
-      acceptedBy: 'Omar Reyes', acceptedAt: '10 Mar 2026 · 09:40 GST',
-      perf: { views: 184500, daysTotal: 46 },
-      summary: [
-        ['t','10% cashback'], ['n',' at '], ['t','Faces'], ['n',', capped at '],
-        ['t','AED 250 per cardholder'], ['n',', across the spring beauty season.'],
-      ],
-      conditions: ['Spends on beauty — AED 300+ in last 90 days', 'Makes 3+ beauty purchases per quarter'],
-    }),
-    mk({
-      merchant: 'Lulu Hypermarket', campaign: 'Weekly Basket', cat: 'grocery',
-      status: 'completed', cashback: 5, budget: 140000, audience: 210500,
-      closedOn: '25 Apr 2026', activated: 156400, createdOn: '15 Feb 2026', cap: 200,
-      start: '1 Mar 2026', end: '25 Apr 2026', refundWindow: 14, ref: 'LL-2602-G',
-      acceptedBy: 'Layla Haddad', acceptedAt: '20 Feb 2026 · 13:15 GST',
-      perf: { views: 298700, daysTotal: 55 },
-      summary: [
-        ['t','5% cashback'], ['n',' at '], ['t','Lulu Hypermarket'], ['n',', capped at '],
-        ['t','AED 200 per cardholder'], ['n',', on weekly grocery baskets.'],
-      ],
-      conditions: ['Spends on groceries — AED 150+ weekly', 'Shops groceries 4+ times per month'],
-    }),
-    mk({
-      merchant: 'Centrepoint', campaign: 'Back to School', cat: 'fashion',
-      status: 'rejected', cashback: 9, budget: 70000, audience: 88000,
-      rejectedOn: '29 Apr 2026', createdOn: '26 Apr 2026', cap: 75,
-      start: '5 May 2026', end: '5 Jun 2026', refundWindow: 14, ref: 'CP-2604-H',
-      rejectedBy: 'Omar Reyes', rejectedAt: '29 Apr 2026 · 15:48 GST',
-      rejectReasons: ['Cap too low', 'Off calendar'],
-      rejectNote: 'Cap of AED 75 is below our Q2 floor of AED 120, and the window clashes with an existing Eid push.',
-      summary: [
-        ['t','9% cashback'], ['n',' at '], ['t','Centrepoint'], ['n',', capped at '],
-        ['t','AED 75 per cardholder'], ['n',', for back-to-school apparel.'],
-      ],
-      conditions: ['Spends on fashion — AED 200+ in last 60 days', 'Spends on kids & baby in last 90 days'],
     }),
   ];
 
   // ---- filler campaigns for pagination realism ---------------
+  // [name, category, status] \u2014 the full merchant roster shown in the bank Campaign Manager.
   const merchants = [
-    ['Amazon.ae','elec'], ['Mumzworld','home'], ['Eros Group','elec'], ['Nesto','grocery'],
-    ['Grand Hyper','grocery'], ['Apparel Group','fashion'], ['Jumbo','elec'], ['Spinneys','grocery'],
-    ['Magrudy\u2019s','home'], ['Cobone','travel'], ['Wadi','elec'], ['6th Street','fashion'],
-    ['SACOOR','fashion'], ['Bath & Body Works','beauty'], ['Tim Hortons','food'], ['KFC','food'],
-    ['Wild Wadi','travel'], ['Emaar Hospitality','travel'], ['Ace Hardware','home'], ['IKEA','home'],
-    ['Joi Gifts','home'], ['Letstango','elec'], ['Pottery Barn','home'], ['Rivoli','fashion'],
-    ['Babyshop','home'], ['Max Fashion','fashion'], ['Home Centre','home'], ['Lifestyle','fashion'],
+    ['Expedia','travel','live'],
+    ['Eyewa','fashion','live'],
+    ['The Meal','food','live'],
+    ['Ajmal Perfumes','beauty','live'],
+    ['Rayna Tours','travel','live'],
+    ['Reebok','fashion','live'],
+    ['Beyond the Beach','fashion','live'],
+    ['Sharaf DG','elec','live'],
+    ['Yango Drive','travel','pending'],
+    ['Jashanmal Group','fashion','pending'],
+    ['Throwmenot','home','pending'],
+    ['Beside Group','fashion','pending'],
+    ['Washmen','home','pending'],
+    ['Al Yasra Group','fashion','completed'],
+    ['Chalhoub Group','fashion','completed'],
+    ['Al Tayer Group','fashion','completed'],
+    ['Swiss Arabian','beauty','completed'],
+    ['BinSina','beauty','completed'],
+    ['Stake','home','rejected'],
+    ['Zed','home','rejected'],
   ];
   const campNames = [
     'Spring Saver','Loyalty Lift','Weekend Burst','Festival Push','Cashback Sprint',
@@ -1008,50 +908,48 @@ window.__resources = {
   function rnd(seed) { let x = Math.sin(seed * 99.13) * 10000; return x - Math.floor(x); }
 
   const fillers = [];
-  let fi = 0;
-  // distribution to roughly hit KPI strip: pending 12, live 8, accepted/completed 11, rejected 2
-  const plan = [
-    ['pending', 9], ['live', 6], ['completed', 9], ['rejected', 0],
-  ];
-  plan.forEach(([status, n]) => {
-    for (let k = 0; k < n; k++) {
-      const m = merchants[fi % merchants.length];
-      const r = rnd(fi + 7);
-      const cb = 5 + Math.floor(rnd(fi + 1) * 12);
-      const budget = (40 + Math.floor(rnd(fi + 2) * 36)) * 5000;
-      const aud = 40000 + Math.floor(rnd(fi + 3) * 240000);
-      const cap = [150, 200, 250, 300, 400, 500, 750][Math.floor(rnd(fi + 4) * 7)];
-      const dayP = 1 + Math.floor(rnd(fi + 5) * 28);
-      const actRate = status === 'live' ? (0.08 + rnd(fi + 6) * 0.22) : (0.5 + rnd(fi + 6) * 0.35);
-      const activated = (status === 'live' || status === 'completed') ? Math.floor(aud * actRate) : undefined;
-      const views = activated != null ? Math.floor(activated * (1.8 + rnd(fi + 8) * 1.4)) : undefined;
-      const daysTotal = 40 + Math.floor(rnd(fi + 9) * 30);
-      const daysElapsed = Math.max(2, Math.floor(daysTotal * (0.1 + rnd(fi + 10) * 0.4)));
-      const c = mk({
-        merchant: m[0], campaign: campNames[fi % campNames.length], cat: m[1],
-        status, cashback: cb, budget, audience: aud, cap, refundWindow: 14,
-        createdOn: `${dayP} Apr 2026`,
-        liveOn: status === 'live' ? `${dayP} Apr 2026` : undefined,
-        closedOn: status === 'completed' ? `${dayP} Apr 2026` : undefined,
-        rejectedOn: status === 'rejected' ? `${dayP} Apr 2026` : undefined,
-        activated,
-        start: `${dayP} May 2026`, end: `${dayP} Jun 2026`,
-        ref: `${initials(m[0]).toUpperCase()}-26${(10 + fi)}`,
-        acceptedBy: 'Layla Haddad', acceptedAt: `${dayP} Apr 2026 · 12:00 GST`,
-        perf: status === 'live'
-          ? { views, daysElapsed, daysTotal, wkActivated: 6 + Math.floor(r * 16), wkViews: 8 + Math.floor(r * 20) }
-          : status === 'completed'
-          ? { views, daysTotal }
-          : undefined,
-        summary: [
-          ['t', cb + '% cashback'], ['n', ' at '], ['t', m[0]], ['n', ', capped at '],
-          ['t', 'AED ' + cap + ' per cardholder'], ['n', ', for a ' + CAT[m[1]].label.toLowerCase() + ' campaign.'],
-        ],
-        conditions: [`Spends on ${CAT[m[1]].label.toLowerCase()} — AED ${cap}+ in last 60 days`, `Spends on ${CAT[m[1]].label.toLowerCase()} 3+ times in last 60 days`],
-      });
-      fillers.push(c);
-      fi++;
-    }
+  // One campaign per merchant, using its assigned status. Amounts are deterministic.
+  merchants.forEach((m, k) => {
+    const [name, cat, status] = m;
+    const fi = k + 1;
+    const r = rnd(fi + 7);
+    const cb = 5 + Math.floor(rnd(fi + 1) * 12);
+    const budget = (40 + Math.floor(rnd(fi + 2) * 36)) * 5000;
+    const aud = 40000 + Math.floor(rnd(fi + 3) * 240000);
+    const cap = [150, 200, 250, 300, 400, 500, 750][Math.floor(rnd(fi + 4) * 7)];
+    const dayP = 1 + Math.floor(rnd(fi + 5) * 27);
+    const actRate = status === 'live' ? (0.08 + rnd(fi + 6) * 0.22) : (0.5 + rnd(fi + 6) * 0.35);
+    const activated = (status === 'live' || status === 'completed') ? Math.floor(aud * actRate) : undefined;
+    const views = activated != null ? Math.floor(activated * (1.8 + rnd(fi + 8) * 1.4)) : undefined;
+    const daysTotal = 40 + Math.floor(rnd(fi + 9) * 30);
+    const daysElapsed = Math.max(2, Math.floor(daysTotal * (0.1 + rnd(fi + 10) * 0.4)));
+    fillers.push(mk({
+      merchant: name, campaign: campNames[k % campNames.length], cat,
+      status, cashback: cb, budget, audience: aud, cap, refundWindow: 14,
+      createdOn: `${dayP} Apr 2026`,
+      received: status === 'pending' ? `${dayP} Apr, 10:00 GST` : undefined,
+      liveOn: status === 'live' ? `${dayP} Apr 2026` : undefined,
+      closedOn: status === 'completed' ? `${dayP} Apr 2026` : undefined,
+      rejectedOn: status === 'rejected' ? `${dayP} Apr 2026` : undefined,
+      activated,
+      start: `${dayP} May 2026`, end: `${dayP} Jun 2026`,
+      ref: `${initials(name).toUpperCase()}-26${(10 + k)}`,
+      acceptedBy: 'Layla Haddad', acceptedAt: `${dayP} Apr 2026 · 12:00 GST`,
+      rejectedBy: status === 'rejected' ? 'Omar Reyes' : undefined,
+      rejectedAt: status === 'rejected' ? `${dayP} Apr 2026 · 15:00 GST` : undefined,
+      rejectReasons: status === 'rejected' ? ['Cap too low', 'Off calendar'] : undefined,
+      rejectNote: status === 'rejected' ? 'Cap is below our Q2 floor and the window clashes with an existing campaign.' : undefined,
+      perf: status === 'live'
+        ? { views, daysElapsed, daysTotal, wkActivated: 6 + Math.floor(r * 16), wkViews: 8 + Math.floor(r * 20) }
+        : status === 'completed'
+        ? { views, daysTotal }
+        : undefined,
+      summary: [
+        ['t', cb + '% cashback'], ['n', ' at '], ['t', name], ['n', ', capped at '],
+        ['t', 'AED ' + cap + ' per cardholder'], ['n', ', for a ' + CAT[cat].label.toLowerCase() + ' campaign.'],
+      ],
+      conditions: [`Spends on ${CAT[cat].label.toLowerCase()} — AED ${cap}+ in last 60 days`, `Spends on ${CAT[cat].label.toLowerCase()} 3+ times in last 60 days`],
+    }));
   });
 
   const campaigns = detailed.concat(fillers);
