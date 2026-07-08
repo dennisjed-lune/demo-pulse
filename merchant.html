@@ -982,7 +982,7 @@ input, textarea { font-family: inherit; }
             <div id="rec-preview-view" style="display:none;">
               <div class="rec-preview-pane">
                 <div class="cust-card">
-                  <div class="preview-hero" id="rec-prev-hero" style="background-image: url('assets/campaign-hero.png'); height:160px; border-radius: var(--radius-md);"></div>
+                  <div class="preview-hero" id="rec-prev-hero" style="background-image: url('https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70'); height:160px; border-radius: var(--radius-md);"></div>
                   <div class="merchant-row">
                     <div class="merchant-logo" id="rec-prev-logo"><span class="cat-ic" data-icon="shopping" style="width:18px;height:18px;color:var(--lune-teal-700);"></span></div>
                     <div>
@@ -1372,7 +1372,7 @@ function openCampaign(i) {
 function openDetail(name, bank, dates, status, img) {
   document.getElementById('detail-title').textContent = name;
   document.getElementById('detail-sub').textContent = `${bank} · ${dates} 2026`;
-  document.querySelector('.preview-hero').style.backgroundImage = `url('${img || 'assets/campaign-hero.png'}')`;
+  document.querySelector('.preview-hero').style.backgroundImage = `url('${img || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70'}')`;
   const pill = document.getElementById('detail-pill');
   const mode = (status === 'live' || status === 'completed' || status === 'approved') ? status : 'ready';
   pill.outerHTML = PILL[mode].replace('class="pill-status', 'id="detail-pill" class="pill-status');
@@ -1571,7 +1571,7 @@ function recResetMedia() {
   const l = document.getElementById('rec-logo');
   if (l) { l.classList.remove('filled'); l.style.backgroundImage = ''; }
   const h = document.getElementById('rec-prev-hero');
-  if (h) h.style.backgroundImage = "url('assets/campaign-hero.png')";
+  if (h) h.style.backgroundImage = "url('https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70')";
   const pl = document.getElementById('rec-prev-logo');
   if (pl) { pl.classList.remove('logo-set'); pl.style.backgroundImage = ''; pl.innerHTML = `<span class="cat-ic" data-icon="${DEFAULT_PREV_ICON}" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>`; }
 }
