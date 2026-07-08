@@ -841,6 +841,27 @@ window.__resources = {
     return (w[0]?.[0] || 'L') + (w[1]?.[0] || w[0]?.[1] || '');
   }
 
+  // Real brand logos via logo.dev (publishable key). Unknown brands fall back
+  // to the coloured monogram tile in <MerchLogo>.
+  const LOGO_TOKEN = 'pk_PCfI5A2ISc2tZmQNIql7Ww';
+  const DOMAINS = {
+    'Jumbo': 'jumbo.ae', 'Expedia': 'expedia.com', 'Eyewa': 'eyewa.com',
+    'The Meal': 'themeal.ae', 'Yango Drive': 'yango.com', 'Rayna Tours': 'raynatours.com',
+    'Reebok': 'reebok.com', 'Beyond the Beach': 'beyondthebeach.com', 'Sharaf DG': 'sharafdg.com',
+    'Ajmal Perfumes': 'ajmalperfume.com', 'Swiss Arabian': 'swissarabian.com', 'BinSina': 'binsina.ae',
+    'Washmen': 'washmen.com', 'Throwmenot': 'throwmenot.com', 'Stake': 'getstake.com', 'Zed': 'zed.com',
+    'Clarks': 'clarks.com', 'Dune London': 'dunelondon.com', 'Samsonite': 'samsonite.com',
+    'Tumi': 'tumi.com', 'Bang & Olufsen': 'bang-olufsen.com', 'Level Shoes': 'levelshoes.com',
+    'Faces': 'faces.com', 'Wojooh': 'wojooh.com', 'Sephora': 'sephora.com', 'Tanagra': 'tanagra.com',
+    'DKNY': 'dkny.com', 'Ecco': 'ecco.com', 'Nine West': 'ninewest.com', 'Steve Madden': 'stevemadden.com',
+    'Diesel': 'diesel.com', 'Scotch & Soda': 'scotch-soda.com', 'Puma': 'puma.com', 'G-Star RAW': 'g-star.com',
+    "Bloomingdale's": 'bloomingdales.ae', 'Harvey Nichols': 'harveynichols.com', 'Ounass': 'ounass.ae', 'Areej': 'areej.ae',
+  };
+  function logoFor(name) {
+    const d = DOMAINS[name];
+    return d ? `https://img.logo.dev/${d}?token=${LOGO_TOKEN}&size=80&format=png&retina=true` : null;
+  }
+
   let _id = 0;
   function mk(o) {
     const id = 'cmp-' + (++_id);
@@ -853,6 +874,7 @@ window.__resources = {
       subTabs: ['Overview', 'Enrichment', 'Cardholder Preview'],
       brand: brandFill(_id),
       mono: initials(o.merchant || 'L'),
+      logo: logoFor(o.merchant || ''),
     }, o);
   }
 
@@ -877,25 +899,25 @@ window.__resources = {
 
   // ---- filler campaigns for pagination realism ---------------
   // [name, category, status] \u2014 the full merchant roster shown in the bank Campaign Manager.
-  // Every merchant sits in Review Pending (the Campaign Manager landing) so the
-  // list is full. Retail groups are broken out into their individual brands —
-  // each brand is its own campaign, never the group.
+  // [name, category, status] — full roster, weighted toward Review Pending
+  // (the landing) and tapering into live / completed / rejected. Retail groups
+  // are broken out into their individual brands; each brand is its own campaign.
   const merchants = [
     // Direct merchants
-    ['Expedia','travel','pending'],
-    ['Eyewa','fashion','pending'],
-    ['The Meal','food','pending'],
+    ['Expedia','travel','live'],
+    ['Eyewa','fashion','live'],
+    ['The Meal','food','live'],
     ['Yango Drive','travel','pending'],
-    ['Rayna Tours','travel','pending'],
-    ['Reebok','fashion','pending'],
-    ['Beyond the Beach','fashion','pending'],
-    ['Sharaf DG','elec','pending'],
-    ['Ajmal Perfumes','beauty','pending'],
+    ['Rayna Tours','travel','live'],
+    ['Reebok','fashion','live'],
+    ['Beyond the Beach','fashion','live'],
+    ['Sharaf DG','elec','live'],
+    ['Ajmal Perfumes','beauty','live'],
     ['Swiss Arabian','beauty','pending'],
     ['BinSina','beauty','pending'],
     ['Washmen','home','pending'],
     ['Throwmenot','home','pending'],
-    ['Stake','home','pending'],
+    ['Stake','home','rejected'],
     ['Zed','home','pending'],
     // Jashanmal Group brands
     ['Clarks','fashion','pending'],
@@ -904,10 +926,10 @@ window.__resources = {
     ['Tumi','fashion','pending'],
     ['Bang & Olufsen','elec','pending'],
     // Chalhoub Group brands
-    ['Level Shoes','fashion','pending'],
+    ['Level Shoes','fashion','completed'],
     ['Faces','beauty','pending'],
     ['Wojooh','beauty','pending'],
-    ['Sephora','beauty','pending'],
+    ['Sephora','beauty','completed'],
     ['Tanagra','home','pending'],
     // Al Yasra Fashion brands
     ['DKNY','fashion','pending'],
@@ -920,8 +942,8 @@ window.__resources = {
     ['Puma','fashion','pending'],
     ['G-Star RAW','fashion','pending'],
     // Al Tayer Group brands
-    ["Bloomingdale's",'fashion','pending'],
-    ['Harvey Nichols','fashion','pending'],
+    ["Bloomingdale's",'fashion','completed'],
+    ['Harvey Nichols','fashion','completed'],
     ['Ounass','fashion','pending'],
     ['Areej','beauty','pending'],
   ];
@@ -1621,9 +1643,15 @@ Object.assign(window, {
   }
 
   function MerchLogo({ c, size }) {
+    const [failed, setFailed] = React.useState(false);
+    const showImg = c.logo && !failed;
     return (
-      <span className="merch-logo" style={{ background: c.brand, width: size, height: size }}>
-        {c.mono.toUpperCase()}
+      <span className="merch-logo" style={{ background: showImg ? '#fff' : c.brand, width: size, height: size }}>
+        {showImg
+          ? <img src={c.logo} alt={c.merchant}
+                 style={{ width: '78%', height: '78%', objectFit: 'contain', borderRadius: 6 }}
+                 onError={() => setFailed(true)} />
+          : c.mono.toUpperCase()}
       </span>
     );
   }
