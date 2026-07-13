@@ -694,7 +694,25 @@ input, textarea { font-family: inherit; }
 </style>
 </head>
 <body>
-<style>/* demo: hide dev tweak panels */ .tweaks,.twk-panel,[data-omelette-chrome]{display:none!important}</style>
+<style>/* demo: hide dev tweak panels */ .tweaks,.twk-panel,[data-omelette-chrome]{display:none!important}
+/* merchant account switcher */
+.sb-bottom{position:relative;cursor:pointer;border-radius:12px;transition:background .15s;user-select:none}
+.sb-bottom:hover{background:rgba(7,3,18,.04)}
+.sb-bottom .avatar{overflow:hidden;background:#fff;border:1px solid var(--border-subtle)}
+.sb-bottom .avatar img{width:100%;height:100%;object-fit:contain}
+.acct-chev{margin-left:auto;color:var(--text-tertiary);flex:none;transition:transform .18s}
+.sb-bottom.open .acct-chev{transform:rotate(180deg)}
+.acct-menu{position:absolute;left:0;right:0;bottom:calc(100% + 10px);background:#fff;border:1px solid var(--border-subtle);border-radius:14px;box-shadow:0 24px 60px -14px rgba(7,3,18,.34);padding:6px;max-height:400px;overflow-y:auto;display:none;z-index:200}
+.acct-menu.open{display:block}
+.acct-menu .amh{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-tertiary);padding:8px 10px 4px}
+.acct-item{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;font:inherit}
+.acct-item:hover{background:rgba(7,3,18,.05)}
+.acct-item.on{background:#E7F6F2}
+.acct-logo{width:28px;height:28px;border-radius:8px;flex:none;display:grid;place-items:center;background:#fff;border:1px solid var(--border-subtle);overflow:hidden;font-size:10px;font-weight:800;color:var(--lune-teal-700)}
+.acct-logo img{width:100%;height:100%;object-fit:contain}
+.acct-item .an{font-size:13.5px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acct-item .ac{font-size:11px;color:var(--text-tertiary);text-transform:capitalize}
+</style>
 <div class="app" id="app" data-sidebar="light" data-heroes="photo">
 
   <aside class="sidebar">
@@ -744,12 +762,14 @@ input, textarea { font-family: inherit; }
         Campaign Requests
       </button>
     </nav>
-    <div class="sb-bottom">
-      <div class="avatar">DJ</div>
-      <div>
-        <div class="name">Dennis Jedburgh</div>
-        <div class="sub">Jumbo UAE · View profile</div>
+    <div class="sb-bottom" id="acct-switcher" onclick="toggleAcctMenu(event)" title="Switch merchant account">
+      <div class="avatar" id="acct-avatar">JU</div>
+      <div style="min-width:0;flex:1">
+        <div class="name" id="acct-name">Jumbo</div>
+        <div class="sub">Merchant account</div>
       </div>
+      <svg class="acct-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+      <div class="acct-menu" id="acct-menu"></div>
     </div>
   </aside>
 
@@ -796,14 +816,14 @@ input, textarea { font-family: inherit; }
           <div class="preview-body">
             <div class="preview-hero" style="background-image: url('https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70');"></div>
             <div class="merchant-row">
-              <div class="merchant-logo"><span class="cat-ic" data-icon="shopping" style="width: 18px; height: 18px; color: var(--lune-teal-700);"></span></div>
+              <div class="merchant-logo" id="detail-logo"><span class="cat-ic" data-icon="shopping" style="width: 18px; height: 18px; color: var(--lune-teal-700);"></span></div>
               <div>
-                <div class="mname">Jumbo</div>
-                <div class="chips"><span class="chip">Electronics</span><span class="chip">Retail</span></div>
+                <div class="mname" id="detail-mname">Jumbo</div>
+                <div class="chips" id="detail-chips"><span class="chip">Electronics</span><span class="chip">Retail</span></div>
               </div>
             </div>
-            <h2>Get 10% cashback on electronics purchases</h2>
-            <p class="desc">Earn 10% back on every electronics purchase at Jumbo, online or in-store, paid directly to your card at the end of each month.</p>
+            <h2 id="detail-h2">Get 10% cashback on electronics purchases</h2>
+            <p class="desc" id="detail-desc">Earn 10% back on every electronics purchase at Jumbo, online or in-store, paid directly to your card at the end of each month.</p>
             <ul class="terms">
               <li>Cashback cap AED 300 per customer per campaign</li>
               <li>Minimum spend of AED 200 per transaction</li>
@@ -822,13 +842,13 @@ input, textarea { font-family: inherit; }
             <h4>Campaign Details</h4>
             <div class="bsub">Basic information about your campaign</div>
             <div class="kv"><span class="k">Goal</span><span class="v">Acquire new customers</span></div>
-            <div class="kv"><span class="k">Campaign Name</span><span class="v">Summer Electronics Cashback</span></div>
+            <div class="kv"><span class="k">Campaign Name</span><span class="v" id="detail-campname">Summer Electronics Cashback</span></div>
             <div class="kv"><span class="k">Budget</span><span class="v">AED 200,000</span></div>
           </div>
           <div class="req-block">
             <h4>Audience</h4>
             <div class="bsub">We'll reach customers who already shop in these categories</div>
-            <div class="kv"><span class="k">Categories</span><span class="kv-chips"><span class="c">Electronics</span><span class="c">Audio</span><span class="c">Computing</span></span></div>
+            <div class="kv"><span class="k">Categories</span><span class="kv-chips" id="detail-cats"><span class="c">Electronics</span><span class="c">Audio</span><span class="c">Computing</span></span></div>
           </div>
           <div class="req-block">
             <h4>Customer Info</h4>
@@ -1260,17 +1280,103 @@ document.addEventListener('click', (e) => {
   if (t) go(t.dataset.nav);
 });
 
-/* ---------- Campaigns (overview) ---------- */
-const CAMPAIGNS = [
-  { name: 'Summer Electronics Cashback', cashback: '10%', dates: '1 Jul – 31 Aug', bank: 'Abu Dhabi Islamic Bank', icon: 'shopping', color: 'var(--cat-shopping)', status: 'live', img: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=60' },
-  { name: 'Weekend Gadget Bonus', cashback: '8%', dates: '1 May – 30 Jun', bank: 'Ajman Bank', icon: 'shopping', color: 'var(--cat-dining)', status: 'live', img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60' },
-  { name: 'Back-to-School Tech', cashback: '12%', dates: '15 Aug – 15 Sep', bank: 'American Express', icon: 'shopping', color: 'var(--cat-travel)', status: 'live', img: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=800&q=60' },
-  { name: 'New Device Upgrade', cashback: '9%', dates: '1 Jun – 31 Jul', bank: 'D360 Bank', icon: 'shopping', color: 'var(--cat-wellness)', status: 'live', img: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=60' },
-  { name: 'Online Order Cashback', cashback: '11%', dates: '10 Jun – 10 Jul', bank: 'Beyon Money', icon: 'shopping', color: 'var(--cat-shopping)', status: 'live', img: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=60' },
-  { name: 'Smart Home Saver', cashback: '7%', dates: '1 Jul – 30 Sep', bank: 'Commercial Bank of Dubai', icon: 'shopping', color: 'var(--cat-travel)', status: 'live', img: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=60' },
-  { name: 'Ramadan Tech Deals', cashback: '12%', dates: '1 Mar – 30 Mar', bank: 'Abu Dhabi Islamic Bank', icon: 'shopping', color: 'var(--cat-dining)', status: 'completed', img: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=60' },
-  { name: 'New Year Upgrade', cashback: '9%', dates: '2 Jan – 31 Jan', bank: 'Ajman Bank', icon: 'shopping', color: 'var(--cat-wellness)', status: 'completed', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=60' },
+/* ---------- Merchant accounts (match the bank campaign roster) ---------- */
+const MERCH_LOGO_TOKEN = 'pk_PCfI5A2ISc2tZmQNIql7Ww';
+function mLogo(domain){ return domain ? `https://img.logo.dev/${domain}?token=${MERCH_LOGO_TOKEN}&size=64&format=png&retina=true` : null; }
+function mInitials(name){ const w = String(name).replace(/[^A-Za-z0-9 ]/g,'').split(' ').filter(Boolean); return ((w[0]?.[0]||'M')+(w[1]?.[0]||w[0]?.[1]||'')).toUpperCase(); }
+
+const CATS = {
+  elec:    { label:'Electronics', noun:'electronics', icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1498049794561-7780e7231661','photo-1517336714731-489689fd1ca8','photo-1511707171634-5f897ff02aa9'] },
+  travel:  { label:'Travel',      noun:'travel',      icon:'travel',   color:'var(--cat-travel)',   imgs:['photo-1436491865332-7a61a109cc05','photo-1507525428034-b723cf961d3e','photo-1518684079-3c830dcef090'] },
+  fashion: { label:'Fashion',     noun:'fashion',     icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1441986300917-64674bd600d8','photo-1571019613454-1cb2f99b2d8b','photo-1483985988355-763728e1935b'] },
+  beauty:  { label:'Beauty',      noun:'beauty',      icon:'wellness', color:'var(--cat-wellness)', imgs:['photo-1596462502278-27bfdc403348','photo-1541643600914-78b084683601','photo-1512496015851-a90fb38ba796'] },
+  food:    { label:'Dining',      noun:'dining',      icon:'dining',   color:'var(--cat-dining)',   imgs:['photo-1414235077428-338989a2e8c0','photo-1517248135467-4c7edcad34c4','photo-1504674900247-0877df9cc836'] },
+  home:    { label:'Household',   noun:'home',        icon:'shopping', color:'var(--cat-travel)',   imgs:['photo-1544244015-0df4b3ffc6b0','photo-1555041469-a586c61ea9bc','photo-1493663284031-b7e3aefcae8e'] },
+};
+
+const MERCHANTS = [
+  ['Jumbo','elec','jumbo.ae'], ['Expedia','travel','expedia.com'], ['Eyewa','fashion','eyewa.com'],
+  ['The Meal','food','themeal.ae'], ['Yango Drive','travel','yango.com'], ['Rayna Tours','travel','raynatours.com'],
+  ['Reebok','fashion','reebok.com'], ['Beyond the Beach','fashion','beyondthebeach.com'], ['Sharaf DG','elec','sharafdg.com'],
+  ['Ajmal Perfumes','beauty','ajmalperfume.com'], ['Swiss Arabian','beauty','swissarabian.com'], ['BinSina','beauty','binsina.ae'],
+  ['Washmen','home','washmen.com'], ['Throwmenot','home',''], ['Stake','home','getstake.com'], ['Zed','home',''],
+  ['Clarks','fashion','clarks.com'], ['Dune London','fashion','dunelondon.com'], ['Samsonite','fashion','samsonite.com'],
+  ['Tumi','fashion','tumi.com'], ['Bang & Olufsen','elec','bang-olufsen.com'], ['Level Shoes','fashion','levelshoes.com'],
+  ['Faces','beauty','faces.com'], ['Wojooh','beauty',''], ['Sephora','beauty','sephora.com'], ['Tanagra','home',''],
+  ['DKNY','fashion','dkny.com'], ['Ecco','fashion','ecco.com'], ['Nine West','fashion','ninewest.com'], ['Steve Madden','fashion','stevemadden.com'],
+  ['Diesel','fashion','diesel.com'], ['Scotch & Soda','fashion','scotch-soda.com'], ['Puma','fashion','puma.com'], ['G-Star RAW','fashion','g-star.com'],
+  ["Bloomingdale's",'fashion','bloomingdales.ae'], ['Harvey Nichols','fashion','harveynichols.com'], ['Ounass','fashion','ounass.ae'], ['Areej','beauty','areej.ae'],
+].map(a => ({ name:a[0], cat:a[1], domain:a[2] }));
+
+/* ---------- Campaigns (overview) — generated for the active merchant ---------- */
+const CAMPAIGN_ROWS = [
+  { name:'Summer Cashback',       cashback:'10%', dates:'1 Jul – 31 Aug', bank:'Abu Dhabi Islamic Bank',   status:'live' },
+  { name:'Weekend Boost',         cashback:'8%',  dates:'1 May – 30 Jun',  bank:'Ajman Bank',               status:'live' },
+  { name:'Loyalty Lift',          cashback:'12%', dates:'15 Aug – 15 Sep', bank:'American Express',          status:'live' },
+  { name:'New Customer Drive',    cashback:'9%',  dates:'1 Jun – 31 Jul',  bank:'D360 Bank',                status:'live' },
+  { name:'Online Order Cashback', cashback:'11%', dates:'10 Jun – 10 Jul', bank:'Beyon Money',              status:'live' },
+  { name:'Seasonal Saver',        cashback:'7%',  dates:'1 Jul – 30 Sep',  bank:'Commercial Bank of Dubai', status:'live' },
+  { name:'Flash Reward',          cashback:'12%', dates:'1 Mar – 30 Mar',  bank:'Abu Dhabi Islamic Bank',   status:'completed' },
+  { name:'Members Reward',        cashback:'9%',  dates:'2 Jan – 31 Jan',  bank:'Ajman Bank',               status:'completed' },
 ];
+function buildCampaigns(m){
+  const cat = CATS[m.cat] || CATS.elec;
+  return CAMPAIGN_ROWS.map((r,i)=>({
+    name: i===0 ? `Summer ${cat.label} Cashback` : r.name,
+    cashback:r.cashback, dates:r.dates, bank:r.bank, status:r.status,
+    icon:cat.icon, color:cat.color,
+    img:`https://images.unsplash.com/${cat.imgs[i % cat.imgs.length]}?auto=format&fit=crop&w=800&q=60`,
+  }));
+}
+let CAMPAIGNS = buildCampaigns(MERCHANTS[0]);
+
+/* ---------- Merchant account switcher ---------- */
+let curMerchant = 0;
+function mEl(id){ return document.getElementById(id); }
+function mSetTxt(id,t){ var e=mEl(id); if(e) e.textContent=t; }
+function setAvatar(node,m){ if(!node) return; var l=mLogo(m.domain); node.innerHTML = l ? `<img src="${l}" alt="${m.name}">` : mInitials(m.name); }
+function setMerchant(idx){
+  curMerchant = idx;
+  var m = MERCHANTS[idx]; var cat = CATS[m.cat] || CATS.elec;
+  var flagship = 'Summer ' + cat.label + ' Cashback';
+  var g = document.querySelector('[data-screen="overview"] .page-head h1'); if (g) g.textContent = 'Hello, ' + m.name;
+  mSetTxt('acct-name', m.name);
+  setAvatar(mEl('acct-avatar'), m);
+  CAMPAIGNS = buildCampaigns(m);
+  var at = document.querySelector('#overview-tabs .tab.active');
+  renderOverview(at ? at.dataset.filter : 'live');
+  // flagship detail
+  mSetTxt('detail-title', flagship);
+  mSetTxt('detail-campname', flagship);
+  document.querySelectorAll('.mname').forEach(function(n){ n.textContent = m.name; });
+  mSetTxt('detail-h2', 'Get 10% cashback on ' + cat.noun + ' purchases');
+  mSetTxt('detail-desc', 'Earn 10% back on every ' + cat.noun + ' purchase at ' + m.name + ', online or in-store, paid directly to your card at the end of each month.');
+  var ch = mEl('detail-chips'); if (ch) ch.innerHTML = '<span class="chip">' + cat.label + '</span><span class="chip">Retail</span>';
+  var cs = mEl('detail-cats'); if (cs) cs.innerHTML = '<span class="c">' + cat.label + '</span>';
+  var dl = mEl('detail-logo'); if (dl) dl.innerHTML = '<span class="cat-ic" data-icon="' + cat.icon + '" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>';
+  var hero = document.querySelector('.preview-hero');
+  if (hero) hero.style.backgroundImage = "url('https://images.unsplash.com/" + cat.imgs[0] + "?auto=format&fit=crop&w=800&q=70')";
+  // recommendation builder preview
+  mSetTxt('rec-prev-title', '10% Cashback on ' + cat.label);
+  var rn = mEl('rec-offer-name'); if (rn) rn.value = '10% Cashback on ' + cat.label;
+  var rl = mEl('rec-prev-logo'); if (rl) rl.innerHTML = '<span class="cat-ic" data-icon="' + cat.icon + '" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>';
+  var rh = mEl('rec-prev-hero'); if (rh) rh.style.backgroundImage = "url('https://images.unsplash.com/" + cat.imgs[0] + "?auto=format&fit=crop&w=800&q=70')";
+  // requests flagship
+  if (REQUESTS[0]) { REQUESTS[0].name = flagship; renderRequests(); }
+}
+function renderAcctMenu(){
+  var menu = mEl('acct-menu'); if (!menu) return;
+  menu.innerHTML = '<div class="amh">Switch merchant account</div>' + MERCHANTS.map(function(m,i){
+    var l = mLogo(m.domain);
+    var mark = l ? '<img src="' + l + '" alt="">' : mInitials(m.name);
+    var lbl = CATS[m.cat] ? CATS[m.cat].label : '';
+    return '<button type="button" class="acct-item' + (i===curMerchant?' on':'') + '" onclick="chooseMerchant(event,' + i + ')"><span class="acct-logo">' + mark + '</span><span style="min-width:0"><span class="an">' + m.name + '</span><span class="ac">' + lbl + '</span></span></button>';
+  }).join('');
+}
+function chooseMerchant(e,i){ e.stopPropagation(); setMerchant(i); renderAcctMenu(); closeAcctMenu(); }
+function toggleAcctMenu(e){ e.stopPropagation(); var s=mEl('acct-switcher'), mn=mEl('acct-menu'); if(!mn) return; var open=mn.classList.toggle('open'); if(s) s.classList.toggle('open', open); }
+function closeAcctMenu(){ var s=mEl('acct-switcher'), mn=mEl('acct-menu'); if(mn) mn.classList.remove('open'); if(s) s.classList.remove('open'); }
+document.addEventListener('click', function(ev){ var s=mEl('acct-switcher'); if(s && !s.contains(ev.target)) closeAcctMenu(); });
 
 const PILL = {
   live: '<span class="pill-status live"><span class="dot"></span>Live</span>',
@@ -1363,6 +1469,8 @@ wireTabs('overview-tabs', {
 }, renderOverview);
 renderOverview('live');
 renderRequests();
+renderAcctMenu();
+setMerchant(0);
 
 /* ---------- Detail screen ---------- */
 function openCampaign(i) {
