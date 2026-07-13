@@ -446,8 +446,11 @@ code, pre, kbd { font-family: var(--font-mono); }
 .lg-stat__val { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.2; }
 .lg-stat__lbl { font-size: 11px; color: var(--text-tertiary); font-weight: 600; }
 
-/* responsive topbar: shed stats before clipping */
-@media (max-width: 1340px) { .lg-stat:nth-child(4) { display: none; } }
+/* responsive topbar: shed stats from the right before clipping
+   (order L→R by importance: spend, txns, brands, online, countries, international) */
+@media (max-width: 1540px) { .lg-stat:nth-child(6) { display: none; } }
+@media (max-width: 1430px) { .lg-stat:nth-child(5) { display: none; } }
+@media (max-width: 1320px) { .lg-stat:nth-child(4) { display: none; } }
 @media (max-width: 1180px) { .lg-stat:nth-child(3) { display: none; } .lg-search { max-width: 260px; } }
 @media (max-width: 1010px) { .lg-stats { display: none; } }
 .lg-delta { font-size: 11px; font-weight: 700; }
@@ -572,6 +575,19 @@ code, pre, kbd { font-family: var(--font-mono); }
 .lg-origin__keys i { width: 10px; height: 10px; border-radius: 3px; }
 .lg-origin__keys i.uae { background: var(--lg-accent); }
 .lg-origin__keys i.ksa { background: var(--lune-sea); }
+
+/* ---------------- payment channel (online vs in-store) ---------------- */
+.lg-channel { padding: 0 20px; margin-bottom: 22px; }
+.lg-channel__bar { display: flex; height: 12px; border-radius: var(--radius-pill); overflow: hidden; gap: 2px; }
+.lg-channel__bar span { display: block; height: 100%; }
+.lg-channel__bar .on { background: var(--lg-accent); }
+.lg-channel__bar .off { background: var(--lune-sea); }
+.lg-channel__keys { display: flex; gap: 18px; margin-top: 10px; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.lg-channel__keys span { display: flex; align-items: center; gap: 7px; }
+.lg-channel__keys b { font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.lg-channel__keys i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.lg-channel__keys i.on { background: var(--lg-accent); }
+.lg-channel__keys i.off { background: var(--lune-sea); }
 
 /* ---------------- switch + demographics switch ---------------- */
 .lg-switch { width: 38px; height: 22px; border-radius: var(--radius-pill); border: none; cursor: pointer;
@@ -1113,6 +1129,10 @@ window.__resources = {
 
   const AVG_TICKET = { domestic: 62, uk: 210, europe: 240, namerica: 185, easia: 165, sasia: 90, africa: 175 };
 
+  // Online (card-not-present) share of spend by region. Domestic + East Asia skew
+  // higher online; travel-heavy destinations skew in-store (POS while abroad).
+  const ONLINE_SHARE = { domestic: 0.47, uk: 0.38, europe: 0.36, namerica: 0.42, easia: 0.45, sasia: 0.34, africa: 0.31 };
+
   // ---- Demographics ----
   const NAT_POOL = ["Emirati", "Saudi", "Indian", "Pakistani", "Egyptian", "British", "Filipino", "Jordanian", "Lebanese"];
   const NAT_BY_COUNTRY = { "India": "Indian", "Pakistan": "Pakistani", "United Kingdom": "British", "Egypt": "Egyptian" };
@@ -1220,6 +1240,10 @@ window.__resources = {
       .map((n) => ({ name: n, cat: BRAND_BY_NAME[n].cat, volume: brandVol[n], share: brandVol[n] / volume, cards: Math.round(txns * (brandVol[n] / volume) * 0.2) }))
       .sort((a, b) => b.volume - a.volume).slice(0, 4)
       .map((m, mi) => ({ ...m, trend: Array.from({ length: 8 }, (_, w) => Math.round(m.volume / 8 * (0.6 + rng(idx * 71 + mi * 13 + w)() * 0.85))) }));
+    // channel split + distinct-brand universe (separate rng seed so existing figures stay stable)
+    const r2 = rng(idx * 99177 + 41);
+    const online = Math.max(0.16, Math.min(0.72, ONLINE_SHARE[region] * (0.85 + r2() * 0.32)));
+    const brands = Math.round(90 + Math.sqrt(txns) * (0.85 + r2() * 0.55));
     return {
       id: "c" + idx,
       city, country, region, lat, lng,
@@ -1228,6 +1252,9 @@ window.__resources = {
       volume,
       volUAE: Math.round(volume * uaeShare),
       volKSA: Math.round(volume * (1 - uaeShare)),
+      online,
+      onlineVol: Math.round(volume * online),
+      brands,
       txns,
       avgTicket: Math.round(avg * 100) / 100,
       uniqueCards: Math.round(txns * (0.18 + r() * 0.12)),
@@ -1252,6 +1279,12 @@ window.__resources = {
     const f = home === "UAE" ? c.uaeShare : home === "KSA" ? (1 - c.uaeShare) : 1;
     return Math.round((c.brandVol[name] || 0) * f);
   }
+  // distinct-brand count scoped to the home market (sub-linear — a brand universe
+  // doesn't shrink 1:1 with spend share)
+  function effBrands(c, home) {
+    const f = home === "UAE" ? c.uaeShare : home === "KSA" ? (1 - c.uaeShare) : 1;
+    return Math.round(c.brands * (0.45 + 0.55 * Math.sqrt(f)));
+  }
   // headline demographic facts for a city
   const AGE_MID = { "18–24": 21, "25–34": 30, "35–44": 40, "45–54": 50, "55+": 60 };
   function demoSummary(c) {
@@ -1263,7 +1296,7 @@ window.__resources = {
 
   window.LuneGeo = {
     CUR, CATEGORIES, CAT_ORDER, REGIONS, REGION_ORDER, ORIGINS, CITIES, BRANDS, BRAND_BY_NAME,
-    effVol, effTxns, catShare, catVol, brandVol, demoSummary,
+    effVol, effTxns, catShare, catVol, brandVol, effBrands, demoSummary,
   };
 })();
 
@@ -1948,6 +1981,8 @@ function TopBar({ query, onQuery, stats, theme, onToggleTheme }) {
       <div className="lg-stats">
         <div className="lg-stat"><span className="lg-stat__val">{fmtBig(stats.volume)}</span><span className="lg-stat__lbl">Total spend</span></div>
         <div className="lg-stat"><span className="lg-stat__val">{fmtNum(stats.txns)}</span><span className="lg-stat__lbl">Transactions</span></div>
+        <div className="lg-stat"><span className="lg-stat__val">{fmtNum(stats.brands)}</span><span className="lg-stat__lbl">Unique brands</span></div>
+        <div className="lg-stat"><span className="lg-stat__val">{fmtPct(stats.onlinePct)}</span><span className="lg-stat__lbl">Online spend</span></div>
         <div className="lg-stat"><span className="lg-stat__val">{stats.countries}</span><span className="lg-stat__lbl">Countries</span></div>
         <div className="lg-stat"><span className="lg-stat__val">{fmtPct(stats.intlPct)}</span><span className="lg-stat__lbl">International</span></div>
       </div>
@@ -2120,6 +2155,9 @@ function CityDetail({ side, city, home, demographics, onBuild, onClose }) {
   const up = c && c.change >= 0;
   const uaePct = c ? Math.round(c.uaeShare * 100) : 0;
   const originLabel = home === "all" ? "Gulf" : home;
+  const onlinePct = c ? Math.round(c.online * 100) : 0;
+  const onlineVol = c ? Math.round(vol * c.online) : 0;
+  const cityBrands = c ? LuneGeo.effBrands(c, home) : 0;
   return (
     <section className={"lg-card lg-detail side-" + side + (c ? "" : " is-hidden")}>
       {c && (
@@ -2158,8 +2196,22 @@ function CityDetail({ side, city, home, demographics, onBuild, onClose }) {
             <div className="lg-kpis">
               <div className="lg-kpi"><div className="lg-kpi__lbl">Spend · 90d</div><div className="lg-kpi__val">{fmtBig(vol)}</div></div>
               <div className="lg-kpi"><div className="lg-kpi__lbl">Transactions</div><div className="lg-kpi__val">{fmtNum(txns)}</div></div>
-              <div className="lg-kpi"><div className="lg-kpi__lbl">Avg. ticket</div><div className="lg-kpi__val">{fmtUSD(c.avgTicket)}</div></div>
+              <div className="lg-kpi"><div className="lg-kpi__lbl">Unique brands</div><div className="lg-kpi__val">{fmtNum(cityBrands)}</div></div>
               <div className="lg-kpi"><div className="lg-kpi__lbl">Cardholders</div><div className="lg-kpi__val">{fmtNum(c.uniqueCards)}</div></div>
+              <div className="lg-kpi"><div className="lg-kpi__lbl">Avg. ticket</div><div className="lg-kpi__val">{fmtUSD(c.avgTicket)}</div></div>
+              <div className="lg-kpi"><div className="lg-kpi__lbl">Online spend</div><div className="lg-kpi__val">{onlinePct}%</div></div>
+            </div>
+
+            <div className="lg-sub-h">Payment channel<span>online vs in-store</span></div>
+            <div className="lg-channel">
+              <div className="lg-channel__bar">
+                <span className="on" style={{ width: onlinePct + "%" }} />
+                <span className="off" style={{ width: (100 - onlinePct) + "%" }} />
+              </div>
+              <div className="lg-channel__keys">
+                <span><i className="on" />Online {onlinePct}% · <b>{fmtBig(onlineVol)}</b></span>
+                <span><i className="off" />In-store {100 - onlinePct}% · <b>{fmtBig(vol - onlineVol)}</b></span>
+              </div>
             </div>
 
             {demographics && <Demographics city={c} />}
@@ -2690,15 +2742,21 @@ function App() {
   }, [lens, queryMatched, home, activeRegions, activeCats, activeBrands]);
 
   const stats = useMemo(() => {
-    let volume = 0, txns = 0, intl = 0; const countries = new Set();
+    let volume = 0, txns = 0, intl = 0, online = 0, brandSum = 0; const countries = new Set();
     items.forEach((it) => {
       volume += it.value; countries.add(it.country);
       const c = LuneGeo.CITIES.find((x) => x.id === it.id);
       const full = LuneGeo.effVol(c, home) || 1;
-      txns += LuneGeo.effTxns(c, home) * (it.value / full);
+      const frac = it.value / full;
+      txns += LuneGeo.effTxns(c, home) * frac;
+      online += it.value * c.online;
+      brandSum += LuneGeo.effBrands(c, home) * frac;
       if (!it.domestic) intl += it.value;
     });
-    return { volume, txns, countries: countries.size, intlPct: volume ? (intl / volume) * 100 : 0 };
+    // network-distinct brands ≈ sum of per-city distinct discounted for cross-city overlap
+    const brands = Math.round(brandSum * 0.4 / 10) * 10;
+    return { volume, txns, countries: countries.size, intlPct: volume ? (intl / volume) * 100 : 0,
+      onlinePct: volume ? (online / volume) * 100 : 0, brands };
   }, [items, home]);
 
   useEffect(() => {
