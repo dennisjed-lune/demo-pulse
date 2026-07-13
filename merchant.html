@@ -1285,28 +1285,44 @@ const MERCH_LOGO_TOKEN = 'pk_PCfI5A2ISc2tZmQNIql7Ww';
 function mLogo(domain){ return domain ? `https://img.logo.dev/${domain}?token=${MERCH_LOGO_TOKEN}&size=64&format=png&retina=true` : null; }
 function mInitials(name){ const w = String(name).replace(/[^A-Za-z0-9 ]/g,'').split(' ').filter(Boolean); return ((w[0]?.[0]||'M')+(w[1]?.[0]||w[0]?.[1]||'')).toUpperCase(); }
 
-const CATS = {
-  elec:    { label:'Electronics', noun:'electronics', icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1498049794561-7780e7231661','photo-1517336714731-489689fd1ca8','photo-1511707171634-5f897ff02aa9'] },
-  travel:  { label:'Travel',      noun:'travel',      icon:'travel',   color:'var(--cat-travel)',   imgs:['photo-1436491865332-7a61a109cc05','photo-1507525428034-b723cf961d3e','photo-1518684079-3c830dcef090'] },
-  fashion: { label:'Fashion',     noun:'fashion',     icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1441986300917-64674bd600d8','photo-1571019613454-1cb2f99b2d8b','photo-1483985988355-763728e1935b'] },
-  beauty:  { label:'Beauty',      noun:'beauty',      icon:'wellness', color:'var(--cat-wellness)', imgs:['photo-1596462502278-27bfdc403348','photo-1541643600914-78b084683601','photo-1512496015851-a90fb38ba796'] },
-  food:    { label:'Dining',      noun:'dining',      icon:'dining',   color:'var(--cat-dining)',   imgs:['photo-1414235077428-338989a2e8c0','photo-1517248135467-4c7edcad34c4','photo-1504674900247-0877df9cc836'] },
-  home:    { label:'Household',   noun:'home',        icon:'shopping', color:'var(--cat-travel)',   imgs:['photo-1544244015-0df4b3ffc6b0','photo-1555041469-a586c61ea9bc','photo-1493663284031-b7e3aefcae8e'] },
+// Product kits: imagery + copy that reflects what each brand actually sells.
+const KITS = {
+  electronics: { label:'Electronics', noun:'electronics',        icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1498049794561-7780e7231661','photo-1550009158-9ebf69173e03'] },
+  travel:      { label:'Travel',      noun:'travel bookings',    icon:'travel',   color:'var(--cat-travel)',   imgs:['photo-1436491865332-7a61a109cc05','photo-1488646953014-85cb44e25828'] },
+  eyewear:     { label:'Eyewear',     noun:'eyewear',            icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1508296695146-257a814070b4','photo-1591076482161-42ce6da69f67'] },
+  dining:      { label:'Dining',      noun:'dining',             icon:'dining',   color:'var(--cat-dining)',   imgs:['photo-1414235077428-338989a2e8c0','photo-1504674900247-0877df9cc836'] },
+  mobility:    { label:'Rides',       noun:'rides',              icon:'travel',   color:'var(--cat-travel)',   imgs:['photo-1449965408869-eaa3f722e40d','photo-1503376780353-7e6692767b70'] },
+  tours:       { label:'Tours',       noun:'tours & attractions',icon:'travel',   color:'var(--cat-travel)',   imgs:['photo-1512453979798-5ea266f8880c','photo-1528702748617-c64d49f918af'] },
+  sportswear:  { label:'Sportswear',  noun:'sportswear',         icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1542291026-7eec264c27ff','photo-1571019613454-1cb2f99b2d8b'] },
+  beachwear:   { label:'Beachwear',   noun:'beachwear',          icon:'shopping', color:'var(--cat-travel)',   imgs:['photo-1507525428034-b723cf961d3e','photo-1519046904884-53103b34b206'] },
+  fragrance:   { label:'Fragrances',  noun:'fragrances',         icon:'wellness', color:'var(--cat-wellness)', imgs:['photo-1541643600914-78b084683601','photo-1592945403244-b3fbafd7f539'] },
+  pharmacy:    { label:'Pharmacy',    noun:'pharmacy & health',  icon:'wellness', color:'var(--cat-wellness)', imgs:['photo-1587854692152-cbe660dbde88','photo-1471864190281-a93a3070b6de'] },
+  laundry:     { label:'Laundry',     noun:'laundry',            icon:'shopping', color:'var(--cat-travel)',   imgs:['photo-1545173168-9f1947eebb7f','photo-1582735689369-4fe89db7114c'] },
+  footwear:    { label:'Footwear',    noun:'footwear',           icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1549298916-b41d501d3772','photo-1595950653106-6c9ebd614d3a'] },
+  luggage:     { label:'Luggage',     noun:'luggage',            icon:'travel',   color:'var(--cat-travel)',   imgs:['photo-1553062407-98eeb64c6a62','photo-1565026057447-bc90a3dceb87'] },
+  audio:       { label:'Audio',       noun:'audio',              icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1505740420928-5e560c06d30e','photo-1484704849700-f032a568e944'] },
+  beauty:      { label:'Beauty',      noun:'beauty',             icon:'wellness', color:'var(--cat-wellness)', imgs:['photo-1596462502278-27bfdc403348','photo-1512496015851-a90fb38ba796'] },
+  denim:       { label:'Denim',       noun:'denim',              icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1542272604-787c3835535d','photo-1541099649105-f69ad21f3246'] },
+  fashion:     { label:'Fashion',     noun:'fashion',            icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1441986300917-64674bd600d8','photo-1445205170230-053b83016050'] },
+  homeware:    { label:'Homeware',    noun:'homeware & gifts',   icon:'shopping', color:'var(--cat-travel)',   imgs:['photo-1556911220-bff31c812dba','photo-1493663284031-b7e3aefcae8e'] },
+  luxury:      { label:'Luxury',      noun:'luxury fashion',     icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1483985988355-763728e1935b','photo-1490481651871-ab68de25d43d'] },
+  property:    { label:'Property',    noun:'property',           icon:'shopping', color:'var(--cat-travel)',   imgs:['photo-1560518883-ce09059eeffa','photo-1512917774080-9991f1c4c750'] },
+  shopping:    { label:'Shopping',    noun:'shopping',           icon:'shopping', color:'var(--cat-shopping)', imgs:['photo-1441986300917-64674bd600d8','photo-1481437156560-3205f6a55735'] },
 };
 
 const MERCHANTS = [
-  ['Jumbo','elec','jumbo.ae'], ['Expedia','travel','expedia.com'], ['Eyewa','fashion','eyewa.com'],
-  ['The Meal','food','themeal.ae'], ['Yango Drive','travel','yango.com'], ['Rayna Tours','travel','raynatours.com'],
-  ['Reebok','fashion','reebok.com'], ['Beyond the Beach','fashion','beyondthebeach.com'], ['Sharaf DG','elec','sharafdg.com'],
-  ['Ajmal Perfumes','beauty','ajmalperfume.com'], ['Swiss Arabian','beauty','swissarabian.com'], ['BinSina','beauty','binsina.ae'],
-  ['Washmen','home','washmen.com'], ['Throwmenot','home',''], ['Stake','home','getstake.com'], ['Zed','home',''],
-  ['Clarks','fashion','clarks.com'], ['Dune London','fashion','dunelondon.com'], ['Samsonite','fashion','samsonite.com'],
-  ['Tumi','fashion','tumi.com'], ['Bang & Olufsen','elec','bang-olufsen.com'], ['Level Shoes','fashion','levelshoes.com'],
-  ['Faces','beauty','faces.com'], ['Wojooh','beauty',''], ['Sephora','beauty','sephora.com'], ['Tanagra','home',''],
-  ['DKNY','fashion','dkny.com'], ['Ecco','fashion','ecco.com'], ['Nine West','fashion','ninewest.com'], ['Steve Madden','fashion','stevemadden.com'],
-  ['Diesel','fashion','diesel.com'], ['Scotch & Soda','fashion','scotch-soda.com'], ['Puma','fashion','puma.com'], ['G-Star RAW','fashion','g-star.com'],
-  ["Bloomingdale's",'fashion','bloomingdales.ae'], ['Harvey Nichols','fashion','harveynichols.com'], ['Ounass','fashion','ounass.ae'], ['Areej','beauty','areej.ae'],
-].map(a => ({ name:a[0], cat:a[1], domain:a[2] }));
+  ['Jumbo','jumbo.ae','electronics'], ['Expedia','expedia.com','travel'], ['Eyewa','eyewa.com','eyewear'],
+  ['The Meal','themeal.ae','dining'], ['Yango Drive','yango.com','mobility'], ['Rayna Tours','raynatours.com','tours'],
+  ['Reebok','reebok.com','sportswear'], ['Beyond the Beach','beyondthebeach.com','beachwear'], ['Sharaf DG','sharafdg.com','electronics'],
+  ['Ajmal Perfumes','ajmalperfume.com','fragrance'], ['Swiss Arabian','swissarabian.com','fragrance'], ['BinSina','binsina.ae','pharmacy'],
+  ['Washmen','washmen.com','laundry'], ['Throwmenot','','shopping'], ['Stake','getstake.com','property'], ['Zed','','shopping'],
+  ['Clarks','clarks.com','footwear'], ['Dune London','dunelondon.com','footwear'], ['Samsonite','samsonite.com','luggage'],
+  ['Tumi','tumi.com','luggage'], ['Bang & Olufsen','bang-olufsen.com','audio'], ['Level Shoes','levelshoes.com','footwear'],
+  ['Faces','faces.com','beauty'], ['Wojooh','','beauty'], ['Sephora','sephora.com','beauty'], ['Tanagra','','homeware'],
+  ['DKNY','dkny.com','fashion'], ['Ecco','ecco.com','footwear'], ['Nine West','ninewest.com','footwear'], ['Steve Madden','stevemadden.com','footwear'],
+  ['Diesel','diesel.com','denim'], ['Scotch & Soda','scotch-soda.com','fashion'], ['Puma','puma.com','sportswear'], ['G-Star RAW','g-star.com','denim'],
+  ["Bloomingdale's",'bloomingdales.ae','luxury'], ['Harvey Nichols','harveynichols.com','luxury'], ['Ounass','ounass.ae','luxury'], ['Areej','areej.ae','fragrance'],
+].map(a => ({ name:a[0], domain:a[1], kit:a[2] }));
 
 /* ---------- Campaigns (overview) — generated for the active merchant ---------- */
 const CAMPAIGN_ROWS = [
@@ -1320,7 +1336,7 @@ const CAMPAIGN_ROWS = [
   { name:'Members Reward',        cashback:'9%',  dates:'2 Jan – 31 Jan',  bank:'Ajman Bank',               status:'completed' },
 ];
 function buildCampaigns(m){
-  const cat = CATS[m.cat] || CATS.elec;
+  const cat = KITS[m.kit] || KITS.shopping;
   return CAMPAIGN_ROWS.map((r,i)=>({
     name: i===0 ? `Summer ${cat.label} Cashback` : r.name,
     cashback:r.cashback, dates:r.dates, bank:r.bank, status:r.status,
@@ -1337,7 +1353,7 @@ function mSetTxt(id,t){ var e=mEl(id); if(e) e.textContent=t; }
 function setAvatar(node,m){ if(!node) return; var l=mLogo(m.domain); node.innerHTML = l ? `<img src="${l}" alt="${m.name}">` : mInitials(m.name); }
 function setMerchant(idx){
   curMerchant = idx;
-  var m = MERCHANTS[idx]; var cat = CATS[m.cat] || CATS.elec;
+  var m = MERCHANTS[idx]; var cat = KITS[m.kit] || KITS.shopping;
   var flagship = 'Summer ' + cat.label + ' Cashback';
   var g = document.querySelector('[data-screen="overview"] .page-head h1'); if (g) g.textContent = 'Hello, ' + m.name;
   mSetTxt('acct-name', m.name);
@@ -1349,9 +1365,9 @@ function setMerchant(idx){
   mSetTxt('detail-title', flagship);
   mSetTxt('detail-campname', flagship);
   document.querySelectorAll('.mname').forEach(function(n){ n.textContent = m.name; });
-  mSetTxt('detail-h2', 'Get 10% cashback on ' + cat.noun + ' purchases');
-  mSetTxt('detail-desc', 'Earn 10% back on every ' + cat.noun + ' purchase at ' + m.name + ', online or in-store, paid directly to your card at the end of each month.');
-  var ch = mEl('detail-chips'); if (ch) ch.innerHTML = '<span class="chip">' + cat.label + '</span><span class="chip">Retail</span>';
+  mSetTxt('detail-h2', 'Get 10% cashback on ' + cat.noun);
+  mSetTxt('detail-desc', 'Earn 10% back on ' + cat.noun + ' at ' + m.name + ', online or in-store, paid directly to your card at the end of each month.');
+  var ch = mEl('detail-chips'); if (ch) ch.innerHTML = '<span class="chip">' + cat.label + '</span>';
   var cs = mEl('detail-cats'); if (cs) cs.innerHTML = '<span class="c">' + cat.label + '</span>';
   var dl = mEl('detail-logo'); if (dl) dl.innerHTML = '<span class="cat-ic" data-icon="' + cat.icon + '" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>';
   var hero = document.querySelector('.preview-hero');
@@ -1369,7 +1385,7 @@ function renderAcctMenu(){
   menu.innerHTML = '<div class="amh">Switch merchant account</div>' + MERCHANTS.map(function(m,i){
     var l = mLogo(m.domain);
     var mark = l ? '<img src="' + l + '" alt="">' : mInitials(m.name);
-    var lbl = CATS[m.cat] ? CATS[m.cat].label : '';
+    var lbl = KITS[m.kit] ? KITS[m.kit].label : '';
     return '<button type="button" class="acct-item' + (i===curMerchant?' on':'') + '" onclick="chooseMerchant(event,' + i + ')"><span class="acct-logo">' + mark + '</span><span style="min-width:0"><span class="an">' + m.name + '</span><span class="ac">' + lbl + '</span></span></button>';
   }).join('');
 }
