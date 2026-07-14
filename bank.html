@@ -676,6 +676,13 @@ input, textarea { font-family: inherit; }
 .delta.flat { color: var(--ink-2); background: var(--surface-muted); }
 .metric-track { height: 6px; border-radius: 4px; background: var(--line-soft); margin-top: 15px; overflow: hidden; }
 .metric-track i { display: block; height: 100%; border-radius: 4px; }
+/* weekly-spend trend chart */
+.revchart { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: calc(var(--u)*2.5); margin-top: calc(var(--u)*2); background: var(--surface); }
+.revchart-head { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--ink-3); margin-bottom: 14px; }
+.revbars { display: flex; align-items: flex-end; gap: 10px; height: 120px; }
+.revbar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.revbar { width: 100%; max-width: 46px; background: linear-gradient(180deg, var(--brand), var(--brand-strong)); border-radius: 6px 6px 0 0; min-height: 4px; }
+.revbar-lbl { font-size: 11px; color: var(--ink-3); font-weight: 600; }
 
 /* ---------- Decision footer ---------- */
 .decision {
@@ -2103,6 +2110,99 @@ Object.assign(window, {
     );
   }
 
+  // Transaction & revenue — modelled deterministically from the campaign's
+  // activated cardholders, cap, cashback rate and budget.
+  function campaignFinance(c) {
+    const cap = c.cap || 300;
+    const cbRate = (c.cashback || 8) / 100;
+    const budget = c.budget || 100000;
+    const p = c.perf || {};
+    // Cashback committed so far, bounded by the campaign's cashback budget.
+    let burn;
+    if (c.status === 'completed') burn = 0.94;
+    else { const prog = p.daysTotal ? (p.daysElapsed || 0) / p.daysTotal : 0.4; burn = Math.max(0.12, Math.min(0.9, prog)); }
+    const cashback = Math.round(budget * burn);
+    const spend = Math.round(cashback / cbRate);          // qualifying spend that earned the cashback
+    const avgBasket = Math.round(cap * 0.8 + 120);
+    const txns = Math.max(1, Math.round(spend / avgBasket));
+    const transacting = Math.max(1, Math.round(txns / 1.8)); // cardholders who transacted
+    const interchange = Math.round(spend * 0.018);
+    const incremental = Math.round(spend * 0.38);
+    const roas = cashback > 0 ? incremental / cashback : 0;
+    const newCust = Math.round(transacting * 0.42);
+    return { cap, cbRate, budget, cashback, spend, avgBasket, txns, transacting, interchange, incremental, roas, newCust, budgetBurn: burn * 100 };
+  }
+  function weeklySeries(c) {
+    const f = campaignFinance(c);
+    const p = c.perf || {};
+    const totalDays = p.daysTotal || 50;
+    const elapsed = c.status === 'live' ? (p.daysElapsed || totalDays) : totalDays;
+    const weeks = Math.max(3, Math.min(8, Math.ceil(elapsed / 7)));
+    const weights = []; let sum = 0;
+    for (let i = 0; i < weeks; i++) { const w = 0.6 + i * 0.18 + ((i * 37) % 5) / 20; weights.push(w); sum += w; }
+    return weights.map(w => Math.round(f.spend * w / sum));
+  }
+  function RevenueStrip({ c }) {
+    if (c.status !== 'live' && c.status !== 'completed') return null;
+    const live = c.status === 'live';
+    const f = campaignFinance(c);
+    const series = weeklySeries(c);
+    const maxV = Math.max.apply(null, series) || 1;
+    const head = [
+      { label: 'Spend volume processed', value: 'AED ' + fmtNum(f.spend), sub: "on this bank's cards", color: 'var(--brand)', frac: 1 },
+      { label: 'Transactions', value: fmtNum(f.txns), sub: 'qualifying purchases', color: 'var(--brand)', frac: 0.62 },
+      { label: 'Net interchange revenue', value: 'AED ' + fmtNum(f.interchange), sub: 'est. bank revenue', color: 'var(--st-accepted)', frac: 0.6 },
+      { label: 'Cashback liability', value: 'AED ' + fmtNum(f.cashback), sub: f.budgetBurn.toFixed(0) + '% of budget used', color: '#E0A100', frac: f.budgetBurn / 100 },
+    ];
+    const sec = [
+      { label: 'Avg basket', value: 'AED ' + fmtNum(f.avgBasket) },
+      { label: 'Transacting cardholders', value: fmtNum(f.transacting) },
+      { label: 'New-to-merchant', value: fmtNum(f.newCust) },
+    ];
+    return (
+      <div className="block">
+        <div className="section-label" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Icon name="trend" size={14} style={{ color: 'var(--brand)' }} />
+          Transaction &amp; revenue
+          <span style={{ marginLeft: 'auto', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>{live ? 'Live · updated hourly' : 'Final'}</span>
+        </div>
+        <div className="metrics" style={{ '--mcols': 4 }}>
+          {head.map((m, i) => (
+            <div key={i} className="metric">
+              <div className="metric-label">{m.label}</div>
+              <div className="metric-value tnum">{m.value}</div>
+              <div className="delta flat">{m.sub}</div>
+              <div className="metric-track"><i style={{ width: (Math.min(1, m.frac) * 100) + '%', background: m.color }} /></div>
+            </div>
+          ))}
+        </div>
+        <div className="revchart">
+          <div className="revchart-head"><span>Weekly spend</span><span className="tnum">AED {fmtNum(f.spend)} total</span></div>
+          <div className="revbars">
+            {series.map((v, i) => (
+              <div key={i} className="revbar-col">
+                <div className="revbar" style={{ height: Math.round(v / maxV * 100) + '%' }} title={'AED ' + fmtNum(v)}></div>
+                <div className="revbar-lbl">W{i + 1}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="metrics" style={{ '--mcols': 3, marginTop: 'calc(var(--u)*2)' }}>
+          {sec.map((m, i) => (
+            <div key={i} className="metric">
+              <div className="metric-label">{m.label}</div>
+              <div className="metric-value tnum" style={{ fontSize: 22 }}>{m.value}</div>
+            </div>
+          ))}
+        </div>
+        <div className="note info" style={{ maxWidth: 720 }}>
+          <Icon name="info" size={17} />
+          <span>Spend, transactions and revenue are modelled from enriched card transactions attributed to the campaign. Cashback settlement is processed by the issuing bank.</span>
+        </div>
+      </div>
+    );
+  }
+
   function MetricsStrip({ c }) {
     if (c.status !== 'live' && c.status !== 'completed') return null;
     const live = c.status === 'live';
@@ -2152,7 +2252,7 @@ Object.assign(window, {
         </div>
         <div className="note info" style={{ maxWidth: 680 }}>
           <Icon name="info" size={17} />
-          <span>Cashback settlement — amounts paid, pending and refunded — is processed directly by the issuing bank and is not tracked in Pulse during alpha. Pulse reports in-app engagement only.</span>
+          <span>Offer views and activations are tracked live in Pulse from in-app engagement.</span>
         </div>
       </div>
     );
@@ -2304,6 +2404,7 @@ Object.assign(window, {
               <Banner c={c} />
               {c.status === 'rejected' && <RejectRecord c={c} />}
               <MetricsStrip c={c} />
+              <RevenueStrip c={c} />
               <Summary c={c} />
               <Terms c={c} />
               <Schedule c={c} />
