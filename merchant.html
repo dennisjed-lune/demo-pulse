@@ -316,6 +316,24 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 /* ---------- Detail: two-column ---------- */
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); gap: var(--space-6); align-items: start; }
 @media (max-width: 1100px) { .detail-grid { grid-template-columns: 1fr; } }
+/* campaign performance panel */
+.perf-panel { background: var(--bg-surface); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: var(--space-5) var(--space-6); }
+.perf-head { font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-4); }
+.perf-head .perf-sub { margin-left: auto; font-size: 12px; font-weight: var(--weight-medium); color: var(--text-tertiary); }
+.perf-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
+.perf-cards.sec { grid-template-columns: repeat(3, 1fr); margin-top: var(--space-3); }
+.perf-card { border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+.perf-card .pc-label { font-size: 11px; font-weight: var(--weight-bold); letter-spacing: var(--tracking-wide); text-transform: uppercase; color: var(--text-tertiary); }
+.perf-card .pc-val { font-size: 24px; font-weight: var(--weight-bold); color: var(--text-primary); margin-top: 8px; letter-spacing: -.02em; }
+.perf-card .pc-val.pos { color: var(--lune-teal-700); }
+.perf-card .pc-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.perf-chart { margin-top: var(--space-4); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-4); }
+.perf-chart-head { display: flex; justify-content: space-between; font-size: 12px; font-weight: var(--weight-semibold); color: var(--text-tertiary); margin-bottom: 12px; }
+.perf-bars { display: flex; align-items: flex-end; gap: 10px; height: 110px; }
+.perf-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.perf-bar { width: 100%; max-width: 44px; background: linear-gradient(180deg, var(--lune-emerald), var(--lune-teal-700)); border-radius: 6px 6px 0 0; min-height: 4px; }
+.perf-bar-lbl { font-size: 11px; color: var(--text-tertiary); font-weight: var(--weight-semibold); }
+@media (max-width: 900px) { .perf-cards { grid-template-columns: repeat(2, 1fr); } }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -810,6 +828,7 @@ input, textarea { font-family: inherit; }
           <p class="sub" id="detail-sub">Abu Dhabi Islamic Bank · 1 Jul – 31 Aug 2026</p>
         </div>
       </div>
+      <div id="detail-perf" style="display:none;margin-bottom:var(--space-6)"></div>
       <div class="detail-grid">
         <div class="panel">
           <div class="preview-head">Customer Preview</div>
@@ -1492,8 +1511,65 @@ setMerchant(0);
 function openCampaign(i) {
   const c = CAMPAIGNS[i];
   openDetail(c.name, c.bank, c.dates, c.status, c.img);
+  renderMerchantPerf(c);
+}
+/* Campaign performance — modelled deterministically from cashback rate + a seeded budget. */
+function mfmt(n) { return Math.round(n).toLocaleString('en-US'); }
+function mFinance(camp) {
+  const cbRate = (parseFloat(camp.cashback) || 10) / 100;
+  const s = (camp.name || '') + (camp.bank || ''); let seed = 0;
+  for (let i = 0; i < s.length; i++) seed = (seed * 31 + s.charCodeAt(i)) >>> 0;
+  const rnd = (n) => { const x = Math.sin((seed + n) * 99.13) * 10000; return x - Math.floor(x); };
+  const budget = (60 + Math.floor(rnd(1) * 40)) * 5000;
+  const burn = camp.status === 'completed' ? 0.94 : (0.3 + rnd(2) * 0.45);
+  const cashback = Math.round(budget * burn);
+  const spend = Math.round(cashback / cbRate);
+  const avgBasket = 180 + Math.floor(rnd(3) * 260);
+  const txns = Math.max(1, Math.round(spend / avgBasket));
+  const incremental = Math.round(spend * 0.38);
+  const uplift = 18 + Math.floor(rnd(4) * 22);
+  const roas = cashback > 0 ? incremental / cashback : 0;
+  const transacting = Math.max(1, Math.round(txns / 1.8));
+  const newC = Math.round(transacting * 0.42);
+  const retC = transacting - newC;
+  const activationRate = 8 + rnd(5) * 14;
+  return { budget, cashback, spend, avgBasket, txns, incremental, uplift, roas, transacting, newC, retC, activationRate };
+}
+function renderMerchantPerf(camp) {
+  const box = document.getElementById('detail-perf');
+  if (!box) return;
+  if (camp.status !== 'live' && camp.status !== 'completed') { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const live = camp.status === 'live';
+  const f = mFinance(camp);
+  const weeks = live ? 4 : 6;
+  const wts = []; let sum = 0;
+  for (let i = 0; i < weeks; i++) { const w = 0.6 + i * 0.18 + ((i * 37) % 5) / 20; wts.push(w); sum += w; }
+  const series = wts.map(w => Math.round(f.spend * w / sum));
+  const maxV = Math.max.apply(null, series) || 1;
+  const head = [
+    ['Incremental revenue', 'AED ' + mfmt(f.incremental), '+' + f.uplift + '% vs baseline', true],
+    ['Return on cashback', f.roas.toFixed(1) + '×', 'revenue per AED cashback', false],
+    ['Transactions', mfmt(f.txns), 'qualifying purchases', false],
+    ['Average basket', 'AED ' + mfmt(f.avgBasket), 'per transaction', false],
+  ];
+  const sec = [
+    ['New customers', mfmt(f.newC)],
+    ['Returning customers', mfmt(f.retC)],
+    ['Activation rate', f.activationRate.toFixed(1) + '%'],
+  ];
+  box.innerHTML =
+    '<div class="perf-panel">' +
+      '<div class="perf-head">Campaign performance<span class="perf-sub">' + (live ? 'Live · updated hourly' : 'Final results') + '</span></div>' +
+      '<div class="perf-cards">' + head.map(h => '<div class="perf-card"><div class="pc-label">' + h[0] + '</div><div class="pc-val' + (h[3] ? ' pos' : '') + '">' + h[1] + '</div><div class="pc-sub">' + h[2] + '</div></div>').join('') + '</div>' +
+      '<div class="perf-chart"><div class="perf-chart-head"><span>Weekly spend</span><span>AED ' + mfmt(f.spend) + ' total</span></div>' +
+        '<div class="perf-bars">' + series.map((v, i) => '<div class="perf-bar-col"><div class="perf-bar" style="height:' + Math.round(v / maxV * 100) + '%" title="AED ' + mfmt(v) + '"></div><div class="perf-bar-lbl">W' + (i + 1) + '</div></div>').join('') + '</div>' +
+      '</div>' +
+      '<div class="perf-cards sec">' + sec.map(sc => '<div class="perf-card"><div class="pc-label">' + sc[0] + '</div><div class="pc-val" style="font-size:20px">' + sc[1] + '</div></div>').join('') + '</div>' +
+    '</div>';
+  box.style.display = '';
 }
 function openDetail(name, bank, dates, status, img) {
+  var pf = document.getElementById('detail-perf'); if (pf) { pf.style.display = 'none'; pf.innerHTML = ''; }
   document.getElementById('detail-title').textContent = name;
   document.getElementById('detail-sub').textContent = `${bank} · ${dates} 2026`;
   document.querySelector('.preview-hero').style.backgroundImage = `url('${img || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70'}')`;
