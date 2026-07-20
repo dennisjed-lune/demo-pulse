@@ -875,10 +875,35 @@ window.__resources = {
     return d ? `https://img.logo.dev/${d}?token=${LOGO_TOKEN}&size=80&format=png&retina=true` : null;
   }
 
+  /* ---- Bank card portfolio -----------------------------------
+     The campaign request delivers, per targetable card product,
+     { cardId, cardName, holders } — holders = eligible cardholders
+     on that card (already matched on Lune's targeting conditions).
+     The bank chooses which cardIds receive the offer; Pulse then
+     targets the customerIds mapped to those cardIds. -------------- */
+  const CARD_CATALOG = [
+    { cardId: 'signature-cc',  cardName: 'Signature Credit', w: 0.14 },
+    { cardId: 'platinum-cc',   cardName: 'Platinum Credit',  w: 0.24 },
+    { cardId: 'cashback-dc',   cardName: 'Cashback Debit',   w: 0.34 },
+    { cardId: 'everyday-dc',   cardName: 'Everyday Debit',   w: 0.20 },
+    { cardId: 'youth-prepaid', cardName: 'Youth Prepaid',    w: 0.08 },
+  ];
+  function buildCards(total, seed) {
+    const raw = CARD_CATALOG.map((k, i) => k.w * (0.85 + rnd(seed + i * 3) * 0.3));
+    const rawSum = raw.reduce((a, b) => a + b, 0) || 1;
+    let running = 0;
+    return CARD_CATALOG.map((k, i) => {
+      let holders;
+      if (i === CARD_CATALOG.length - 1) { holders = Math.max(0, total - running); }
+      else { holders = Math.round(total * raw[i] / rawSum); running += holders; }
+      return { cardId: k.cardId, cardName: k.cardName, holders };
+    });
+  }
+
   let _id = 0;
   function mk(o) {
     const id = 'cmp-' + (++_id);
-    return Object.assign({
+    const c = Object.assign({
       id,
       cat: 'food',
       cap: 750,
@@ -889,6 +914,10 @@ window.__resources = {
       mono: initials(o.merchant || 'L'),
       logo: logoFor(o.merchant || ''),
     }, o);
+    // card products delivered in the request, and the bank's default selection (all)
+    if (!c.cards) c.cards = buildCards(c.audience || 0, _id);
+    if (!c.selectedCards) c.selectedCards = c.cards.map(k => k.cardId);
+    return c;
   }
 
   // ---- HERO + detailed campaigns (PRD examples) -------------
@@ -2017,6 +2046,15 @@ Object.assign(window, {
   const { Icon, StatusPill, CatTag, MerchLogo, fmtAED, fmtNum } = window;
   const { useState } = React;
 
+  // Eligible audience = holders on the card products the bank has selected.
+  // Falls back to the full audience when a campaign carries no card breakdown.
+  function audienceFor(c) {
+    if (!c.cards || !c.cards.length) return c.audience;
+    const sel = c.selectedCards || c.cards.map(k => k.cardId);
+    return c.cards.filter(k => sel.includes(k.cardId)).reduce((a, k) => a + k.holders, 0);
+  }
+  window.audienceFor = audienceFor;
+
   function Summary({ c }) {
     return (
       <div className="block">
@@ -2080,8 +2118,9 @@ Object.assign(window, {
     );
   }
 
-  function Audience({ c }) {
+  function Audience({ c, audience, cardSummary, children }) {
     const bars = [0.45, 0.7, 1, 0.85, 0.6, 0.4, 0.55, 0.3];
+    const num = audience != null ? audience : c.audience;
     return (
       <div className="block">
         <div className="section-label">Audience</div>
@@ -2089,8 +2128,8 @@ Object.assign(window, {
           <div className="aud-head">
             <Icon name="users" size={26} style={{ color: 'var(--brand)' }} />
             <div>
-              <div className="aud-num tnum">{fmtNum(c.audience)} <small>eligible cardholders</small></div>
-              <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 2 }}>matched on the targeting conditions below</div>
+              <div className="aud-num tnum">{fmtNum(num)} <small>eligible cardholders</small></div>
+              <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 2 }}>{cardSummary || 'matched on the targeting conditions below'}</div>
             </div>
             <div className="aud-bars">
               {bars.map((h, i) => <i key={i} className={h >= 0.8 ? 'on' : ''} style={{ height: (h * 44) + 'px' }} />)}
@@ -2105,7 +2144,58 @@ Object.assign(window, {
               </div>
             ))}
           </div>
+          {children}
         </div>
+      </div>
+    );
+  }
+
+  // Bank-controlled targeting: pick which card products receive the offer.
+  function CardTargeting({ cards, selected, onToggle, total }) {
+    if (!cards || !cards.length) return null;
+    return (
+      <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--line)' }}>
+        <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Icon name="wallet" size={16} style={{ color: 'var(--brand)' }} />Card products
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--ink-3)', margin: '4px 0 12px' }}>
+          Delivered in the campaign request. Select which of your card portfolios receive this offer — eligible cardholders update with your selection.
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {cards.map(k => {
+            const on = selected.includes(k.cardId);
+            return (
+              <button key={k.cardId} onClick={() => onToggle(k.cardId)} aria-pressed={on}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '12px 14px',
+                  textAlign: 'left', cursor: 'pointer', borderRadius: 12,
+                  border: '1px solid ' + (on ? 'var(--brand)' : 'var(--line)'),
+                  background: on ? 'var(--brand-soft)' : 'transparent' }}>
+                <span style={{ width: 20, height: 20, borderRadius: 6, flex: '0 0 auto', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  border: '1.5px solid ' + (on ? 'var(--brand)' : 'var(--ink-3)'),
+                  background: on ? 'var(--brand)' : 'transparent', color: '#fff' }}>
+                  {on && <Icon name="check" size={13} />}
+                </span>
+                <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}>{k.cardName}</span>
+                <span className="tnum" style={{ fontSize: 13.5, fontWeight: 600, color: on ? 'var(--brand-strong)' : 'var(--ink-3)' }}>{fmtNum(k.holders)}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: 14 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>
+            Selected reach <span style={{ color: 'var(--ink-3)', fontWeight: 500 }}>· {selected.length} of {cards.length} cards</span>
+          </span>
+          <span className="tnum" style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)' }}>
+            {fmtNum(total)} <small style={{ fontSize: 12, fontWeight: 600, color: 'var(--ink-3)' }}>cardholders</small>
+          </span>
+        </div>
+        {!selected.length && (
+          <div className="note warn" style={{ marginTop: 12 }}>
+            <Icon name="alert" size={17} />
+            <span>Select at least one card product to accept this campaign.</span>
+          </div>
+        )}
       </div>
     );
   }
@@ -2354,6 +2444,20 @@ Object.assign(window, {
     const [sub, setSub] = useState('Overview');
     const cat = window.PULSE.categories[c.cat];
     const isPending = c.status === 'pending';
+    const hasCards = !!(c.cards && c.cards.length);
+    const [sel, setSel] = useState(() =>
+      c.selectedCards ? c.selectedCards.slice() : (c.cards || []).map(k => k.cardId));
+    function toggleCard(id) {
+      setSel(prev => {
+        const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
+        c.selectedCards = next; // write-through so the Accept modal + sign-off read the choice
+        return next;
+      });
+    }
+    const reach = hasCards
+      ? c.cards.filter(k => sel.includes(k.cardId)).reduce((a, k) => a + k.holders, 0)
+      : c.audience;
+    const cardSummary = hasCards ? `across ${sel.length} of ${c.cards.length} card products` : null;
 
     return (
       <div className="page">
@@ -2408,7 +2512,11 @@ Object.assign(window, {
               <Summary c={c} />
               <Terms c={c} />
               <Schedule c={c} />
-              <Audience c={c} />
+              {isPending && hasCards
+                ? <Audience c={c} audience={reach} cardSummary={cardSummary}>
+                    <CardTargeting cards={c.cards} selected={sel} onToggle={toggleCard} total={reach} />
+                  </Audience>
+                : <Audience c={c} />}
             </>
           )}
 
@@ -2440,7 +2548,8 @@ Object.assign(window, {
             })()}
             <div className="decision-actions">
               <button className="btn btn-danger btn-lg" onClick={onReject}><Icon name="x" size={17} />Reject</button>
-              <button className="btn btn-primary btn-lg" onClick={onAccept}><Icon name="check" size={17} />Accept</button>
+              <button className="btn btn-primary btn-lg" onClick={onAccept} disabled={hasCards && !sel.length}
+                style={hasCards && !sel.length ? { opacity: 0.5, cursor: 'not-allowed' } : null}><Icon name="check" size={17} />Accept</button>
             </div>
           </div>
         )}
@@ -2475,6 +2584,9 @@ Object.assign(window, {
   }
 
   function AcceptModal({ c, treatment, onClose, onConfirm }) {
+    const reach = window.audienceFor(c);
+    const cards = c.cards || [];
+    const selCards = cards.filter(k => (c.selectedCards || []).includes(k.cardId));
     return (
       <Overlay treatment={treatment} onClose={onClose}>
         <div className="modal-head">
@@ -2482,7 +2594,7 @@ Object.assign(window, {
           <div>
             <div className="modal-title">Accept this campaign?</div>
             <div className="modal-sub">
-              You’re accepting <b style={{ color: 'var(--ink)' }}>{c.merchant} · {c.campaign}</b> for distribution to <b style={{ color: 'var(--ink)' }}>{fmtNum(c.audience)}</b> cardholders. The offer goes live at 00:00 GST on {c.start}.
+              You’re accepting <b style={{ color: 'var(--ink)' }}>{c.merchant} · {c.campaign}</b> for distribution to <b style={{ color: 'var(--ink)' }}>{fmtNum(reach)}</b> cardholders{cards.length ? <> across <b style={{ color: 'var(--ink)' }}>{selCards.length} of {cards.length}</b> card products</> : null}. The offer goes live at 00:00 GST on {c.start}.
             </div>
           </div>
           <button className="modal-close" onClick={onClose}><Icon name="x" size={18} /></button>
@@ -2503,8 +2615,14 @@ Object.assign(window, {
             </div>
             <div className="recap-item">
               <div className="rl">Audience</div>
-              <div className="rv tnum">{fmtNum(c.audience)}</div>
+              <div className="rv tnum">{fmtNum(reach)}</div>
             </div>
+            {cards.length ? (
+              <div className="recap-item">
+                <div className="rl">Card products</div>
+                <div className="rv tnum">{selCards.length} / {cards.length}</div>
+              </div>
+            ) : null}
           </div>
           <div className="note warn">
             <Icon name="alert" size={17} />
@@ -2729,6 +2847,7 @@ Object.assign(window, {
 
     function confirmAccept() {
       const c = current;
+      c.audience = window.audienceFor(c); // lock in the reach from the selected card products
       c.status = 'live';
       c.liveOn = c.start;
       c.acceptedBy = 'Layla Haddad';
@@ -2788,6 +2907,7 @@ Object.assign(window, {
 
         {route.name === 'detail' && current && (
           <DetailScreen
+            key={current.id}
             c={current}
             onJump={open}
             onBack={back}
