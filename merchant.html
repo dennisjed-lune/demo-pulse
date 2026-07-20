@@ -334,6 +334,42 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .perf-bar { width: 100%; max-width: 44px; background: linear-gradient(180deg, var(--lune-emerald), var(--lune-teal-700)); border-radius: 6px 6px 0 0; min-height: 4px; }
 .perf-bar-lbl { font-size: 11px; color: var(--text-tertiary); font-weight: var(--weight-semibold); }
 @media (max-width: 900px) { .perf-cards { grid-template-columns: repeat(2, 1fr); } }
+/* ---------- Profile / settings ---------- */
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+@media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
+.settings-card { padding: var(--space-5) var(--space-6); }
+.settings-card + .settings-card { margin-top: var(--space-4); }
+.sc-head h3 { font-size: 16px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.sc-head p { font-size: 13px; color: var(--text-tertiary); margin-top: 4px; line-height: 1.5; }
+.sc-head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.sc-divider { height: 1px; background: var(--border-subtle); margin: var(--space-4) 0; }
+.field-ro { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-3); font-size: 14px; }
+.field-ro .lbl { color: var(--text-tertiary); font-weight: var(--weight-medium); }
+.field-ro .val { color: var(--text-primary); font-weight: var(--weight-semibold); }
+.field-ro .val.mono { font-family: var(--font-mono); }
+.linklike { color: var(--lune-teal-700); font-weight: var(--weight-semibold); }
+/* ---------- Brands manager (Merchant / POS IDs) ---------- */
+.brands-list { display: flex; flex-direction: column; gap: var(--space-3); margin-top: var(--space-4); }
+.brand-item { border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); }
+.brand-item-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.brand-item-name { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.brand-ids { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-4) var(--space-6); margin-top: var(--space-4); align-items: start; }
+@media (max-width: 720px) { .brand-ids { grid-template-columns: 1fr; } }
+.brand-ids .lbl { font-size: 12px; color: var(--text-tertiary); font-weight: var(--weight-medium); margin-bottom: 6px; }
+.brand-ids .lbl .hint { font-weight: var(--weight-regular); }
+.mid-input { width: 100%; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-sm); padding: 8px 10px; font-family: var(--font-mono); font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-primary); outline: none; background: var(--bg-surface); }
+.mid-input:focus { border-color: var(--lune-emerald); box-shadow: 0 0 0 3px var(--focus-ring); }
+.pos-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pos-chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; font-weight: var(--weight-semibold); padding: 4px 6px 4px 10px; border-radius: var(--radius-pill); background: var(--surface-emerald); color: var(--lune-teal-700); }
+.pos-chip .x { cursor: pointer; opacity: .55; font-size: 15px; line-height: 1; } .pos-chip .x:hover { opacity: 1; }
+.pos-inline { border: var(--border-hairline) dashed var(--border-default); border-radius: var(--radius-pill); padding: 4px 12px; font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); outline: none; background: transparent; width: 130px; }
+.pos-inline:focus { border-color: var(--lune-emerald); border-style: solid; }
+.brands-empty { padding: var(--space-5); text-align: center; font-size: 13px; color: var(--text-tertiary); border: var(--border-hairline) dashed var(--border-default); border-radius: var(--radius-md); margin-top: var(--space-4); }
+.posadd-row { display: flex; gap: var(--space-2); align-items: center; }
+.posadd-row input { flex: 1; border: none; border-bottom: var(--border-hairline) solid var(--border-default); outline: none; padding: 8px 0; font: inherit; font-size: 14px; background: transparent; }
+.posadd-row input:focus { border-bottom-color: var(--lune-emerald); }
+.brand-logo-sm { width: 34px; height: 34px; flex: 0 0 34px; border-radius: var(--radius-sm); border: var(--border-hairline) solid var(--border-subtle); background: #fff; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; color: var(--text-tertiary); }
+.brand-logo-sm img { width: 100%; height: 100%; object-fit: contain; }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -779,6 +815,10 @@ input, textarea { font-family: inherit; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v8M8 12h8"></path></svg>
         Campaign Requests
       </button>
+      <button class="nav-item" data-nav="profile" id="nav-profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+        Profile &amp; Settings
+      </button>
     </nav>
     <div class="sb-bottom" id="acct-switcher" onclick="toggleAcctMenu(event)" title="Switch merchant account">
       <div class="avatar" id="acct-avatar">JU</div>
@@ -884,6 +924,41 @@ input, textarea { font-family: inherit; }
           </div>
           <button class="btn btn-primary btn-block" id="detail-cta" onclick="openModal('modal-confirm')">Send for Approval</button>
         </div>
+      </div>
+    </section>
+
+    <!-- ===== PROFILE & SETTINGS (account · merchant ID · brands · POS IDs) ===== -->
+    <section class="screen" data-screen="profile">
+      <div class="page-head"><h1>Profile &amp; Settings</h1><p>Manage your merchant account, brands, Merchant IDs and POS IDs.</p></div>
+
+      <div class="profile-grid" style="margin-bottom:var(--space-4);">
+        <div class="panel settings-card">
+          <div class="sc-head"><h3>Merchant account</h3></div>
+          <div class="merchant-row" style="margin-top:var(--space-4);">
+            <div class="avatar" id="prof-avatar">M</div>
+            <div><div class="mname" id="prof-name">Jumbo</div><div class="sub" id="prof-email">dennis@jumbo.ae</div></div>
+          </div>
+          <div class="sc-divider"></div>
+          <div class="field-ro"><span class="lbl">Merchant ID</span><span class="val mono" id="prof-mid">MID-0000</span></div>
+          <div class="field-ro"><span class="lbl">Role</span><span class="val">Owner · Full access</span></div>
+          <div class="field-ro"><span class="lbl">Region</span><span class="val">United Arab Emirates</span></div>
+          <div class="field-ro" style="margin-bottom:0;"><span class="lbl">Currency</span><span class="val">AED</span></div>
+        </div>
+        <div class="panel settings-card">
+          <div class="sc-head"><h3>Status</h3><p>Your account is active and matching qualifying transactions across your brands.</p></div>
+          <div class="field-ro" style="margin-top:var(--space-4);"><span class="lbl">Account status</span><span class="pill-status live" style="align-self:flex-start;"><span class="dot"></span>Active</span></div>
+          <div class="field-ro"><span class="lbl">Created</span><span class="val">12 Aug 2023</span></div>
+          <div class="field-ro" style="margin-bottom:0;"><span class="lbl">Last updated</span><span class="val">04 Jun 2026</span></div>
+          <p class="sc-head" style="margin-top:var(--space-4);"><span style="font-size:12px;font-weight:var(--weight-regular);color:var(--text-tertiary);line-height:1.5;">Region and currency are set by Lune when your credentials are issued and can't be changed here.</span></p>
+        </div>
+      </div>
+
+      <div class="panel settings-card">
+        <div class="sc-head-row">
+          <div class="sc-head"><h3>Brands</h3><p>Brands you operate. Each brand carries its own Merchant ID and POS IDs, used to match qualifying transactions.</p></div>
+          <button class="btn btn-primary" onclick="openAddBrand()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M12 5v14M5 12h14"></path></svg> Add brand</button>
+        </div>
+        <div class="brands-list" id="brands-list"></div>
       </div>
     </section>
 
@@ -1164,6 +1239,31 @@ input, textarea { font-family: inherit; }
 </div>
 
 <!-- ===== MODALS ===== -->
+<div class="overlay" id="modal-brand">
+  <div class="modal">
+    <div class="head-row" style="margin-bottom:var(--space-4)">
+      <div><h2 style="font-size:20px;font-weight:var(--weight-bold);color:var(--text-primary)">Add brand</h2><p style="font-size:13px;color:var(--text-tertiary);margin-top:4px">Add a brand you operate, its Merchant ID, and its POS IDs.</p></div>
+      <button class="x" onclick="closeModal('modal-brand')" style="color:var(--text-tertiary)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div class="field-line"><label>Brand name</label><input id="nb-name" placeholder="e.g. Tanagra"></div>
+      <div class="field-line"><label>Merchant ID</label><input id="nb-mid" placeholder="e.g. MID-0000"></div>
+      <div class="field-line">
+        <label>POS IDs · add one or more</label>
+        <div class="posadd-row">
+          <input id="nb-pos" placeholder="e.g. POS-0000" onkeydown="if(event.key==='Enter'){event.preventDefault();addNbPos();}">
+          <button class="btn btn-ghost" type="button" onclick="addNbPos()">Add</button>
+        </div>
+        <div class="pos-chips" id="nb-pos-chips" style="margin-top:10px;"></div>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:var(--space-5);">
+      <button class="btn btn-ghost" onclick="closeModal('modal-brand')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBrand()">Add brand</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="modal-confirm">
   <div class="modal modal-center">
     <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path></svg></div>
@@ -1288,10 +1388,12 @@ function go(screen) {
     'campaign-requests': 'nav-campaigns',
     'wizard': 'nav-campaigns',
     'recommendation': 'nav-campaigns',
+    'profile': 'nav-profile',
   };
   document.querySelectorAll('.nav-item').forEach((n) => n.classList.remove('active'));
   const active = document.getElementById(map[screen]);
   if (active) active.classList.add('active');
+  if (screen === 'profile') { if (window.updateProfileCard) updateProfileCard(); if (window.renderBrands) renderBrands(); }
   document.querySelector('.main').scrollTop = 0;
 }
 document.addEventListener('click', (e) => {
@@ -1398,6 +1500,10 @@ function setMerchant(idx){
   var rh = mEl('rec-prev-hero'); if (rh) rh.style.backgroundImage = "url('https://images.unsplash.com/" + cat.imgs[0] + "?auto=format&fit=crop&w=800&q=70')";
   // requests flagship
   if (REQUESTS[0]) { REQUESTS[0].name = flagship; renderRequests(); }
+  // profile / brands
+  seedBrandsForMerchant(m);
+  updateProfileCard(m);
+  renderBrands();
 }
 function renderAcctMenu(){
   var menu = mEl('acct-menu'); if (!menu) return;
@@ -1502,6 +1608,53 @@ wireTabs('overview-tabs', {
   completed: CAMPAIGNS.filter((c) => c.status === 'completed').length,
   all: CAMPAIGNS.length,
 }, renderOverview);
+/* ---------- Profile: brands + Merchant/POS IDs (per merchant account) ---------- */
+const LOGO_PH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="9" cy="9" r="2"></circle><path d="M21 15l-5-5L5 21"></path></svg>';
+let MERCHANT_BRANDS = [];
+let nbPos = [];
+function escB(s){ return String(s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+function brandCode(name){ return (String(name).replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase()) || 'MER'; }
+function seedBrandsForMerchant(m){
+  const code = brandCode(m.name);
+  let s = 0; for (let i=0;i<m.name.length;i++) s = (s*31 + m.name.charCodeAt(i)) >>> 0;
+  const base = 1000 + (s % 8999);
+  const pos = [];
+  for (let k=0;k<3;k++) pos.push('POS-' + code + '-' + (2200 + ((s >> (k*4)) % 700) + k));
+  MERCHANT_BRANDS = [{ name: m.name, logo: mLogo(m.domain), merchantId: 'MID-' + code + '-' + base, posIds: pos }];
+}
+function updateProfileCard(m){
+  m = m || MERCHANTS[curMerchant];
+  const set = (id,v) => { const e = mEl(id); if (e) e.textContent = v; };
+  set('prof-name', m.name);
+  set('prof-email', 'dennis@' + (m.domain || 'merchant.ae'));
+  set('prof-mid', (MERCHANT_BRANDS[0] && MERCHANT_BRANDS[0].merchantId) || '—');
+  const av = mEl('prof-avatar'); if (av) setAvatar(av, m);
+}
+function renderBrands(){
+  const host = mEl('brands-list'); if (!host) return;
+  if (!MERCHANT_BRANDS.length) { host.innerHTML = '<div class="brands-empty">No brands yet. Add a brand and its Merchant / POS IDs to start matching transactions.</div>'; return; }
+  host.innerHTML = MERCHANT_BRANDS.map(function(b, i){
+    const chips = b.posIds.map(function(p, pi){ return '<span class="pos-chip">' + escB(p) + '<span class="x" role="button" tabindex="0" onclick="removePos(' + i + ',' + pi + ')" aria-label="Remove ' + escB(p) + '">&times;</span></span>'; }).join('');
+    const logo = b.logo ? '<img src="' + escB(b.logo) + '" alt="" onerror="this.outerHTML=LOGO_PH">' : LOGO_PH;
+    return '<div class="brand-item">' +
+      '<div class="brand-item-head"><span class="brand-item-name"><span class="brand-logo-sm">' + logo + '</span>' + escB(b.name) + '</span>' +
+        '<button class="linklike" style="font-size:13px" onclick="removeBrand(' + i + ')">Remove brand</button></div>' +
+      '<div class="brand-ids">' +
+        '<div><div class="lbl">Merchant ID</div><input class="mid-input" value="' + escB(b.merchantId) + '" onchange="setMid(' + i + ', this.value)" aria-label="Merchant ID for ' + escB(b.name) + '"></div>' +
+        '<div><div class="lbl">POS IDs <span class="hint">· matched for qualifying transactions</span></div>' +
+          '<div class="pos-chips">' + chips + '<input class="pos-inline" placeholder="+ Add POS ID" onkeydown="if(event.key===\'Enter\'){addPos(' + i + ', this);}" aria-label="Add POS ID to ' + escB(b.name) + '"></div></div>' +
+      '</div></div>';
+  }).join('');
+}
+function setMid(i, v){ if (MERCHANT_BRANDS[i]) MERCHANT_BRANDS[i].merchantId = v.trim(); }
+function addPos(i, inp){ const v = inp.value.trim(); if (!v) return; if (MERCHANT_BRANDS[i] && !MERCHANT_BRANDS[i].posIds.includes(v)) MERCHANT_BRANDS[i].posIds.push(v); inp.value=''; renderBrands(); }
+function removePos(i, pi){ if (MERCHANT_BRANDS[i]) { MERCHANT_BRANDS[i].posIds.splice(pi,1); renderBrands(); } }
+function removeBrand(i){ MERCHANT_BRANDS.splice(i,1); renderBrands(); }
+function openAddBrand(){ nbPos = []; ['nb-name','nb-mid','nb-pos'].forEach(function(id){ const e=mEl(id); if(e) e.value=''; }); renderNbPos(); openModal('modal-brand'); }
+function renderNbPos(){ const el = mEl('nb-pos-chips'); if (el) el.innerHTML = nbPos.map(function(p,i){ return '<span class="pos-chip">' + escB(p) + '<span class="x" role="button" tabindex="0" onclick="nbPos.splice(' + i + ',1);renderNbPos();" aria-label="Remove ' + escB(p) + '">&times;</span></span>'; }).join(''); }
+function addNbPos(){ const inp = mEl('nb-pos'); const v = inp.value.trim(); if (!v) return; if (!nbPos.includes(v)) nbPos.push(v); inp.value=''; renderNbPos(); inp.focus(); }
+function saveBrand(){ const name = mEl('nb-name').value.trim(); const mid = mEl('nb-mid').value.trim(); const pending = mEl('nb-pos').value.trim(); if (pending && !nbPos.includes(pending)) nbPos.push(pending); if (!name) { mEl('nb-name').focus(); return; } MERCHANT_BRANDS.push({ name: name, logo: '', merchantId: mid, posIds: nbPos.slice() }); closeModal('modal-brand'); renderBrands(); }
+
 renderOverview('live');
 renderRequests();
 renderAcctMenu();
