@@ -435,7 +435,96 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .ov-empty { text-align: center; color: var(--text-tertiary); padding: 32px; }
 .ov-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; font-size: 13px; color: var(--text-tertiary); }
 .ov-foot b { color: var(--text-secondary); }
-.pill-status.scheduled { background: var(--req-ready-bg, rgba(56,82,180,.12)); color: var(--req-ready-ink, #3852B4); }
+.dr-updated .t { color: var(--text-primary); }
+.dr-updated .by { font-size: 12.5px; color: var(--text-tertiary); margin-top: 2px; }
+.dr-prog { min-width: 190px; }
+.dr-prog .step { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+.dr-bar { height: 6px; border-radius: 99px; background: var(--surface-muted); overflow: hidden; }
+.dr-bar > span { display: block; height: 100%; border-radius: 99px; background: var(--lune-emerald); }
+.dr-act { text-align: right; }
+.dr-icon-btn { width: 32px; height: 32px; border-radius: 8px; border: var(--border-hairline) solid var(--border-subtle); background: var(--bg-surface); color: var(--text-tertiary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.dr-icon-btn:hover { color: #c0392b; border-color: #f0c8c2; background: #fdf1ef; }
+.pill-status.scheduled { background: rgba(56,82,180,.12); color: #3852B4; }
+.pill-status.review    { background: rgba(180,120,20,.14); color: #a86a12; }
+
+/* ===== Campaign detail (Figma) ===== */
+.cd-crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-tertiary); margin-bottom: var(--space-4); }
+.cd-crumb svg { color: var(--neutral-300); }
+.cd-crumb .cd-crumb-cur { color: var(--text-secondary); font-weight: var(--weight-medium); }
+.cd-head { display: flex; align-items: center; gap: 14px; margin-bottom: var(--space-5); }
+.cd-back { width: 40px; height: 40px; flex: none; border-radius: 50%; border: var(--border-hairline) solid var(--border-default); background: var(--bg-surface); color: var(--text-secondary); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background var(--dur-fast) var(--ease-standard); }
+.cd-back:hover { background: var(--surface-muted); }
+.cd-logo { width: 48px; height: 48px; flex: none; border-radius: 12px; border: var(--border-hairline) solid var(--border-subtle); background: #fff; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; font-size: 13px; font-weight: 800; color: var(--lune-teal-700); }
+.cd-logo img { width: 100%; height: 100%; object-fit: contain; }
+.cd-head h1 { font-size: 26px; font-weight: var(--weight-bold); color: var(--text-primary); margin: 0; letter-spacing: var(--tracking-tight); }
+.cd-banner { border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: var(--space-5); }
+.cd-banner h4 { margin: 0 0 3px; font-size: 14px; font-weight: var(--weight-semibold); }
+.cd-banner p { margin: 0; font-size: 13px; line-height: 1.5; }
+.cd-banner.review { background: #fdf5e3; }
+.cd-banner.review h4 { color: #a86a12; }
+.cd-banner.review p { color: #8a6a2e; }
+.cd-banner.scheduled { background: #eaeefb; }
+.cd-banner.scheduled h4 { color: #3852B4; }
+.cd-banner.scheduled p { color: #4a5a9e; }
+.cd-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: var(--space-6); align-items: start; }
+@media (max-width: 1100px) { .cd-grid { grid-template-columns: 1fr; } }
+.cd-card { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: var(--space-4); overflow: hidden; }
+.cd-card-head { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: none; border: none; font: inherit; font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); cursor: pointer; }
+.cd-chev { color: var(--text-tertiary); transition: transform var(--dur-fast) var(--ease-standard); }
+.cd-card.open .cd-chev { transform: rotate(180deg); }
+.cd-card-body { display: none; padding: 0 20px 22px; }
+.cd-card.open .cd-card-body { display: block; }
+.cd-kv-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px 28px; }
+@media (max-width: 620px) { .cd-kv-grid { grid-template-columns: 1fr; } }
+.cd-kv { display: flex; align-items: flex-start; gap: 12px; }
+.cd-kv-ic { width: 34px; height: 34px; flex: none; border-radius: 9px; background: var(--surface-emerald); color: var(--lune-teal-700); display: inline-flex; align-items: center; justify-content: center; }
+.cd-kv-ic svg { width: 17px; height: 17px; }
+.cd-kv-t { min-width: 0; display: flex; flex-direction: column; }
+.cd-kv-l { display: block; font-size: 12.5px; color: var(--text-tertiary); margin-bottom: 3px; }
+.cd-kv-v { display: block; font-size: 15px; font-weight: var(--weight-semibold); color: var(--text-primary); }
+.cd-dist-row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-primary); padding: 9px 0; border-bottom: var(--border-hairline) solid var(--border-subtle); }
+.cd-dist-row:last-child { border-bottom: none; }
+.cd-dist-row .b { font-weight: var(--weight-semibold); }
+.cd-dist-row .r { margin-left: auto; color: var(--text-tertiary); font-size: 13px; }
+
+/* Shopper preview panel */
+.shp-panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; position: sticky; top: var(--space-6); }
+.shp-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: var(--border-hairline) solid var(--border-subtle); }
+.shp-eye { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: var(--weight-medium); color: var(--text-secondary); }
+.shp-eye svg { color: var(--text-tertiary); }
+.shp-toggle { display: inline-flex; background: var(--surface-muted); border-radius: var(--radius-pill); padding: 3px; gap: 2px; }
+.shp-toggle button { border: none; background: none; font: inherit; font-size: 13px; font-weight: var(--weight-medium); color: var(--text-secondary); padding: 5px 14px; border-radius: var(--radius-pill); cursor: pointer; }
+.shp-toggle button.on { background: var(--lune-teal-700); color: #fff; }
+.shp-stage { padding: 22px 16px 26px; display: flex; justify-content: center; background: linear-gradient(180deg, var(--surface-muted), var(--surface-card)); }
+.phone { width: 264px; border-radius: 38px; background: #0c1512; padding: 10px; box-shadow: 0 22px 48px rgba(9,20,16,.28); }
+.phone-scr { border-radius: 30px; overflow: hidden; background: #f4f6f5; height: 540px; overflow-y: auto; position: relative; }
+.phone-scr::-webkit-scrollbar { width: 0; }
+.ph-status { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px 4px; font-size: 12px; font-weight: 700; color: #0c1512; }
+.ph-title { padding: 6px 20px 12px; font-size: 18px; font-weight: 800; color: #0c1512; }
+.cust-sheet { background: #0b5c43; color: #fff; border-radius: 22px 22px 0 0; margin: 0 6px; min-height: 480px; padding: 16px 16px 22px; }
+.cust-sheet-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.cust-brand { display: inline-flex; align-items: center; gap: 7px; background: #fff; color: #0c1512; border-radius: var(--radius-pill); padding: 5px 12px 5px 6px; font-size: 12.5px; font-weight: 700; }
+.cust-brand .cb-logo { width: 20px; height: 20px; border-radius: 50%; overflow: hidden; background: #eef1f0; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; }
+.cust-brand .cb-logo img { width: 100%; height: 100%; object-fit: contain; }
+.cust-x { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.18); color: #fff; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.cust-h { font-size: 17px; font-weight: 800; line-height: 1.25; margin: 40px 0 8px; }
+.cust-desc { font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.82); margin: 0 0 20px; }
+.cust-sec-h { font-size: 14px; font-weight: 700; margin: 0 0 12px; }
+.cust-step { display: flex; gap: 11px; margin-bottom: 14px; }
+.cust-step-ic { width: 30px; height: 30px; flex: none; border-radius: 8px; background: rgba(255,255,255,.14); display: inline-flex; align-items: center; justify-content: center; }
+.cust-step-ic svg { width: 15px; height: 15px; color: #7ee0bb; }
+.cust-step-t b { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 2px; }
+.cust-step-t span { font-size: 11.5px; line-height: 1.45; color: rgba(255,255,255,.7); }
+.cust-tc { margin: 20px 0 0; padding: 0 0 0 4px; list-style: none; }
+.cust-tc li { position: relative; font-size: 11.5px; line-height: 1.5; color: rgba(255,255,255,.78); padding-left: 14px; margin-bottom: 6px; }
+.cust-tc li::before { content: ''; position: absolute; left: 2px; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: #7ee0bb; }
+.cust-cta { display: block; width: 100%; margin-top: 20px; background: #0c3d2c; color: #fff; border: 1px solid rgba(255,255,255,.16); border-radius: var(--radius-md); padding: 13px; font: inherit; font-size: 14px; font-weight: 700; text-align: center; cursor: pointer; }
+/* Card (compact) view */
+.cust-card { margin: 8px 12px; background: #0b5c43; color: #fff; border-radius: 18px; padding: 16px; }
+.cust-card .cc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+.cust-card .cc-pct { font-size: 30px; font-weight: 800; }
+.cust-card .cc-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.cust-card .cc-sub { font-size: 11.5px; color: rgba(255,255,255,.75); }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -907,7 +996,7 @@ input, textarea { font-family: inherit; }
           <p>Track your live campaigns performance</p>
         </div>
         <div class="ov-actions">
-          <button class="btn btn-ghost" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Drafts</button>
+          <button class="btn btn-ghost" type="button" data-nav="drafts"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Drafts</button>
           <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
         </div>
       </div>
@@ -926,6 +1015,30 @@ input, textarea { font-family: inherit; }
       </div>
     </section>
 
+    <!-- ===== DRAFT CAMPAIGNS ===== -->
+    <section class="screen" data-screen="drafts">
+      <div class="ov-head">
+        <div class="page-head" style="margin:0;">
+          <h1>Draft Campaigns</h1>
+          <p>Continue working on your saved campaigns</p>
+        </div>
+        <div class="ov-actions">
+          <button class="btn btn-ghost" data-nav="overview"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>Go to Campaigns</button>
+          <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
+        </div>
+      </div>
+      <div class="ov-filters" style="grid-template-columns:1fr;max-width:420px;">
+        <div class="ov-field"><label>Campaign name</label><div class="ov-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input id="dr-q" placeholder="Search Campaign Name" oninput="renderDrafts()"></div></div>
+      </div>
+      <div class="ov-tablewrap">
+        <table class="ov-table">
+          <thead><tr><th>Brand &amp; Campaign</th><th>Last updated</th><th>Progress</th><th style="text-align:right">Actions</th></tr></thead>
+          <tbody id="drafts-body"></tbody>
+        </table>
+        <div class="ov-foot" id="drafts-foot"></div>
+      </div>
+    </section>
+
     <!-- ===== CAMPAIGN REQUESTS ===== -->
     <section class="screen" data-screen="campaign-requests">
       <div class="head-row" style="margin-bottom: 8px;">
@@ -940,68 +1053,42 @@ input, textarea { font-family: inherit; }
 
     <!-- ===== CAMPAIGN DETAIL ===== -->
     <section class="screen screen-wide" data-screen="campaign-detail">
-      <div class="back-head">
-        <button class="back-btn" data-nav="campaign-requests" id="detail-back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
-        <div>
-          <h1><span id="detail-title">Summer Electronics Cashback</span> <span id="detail-pill" class="pill-status ready"><span class="dot"></span>Recommendation ready</span></h1>
-          <p class="sub" id="detail-sub">Abu Dhabi Islamic Bank · 1 Jul – 31 Aug 2026</p>
-        </div>
+      <div class="cd-crumb"><span>Campaign</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg><span id="cd-crumb-name" class="cd-crumb-cur">Campaign</span></div>
+      <div class="cd-head">
+        <button class="cd-back" id="detail-back" data-nav="overview"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <span class="cd-logo" id="detail-logo"></span>
+        <h1 id="detail-title">Summer Cashback</h1>
+        <span id="detail-pill" class="pill-status live"><span class="dot"></span>Live</span>
       </div>
-      <div id="detail-perf" style="display:none;margin-bottom:var(--space-6)"></div>
-      <div class="detail-grid">
-        <div class="panel">
-          <div class="preview-head">Customer Preview</div>
-          <div class="preview-body">
-            <div class="preview-hero" style="background-image: url('https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70');"></div>
-            <div class="merchant-row">
-              <div class="merchant-logo" id="detail-logo"><span class="cat-ic" data-icon="shopping" style="width: 18px; height: 18px; color: var(--lune-teal-700);"></span></div>
-              <div>
-                <div class="mname" id="detail-mname">Jumbo</div>
-                <div class="chips" id="detail-chips"><span class="chip">Electronics</span><span class="chip">Retail</span></div>
+      <div id="detail-banner"></div>
+      <div class="cd-grid">
+        <div class="cd-left">
+          <div class="cd-card open">
+            <button class="cd-card-head" onclick="toggleCd(this)"><span>Campaign Details</span><svg class="cd-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button>
+            <div class="cd-card-body"><div class="cd-kv-grid" id="detail-kv"></div></div>
+          </div>
+          <div class="cd-card">
+            <button class="cd-card-head" onclick="toggleCd(this)"><span>Merchant Details</span><svg class="cd-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button>
+            <div class="cd-card-body"><div class="cd-kv-grid" id="detail-merchant"></div></div>
+          </div>
+          <div class="cd-card">
+            <button class="cd-card-head" onclick="toggleCd(this)"><span>Distribution</span><svg class="cd-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button>
+            <div class="cd-card-body"><div id="detail-distribution"></div></div>
+          </div>
+        </div>
+        <div class="cd-right">
+          <div class="shp-panel">
+            <div class="shp-head">
+              <span class="shp-eye"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>What shoppers will see</span>
+              <div class="shp-toggle" id="shp-toggle">
+                <button data-v="card" onclick="setShpView('card')">Card</button>
+                <button data-v="detail" class="on" onclick="setShpView('detail')">Detail</button>
               </div>
             </div>
-            <h2 id="detail-h2">Get 10% cashback on electronics purchases</h2>
-            <p class="desc" id="detail-desc">Earn 10% back on every electronics purchase at Jumbo, online or in-store, paid directly to your card at the end of each month.</p>
-            <ul class="terms">
-              <li>Cashback cap AED 300 per customer per campaign</li>
-              <li>Minimum spend of AED 200 per transaction</li>
-              <li>30-day refund window applies</li>
-              <li>Valid 1 Jul – 31 Aug 2026</li>
-            </ul>
+            <div class="shp-stage">
+              <div class="phone"><div class="phone-scr" id="shp-screen"></div></div>
+            </div>
           </div>
-          <div class="preview-foot"><span>1 Jul – 31 Aug 2026</span><span class="on">Online &amp; In-store</span></div>
-        </div>
-        <div class="req-panel">
-          <div class="panel req-intro">
-            <h4>Your Campaign Request</h4>
-            <p>These are the details you entered</p>
-          </div>
-          <div class="req-block">
-            <h4>Campaign Details</h4>
-            <div class="bsub">Basic information about your campaign</div>
-            <div class="kv"><span class="k">Goal</span><span class="v">Acquire new customers</span></div>
-            <div class="kv"><span class="k">Campaign Name</span><span class="v" id="detail-campname">Summer Electronics Cashback</span></div>
-            <div class="kv"><span class="k">Budget</span><span class="v">AED 200,000</span></div>
-          </div>
-          <div class="req-block">
-            <h4>Audience</h4>
-            <div class="bsub">We'll reach customers who already shop in these categories</div>
-            <div class="kv"><span class="k">Categories</span><span class="kv-chips" id="detail-cats"><span class="c">Electronics</span><span class="c">Audio</span><span class="c">Computing</span></span></div>
-          </div>
-          <div class="req-block">
-            <h4>Customer Info</h4>
-            <div class="bsub">Key insights about your target customers</div>
-            <div class="kv"><span class="k">Channel</span><span class="v">Online &amp; In-store</span></div>
-            <div class="kv"><span class="k">Avg purchase value</span><span class="v">AED 200</span></div>
-            <div class="kv"><span class="k">Average customer LTV</span><span class="v">AED 4,800</span></div>
-          </div>
-          <div class="req-block">
-            <h4>Activity</h4>
-            <div class="bsub"></div>
-            <div class="kv"><span class="k">Created on</span><span class="v">9 May 2026</span></div>
-            <div class="kv"><span class="k">Recommendation received</span><span class="v">11 May 2026</span></div>
-          </div>
-          <button class="btn btn-primary btn-block" id="detail-cta" onclick="openModal('modal-confirm')">Send for Approval</button>
         </div>
       </div>
     </section>
@@ -1505,6 +1592,7 @@ function go(screen) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('active', s.dataset.screen === screen));
   const map = {
     'overview': 'nav-overview',
+    'drafts': 'nav-overview',
     'campaign-detail': 'nav-campaigns',
     'request-empty': 'nav-campaigns',
     'campaign-requests': 'nav-campaigns',
@@ -1515,6 +1603,7 @@ function go(screen) {
   document.querySelectorAll('.nav-item').forEach((n) => n.classList.remove('active'));
   const active = document.getElementById(map[screen]);
   if (active) active.classList.add('active');
+  if (screen === 'drafts') { if (window.renderDrafts) renderDrafts(); }
   if (screen === 'profile') { if (window.updateProfileCard) updateProfileCard(); if (window.renderBrands) renderBrands(); }
   document.querySelector('.main').scrollTop = 0;
 }
@@ -1569,16 +1658,16 @@ const MERCHANTS = [
 
 /* ---------- Campaigns (overview) — generated for the active merchant ---------- */
 const CAMPAIGN_ROWS = [
-  { name:'Summer Cashback',       cashback:'10%', dates:'1 Jul – 31 Aug', start:'1 Jul 2026',  end:'31 Aug 2026',          duration:'61 days',  bank:'Abu Dhabi Islamic Bank',   status:'live' },
-  { name:'Weekend Boost',         cashback:'8%',  dates:'1 May – 30 Jun',  start:'1 May 2026',  end:'30 Jun 2026',          duration:'60 days',  bank:'Ajman Bank',               status:'live' },
-  { name:'Loyalty Lift',          cashback:'12%', dates:'15 Aug – 15 Sep', start:'15 Aug 2026', end:'15 Sep 2026',          duration:'31 days',  bank:'American Express',          status:'live' },
-  { name:'New Customer Drive',    cashback:'9%',  dates:'1 Jun – 31 Jul',  start:'1 Jun 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'D360 Bank',                status:'live' },
-  { name:'Online Order Cashback', cashback:'11%', dates:'10 Jun – 10 Jul', start:'10 Jun 2026', end:'10 Jul 2026',          duration:'30 days',  bank:'Beyon Money',              status:'live' },
-  { name:'Seasonal Saver',        cashback:'7%',  dates:'1 Jul – 30 Sep',  start:'1 Jul 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'Commercial Bank of Dubai', status:'live' },
-  { name:'Ramadan Reward',        cashback:'15%', dates:'1 Nov – ',        start:'1 Nov 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'Abu Dhabi Islamic Bank',   status:'scheduled' },
-  { name:'Eid Shopping Festival', cashback:'17%', dates:'1 Jan – 28 Feb',  start:'1 Jan 2026',  end:'28 Feb 2026',          duration:'58 days',  bank:'Emirates NBD',             status:'review' },
-  { name:'Flash Reward',          cashback:'12%', dates:'1 Mar – 30 Mar',  start:'1 Mar 2026',  end:'30 Mar 2026',          duration:'29 days',  bank:'Abu Dhabi Islamic Bank',   status:'completed' },
-  { name:'Members Reward',        cashback:'9%',  dates:'2 Jan – 31 Jan',  start:'2 Jan 2026',  end:'31 Jan 2026',          duration:'29 days',  bank:'Ajman Bank',               status:'completed' },
+  { name:'Summer Cashback',       cashback:'10%', goal:'Grow average spend',  budget:'AED 50,000', dates:'1 Jul – 31 Aug', start:'1 Jul 2026',  end:'31 Aug 2026',          duration:'61 days',  bank:'Abu Dhabi Islamic Bank',   status:'live' },
+  { name:'Weekend Boost',         cashback:'8%',  goal:'Increase frequency',  budget:'AED 30,000', dates:'1 May – 30 Jun',  start:'1 May 2026',  end:'30 Jun 2026',          duration:'60 days',  bank:'Ajman Bank',               status:'live' },
+  { name:'Loyalty Lift',          cashback:'12%', goal:'Win back customers',  budget:'AED 40,000', dates:'15 Aug – 15 Sep', start:'15 Aug 2026', end:'15 Sep 2026',          duration:'31 days',  bank:'American Express',          status:'live' },
+  { name:'New Customer Drive',    cashback:'9%',  goal:'Acquire new customers', budget:'AED 60,000', dates:'1 Jun – 31 Jul', start:'1 Jun 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'D360 Bank',                status:'live' },
+  { name:'Online Order Cashback', cashback:'11%', goal:'Grow average spend',  budget:'AED 35,000', dates:'10 Jun – 10 Jul', start:'10 Jun 2026', end:'10 Jul 2026',          duration:'30 days',  bank:'Beyon Money',              status:'live' },
+  { name:'Seasonal Saver',        cashback:'7%',  goal:'Increase frequency',  budget:'AED 45,000', dates:'1 Jul – 30 Sep',  start:'1 Jul 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'Commercial Bank of Dubai', status:'live' },
+  { name:'Ramadan Reward',        cashback:'15%', goal:'Increase frequency',  budget:'AED 30,000', dates:'1 Nov – ',        start:'1 Nov 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'Abu Dhabi Islamic Bank',   status:'scheduled' },
+  { name:'Eid Shopping Festival', cashback:'17%', goal:'Acquire new customers', budget:'AED 75,000', dates:'1 Jan – 28 Feb', start:'1 Jan 2026',  end:'28 Feb 2026',          duration:'58 days',  bank:'Emirates NBD',             status:'review' },
+  { name:'Flash Reward',          cashback:'12%', goal:'Grow average spend',  budget:'AED 25,000', dates:'1 Mar – 30 Mar',  start:'1 Mar 2026',  end:'30 Mar 2026',          duration:'29 days',  bank:'Abu Dhabi Islamic Bank',   status:'completed' },
+  { name:'Members Reward',        cashback:'9%',  goal:'Win back customers',  budget:'AED 40,000', dates:'2 Jan – 31 Jan',  start:'2 Jan 2026',  end:'31 Jan 2026',          duration:'29 days',  bank:'Ajman Bank',               status:'completed' },
 ];
 function buildCampaigns(m){
   const cat = KITS[m.kit] || KITS.shopping;
@@ -1586,8 +1675,10 @@ function buildCampaigns(m){
   return CAMPAIGN_ROWS.map((r,i)=>({
     name: i===0 ? `Summer ${cat.label} Cashback` : r.name,
     brand: m.name, brandLogo: logo,
-    cashback:r.cashback, dates:r.dates, start:r.start, end:r.end, duration:r.duration, bank:r.bank, status:r.status,
-    icon:cat.icon, color:cat.color,
+    cashback:r.cashback, goal:r.goal, budget:r.budget,
+    holdPeriod:'30 days', minSpend:'AED 200', cashbackCap:'AED 300',
+    dates:r.dates, start:r.start, end:r.end, duration:r.duration, bank:r.bank, status:r.status,
+    icon:cat.icon, color:cat.color, noun:cat.noun,
     img:`https://images.unsplash.com/${cat.imgs[i % cat.imgs.length]}?auto=format&fit=crop&w=800&q=60`,
   }));
 }
@@ -1608,17 +1699,9 @@ function setMerchant(idx){
   CAMPAIGNS = buildCampaigns(m);
   populateOvFilters();
   renderOverview();
-  // flagship detail
-  mSetTxt('detail-title', flagship);
-  mSetTxt('detail-campname', flagship);
-  document.querySelectorAll('.mname').forEach(function(n){ n.textContent = m.name; });
-  mSetTxt('detail-h2', 'Get 10% cashback on ' + cat.noun);
-  mSetTxt('detail-desc', 'Earn 10% back on ' + cat.noun + ' at ' + m.name + ', online or in-store, paid directly to your card at the end of each month.');
-  var ch = mEl('detail-chips'); if (ch) ch.innerHTML = '<span class="chip">' + cat.label + '</span>';
-  var cs = mEl('detail-cats'); if (cs) cs.innerHTML = '<span class="c">' + cat.label + '</span>';
-  var dl = mEl('detail-logo'); if (dl) dl.innerHTML = '<span class="cat-ic" data-icon="' + cat.icon + '" style="width:18px;height:18px;color:var(--lune-teal-700);"></span>';
-  var hero = document.querySelector('.preview-hero');
-  if (hero) hero.style.backgroundImage = "url('https://images.unsplash.com/" + cat.imgs[0] + "?auto=format&fit=crop&w=800&q=70')";
+  renderDrafts();
+  // recommendation preview brand name
+  document.querySelectorAll('#rec-step-1 .mname, [data-screen="recommendation"] .mname').forEach(function(n){ n.textContent = m.name; });
   // recommendation builder preview
   mSetTxt('rec-prev-title', '10% Cashback on ' + cat.label);
   var rn = mEl('rec-offer-name'); if (rn) rn.value = '10% Cashback on ' + cat.label;
@@ -1689,6 +1772,33 @@ function renderOverview() {
     (!q || c.name.toLowerCase().includes(q)) && (!st || c.status === st) && (!br || c.brand === br) && (!bk || c.bank === bk));
   body.innerHTML = list.length ? list.map(offerRow).join('') : '<tr><td colspan="7" class="ov-empty">No campaigns match your filters.</td></tr>';
   const foot = mEl('overview-foot'); if (foot) foot.innerHTML = '<span>Showing <b>' + list.length + '</b> of ' + CAMPAIGNS.length + ' campaigns</span><span>Page 1 of 1</span>';
+}
+
+/* ---------- Draft campaigns ---------- */
+const DRAFT_ROWS = [
+  { name: 'Ramadan Beauty Treats 10% Cashback', updated: 'Today, 10:30 AM', by: 'Dennis', step: 2, total: 3 },
+  { name: 'Summer Fashion Fiesta', updated: 'Today, 9:15 AM',  by: 'Dennis', step: 1, total: 3 },
+  { name: 'Back to School Bonanza', updated: 'Yesterday, 4:42 PM', by: 'Dennis', step: 3, total: 3 },
+];
+const TRASH_IC = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"></path></svg>';
+function draftRow(d){
+  const m = MERCHANTS[curMerchant];
+  const logo = mLogo(m.domain);
+  const badge = logo ? '<span class="ov-logo"><img src="'+logo+'" alt="" onerror="this.remove()"></span>' : '<span class="ov-logo">'+mInitials(m.name)+'</span>';
+  const pct = Math.round(d.step / d.total * 100);
+  return '<tr>'+
+    '<td><div class="ov-brand">'+badge+'<div><div class="ov-cname">'+d.name+'</div><div class="ov-bsub">'+m.name+'</div></div></div></td>'+
+    '<td class="dr-updated"><div class="t">'+d.updated+'</div><div class="by">by '+d.by+'</div></td>'+
+    '<td><div class="dr-prog"><div class="step">Step '+d.step+' of '+d.total+'</div><div class="dr-bar"><span style="width:'+pct+'%"></span></div></div></td>'+
+    '<td class="dr-act"><button class="dr-icon-btn" title="Delete draft" onclick="event.stopPropagation()">'+TRASH_IC+'</button></td>'+
+  '</tr>';
+}
+function renderDrafts(){
+  const body = mEl('drafts-body'); if (!body) return;
+  const q = (mEl('dr-q') && mEl('dr-q').value.trim().toLowerCase()) || '';
+  const list = DRAFT_ROWS.filter(d => !q || d.name.toLowerCase().includes(q));
+  body.innerHTML = list.length ? list.map(draftRow).join('') : '<tr><td colspan="4" class="ov-empty">No draft campaigns match your search.</td></tr>';
+  const foot = mEl('drafts-foot'); if (foot) foot.innerHTML = '<span>Showing <b>'+list.length+'</b> of '+DRAFT_ROWS.length+' drafts</span><span>Page 1 of 1</span>';
 }
 
 /* ---------- Campaign requests ---------- */
@@ -1794,81 +1904,115 @@ function addNbMid(){ const inp = mEl('nb-mid'); const v = inp.value.trim(); if (
 function saveBrand(){ const name = mEl('nb-name').value.trim(); const pm = mEl('nb-mid').value.trim(); if (pm && !nbMids.some(m => m.v === pm)) nbMids.push({ v: pm, ch: 'online', posIds: [] }); if (!name) { mEl('nb-name').focus(); return; } MERCHANT_BRANDS.push({ name: name, logo: '', merchantIds: nbMids.slice() }); closeModal('modal-brand'); renderBrands(); }
 
 renderOverview();
+renderDrafts();
 renderRequests();
 renderAcctMenu();
 setMerchant(0);
 
 /* ---------- Detail screen ---------- */
+/* ---------- Campaign detail (Figma) ---------- */
+const CD_IC = {
+  brand:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/><path d="M9 20v-6h6v6"/></svg>',
+  cashback:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  goal:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  budget: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h.01M18 12h.01"/><circle cx="12" cy="12" r="2.5"/></svg>',
+  hold:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  min:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>',
+  duration:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>',
+  cap:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12a8 8 0 1 1-8-8"/><path d="M20 5v4h-4"/></svg>',
+  date:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>',
+  web:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>',
+  id:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 15h4M15 15h2M7 9h10"/></svg>',
+  region: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  store:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/></svg>',
+};
+function cdKV(ic, label, val){ return '<div class="cd-kv"><span class="cd-kv-ic">'+CD_IC[ic]+'</span><span class="cd-kv-t"><span class="cd-kv-l">'+label+'</span><span class="cd-kv-v">'+val+'</span></span></div>'; }
+function cdLogoMarkup(c){ return c.brandLogo ? '<img src="'+c.brandLogo+'" alt="" onerror="this.remove()">' : mInitials(c.brand||'M'); }
+
+let curShopper = null;
+function setShpView(v){
+  document.querySelectorAll('#shp-toggle button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  if (curShopper) document.getElementById('shp-screen').innerHTML = v === 'card' ? shopperCard(curShopper) : shopperDetail(curShopper);
+}
+function shopperDetail(c){
+  const brand = c.brand || 'Merchant';
+  const logo = c.brandLogo ? '<span class="cb-logo"><img src="'+c.brandLogo+'" onerror="this.remove()"></span>' : '<span class="cb-logo">'+mInitials(brand)+'</span>';
+  return ''+
+  '<div class="ph-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>'+
+  '<div class="ph-title">Cashback</div>'+
+  '<div class="cust-sheet">'+
+    '<div class="cust-sheet-top"><span class="cust-brand">'+logo+brand+'</span><button class="cust-x">&times;</button></div>'+
+    '<h3 class="cust-h">'+c.name+'</h3>'+
+    '<p class="cust-desc">Enjoy a special '+c.cashback+' cashback on your next '+(c.noun||'')+' purchase with our exclusive offer!</p>'+
+    '<h4 class="cust-sec-h">How to get cashback</h4>'+
+    '<div class="cust-step"><span class="cust-step-ic">'+CD_IC.store+'</span><span class="cust-step-t"><b>Shop at any '+brand+' stores &amp; Online</b><span>Shop seamlessly both online and in-store.</span></span></div>'+
+    '<div class="cust-step"><span class="cust-step-ic">'+CD_IC.cashback+'</span><span class="cust-step-t"><b>Pay with your linked bank card</b><span>Use your eligible card at checkout.</span></span></div>'+
+    '<div class="cust-step"><span class="cust-step-ic">'+CD_IC.budget+'</span><span class="cust-step-t"><b>Cashback credited on next statement</b><span>Appears within 30 days of purchase date.</span></span></div>'+
+    '<h4 class="cust-sec-h" style="margin-top:20px">Terms &amp; Conditions</h4>'+
+    '<ul class="cust-tc">'+
+      '<li>Maximum cashback of '+c.cashbackCap+' per campaign</li>'+
+      '<li>Minimum spend of '+c.minSpend+' per transaction</li>'+
+      '<li>Gift card and store credit purchases do not qualify</li>'+
+      '<li>Available at participating locations only.</li>'+
+    '</ul>'+
+    '<button class="cust-cta">Activate Cashback</button>'+
+  '</div>';
+}
+function shopperCard(c){
+  const brand = c.brand || 'Merchant';
+  const logo = c.brandLogo ? '<span class="cb-logo"><img src="'+c.brandLogo+'" onerror="this.remove()"></span>' : '<span class="cb-logo">'+mInitials(brand)+'</span>';
+  return ''+
+  '<div class="ph-status"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>'+
+  '<div class="ph-title">Cashback</div>'+
+  '<div class="cust-card">'+
+    '<div class="cc-top"><span class="cust-brand">'+logo+brand+'</span><span class="cc-pct">'+c.cashback+'</span></div>'+
+    '<div class="cc-name">'+c.name+'</div>'+
+    '<div class="cc-sub">Cashback on '+(c.noun||'purchases')+' &middot; Tap to view details</div>'+
+  '</div>';
+}
+function toggleCd(btn){ btn.parentElement.classList.toggle('open'); }
+
 function openCampaign(i) {
   const c = CAMPAIGNS[i];
-  openDetail(c.name, c.bank, c.dates, c.status, c.img);
-  renderMerchantPerf(c);
-}
-/* Campaign performance — modelled deterministically from cashback rate + a seeded budget. */
-function mfmt(n) { return Math.round(n).toLocaleString('en-US'); }
-function mFinance(camp) {
-  const cbRate = (parseFloat(camp.cashback) || 10) / 100;
-  const s = (camp.name || '') + (camp.bank || ''); let seed = 0;
-  for (let i = 0; i < s.length; i++) seed = (seed * 31 + s.charCodeAt(i)) >>> 0;
-  const rnd = (n) => { const x = Math.sin((seed + n) * 99.13) * 10000; return x - Math.floor(x); };
-  const budget = (60 + Math.floor(rnd(1) * 40)) * 5000;
-  const burn = camp.status === 'completed' ? 0.94 : (0.3 + rnd(2) * 0.45);
-  const cashback = Math.round(budget * burn);
-  const spend = Math.round(cashback / cbRate);
-  const avgBasket = 180 + Math.floor(rnd(3) * 260);
-  const txns = Math.max(1, Math.round(spend / avgBasket));
-  const incremental = Math.round(spend * 0.38);
-  const uplift = 18 + Math.floor(rnd(4) * 22);
-  const roas = cashback > 0 ? incremental / cashback : 0;
-  const transacting = Math.max(1, Math.round(txns / 1.8));
-  const newC = Math.round(transacting * 0.42);
-  const retC = transacting - newC;
-  const activationRate = 8 + rnd(5) * 14;
-  return { budget, cashback, spend, avgBasket, txns, incremental, uplift, roas, transacting, newC, retC, activationRate };
-}
-function renderMerchantPerf(camp) {
-  const box = document.getElementById('detail-perf');
-  if (!box) return;
-  if (camp.status !== 'live' && camp.status !== 'completed') { box.style.display = 'none'; box.innerHTML = ''; return; }
-  const live = camp.status === 'live';
-  const f = mFinance(camp);
-  const weeks = live ? 4 : 6;
-  const wts = []; let sum = 0;
-  for (let i = 0; i < weeks; i++) { const w = 0.6 + i * 0.18 + ((i * 37) % 5) / 20; wts.push(w); sum += w; }
-  const series = wts.map(w => Math.round(f.spend * w / sum));
-  const maxV = Math.max.apply(null, series) || 1;
-  const head = [
-    ['Incremental revenue', 'AED ' + mfmt(f.incremental), '+' + f.uplift + '% vs baseline', true],
-    ['Return on cashback', f.roas.toFixed(1) + '×', 'revenue per AED cashback', false],
-    ['Transactions', mfmt(f.txns), 'qualifying purchases', false],
-    ['Average basket', 'AED ' + mfmt(f.avgBasket), 'per transaction', false],
-  ];
-  const sec = [
-    ['New customers', mfmt(f.newC)],
-    ['Returning customers', mfmt(f.retC)],
-    ['Activation rate', f.activationRate.toFixed(1) + '%'],
-  ];
-  box.innerHTML =
-    '<div class="perf-panel">' +
-      '<div class="perf-head">Campaign performance<span class="perf-sub">' + (live ? 'Live · updated hourly' : 'Final results') + '</span></div>' +
-      '<div class="perf-cards">' + head.map(h => '<div class="perf-card"><div class="pc-label">' + h[0] + '</div><div class="pc-val' + (h[3] ? ' pos' : '') + '">' + h[1] + '</div><div class="pc-sub">' + h[2] + '</div></div>').join('') + '</div>' +
-      '<div class="perf-chart"><div class="perf-chart-head"><span>Weekly spend</span><span>AED ' + mfmt(f.spend) + ' total</span></div>' +
-        '<div class="perf-bars">' + series.map((v, i) => '<div class="perf-bar-col"><div class="perf-bar" style="height:' + Math.round(v / maxV * 100) + '%" title="AED ' + mfmt(v) + '"></div><div class="perf-bar-lbl">W' + (i + 1) + '</div></div>').join('') + '</div>' +
-      '</div>' +
-      '<div class="perf-cards sec">' + sec.map(sc => '<div class="perf-card"><div class="pc-label">' + sc[0] + '</div><div class="pc-val" style="font-size:20px">' + sc[1] + '</div></div>').join('') + '</div>' +
-    '</div>';
-  box.style.display = '';
-}
-function openDetail(name, bank, dates, status, img) {
-  var pf = document.getElementById('detail-perf'); if (pf) { pf.style.display = 'none'; pf.innerHTML = ''; }
-  document.getElementById('detail-title').textContent = name;
-  document.getElementById('detail-sub').textContent = `${bank} · ${dates} 2026`;
-  document.querySelector('.preview-hero').style.backgroundImage = `url('${img || 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&w=800&q=70'}')`;
+  curShopper = c;
+  document.getElementById('cd-crumb-name').textContent = c.name;
+  document.getElementById('detail-title').textContent = c.name;
+  document.getElementById('detail-logo').innerHTML = cdLogoMarkup(c);
+  document.getElementById('detail-back').dataset.nav = 'overview';
+  // status pill
   const pill = document.getElementById('detail-pill');
-  const mode = (status === 'live' || status === 'completed' || status === 'approved') ? status : 'ready';
-  pill.outerHTML = PILL[mode].replace('class="pill-status', 'id="detail-pill" class="pill-status');
-  document.getElementById('detail-cta').style.display = mode === 'ready' ? '' : 'none';
-  document.getElementById('detail-back').dataset.nav = mode === 'live' || mode === 'completed' ? 'overview' : 'campaign-requests';
+  pill.outerHTML = PILL[c.status].replace('class="pill-status', 'id="detail-pill" class="pill-status');
+  // banner
+  const banner = document.getElementById('detail-banner');
+  if (c.status === 'review') {
+    banner.innerHTML = '<div class="cd-banner review"><h4>In review</h4><p>Your campaign has been received by the Lune team and will be shared with the bank for approval. You will be notified once the campaign is approved.</p></div>';
+  } else if (c.status === 'scheduled') {
+    banner.innerHTML = '<div class="cd-banner scheduled"><h4>Campaign approved and scheduled</h4><p>Your campaign has been approved by the bank and is scheduled to go live on '+c.start+'.</p></div>';
+  } else { banner.innerHTML = ''; }
+  // campaign details grid
+  document.getElementById('detail-kv').innerHTML =
+    cdKV('brand','Brand',c.brand) + cdKV('cashback','Cashback',c.cashback) +
+    cdKV('goal','Campaign goal',c.goal) + cdKV('budget','Campaign budget',c.budget) +
+    cdKV('hold','Hold period',c.holdPeriod) + cdKV('min','Minimum spend',c.minSpend) +
+    cdKV('duration','Duration',c.duration) + cdKV('cap','Cashback cap',c.cashbackCap) +
+    cdKV('date','Start date',c.start) + cdKV('date','End date',c.end);
+  // merchant details
+  const m = MERCHANTS[curMerchant];
+  const dom = m.domain || (m.name.toLowerCase().replace(/[^a-z0-9]/g,'')+'.ae');
+  const code = (String(m.name).replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase())||'MER';
+  document.getElementById('detail-merchant').innerHTML =
+    cdKV('brand','Display name',m.name) + cdKV('web','Website','www.'+dom) +
+    cdKV('id','Merchant ID','MID-'+code+'-1042') + cdKV('region','Region','United Arab Emirates');
+  // distribution
+  document.getElementById('detail-distribution').innerHTML =
+    '<div class="cd-dist-row">'+CD_IC.store+'<span class="b">Channel</span><span class="r">Online &amp; In-store</span></div>'+
+    '<div class="cd-dist-row">'+CD_IC.id+'<span class="b">Bank</span><span class="r">'+c.bank+'</span></div>'+
+    '<div class="cd-dist-row">'+CD_IC.region+'<span class="b">Availability</span><span class="r">All UAE locations</span></div>';
+  // shopper preview (default Detail)
+  setShpView('detail');
+  // reset collapsibles: Campaign Details open, others closed
+  const cards = document.querySelectorAll('[data-screen="campaign-detail"] .cd-card');
+  cards.forEach((card, idx) => card.classList.toggle('open', idx === 0));
   go('campaign-detail');
 }
 
