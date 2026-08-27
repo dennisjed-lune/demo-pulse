@@ -392,6 +392,21 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .tm { display: inline-flex; align-items: center; gap: 10px; }
 .tm-av { width: 28px; height: 28px; flex: 0 0 28px; border-radius: 50%; background: var(--lune-teal, #002E2A); color: var(--lune-mint, #99F2AC); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: var(--weight-bold); }
 .role-pill { font-size: 11px; font-weight: var(--weight-semibold); padding: 3px 10px; border-radius: var(--radius-pill); background: var(--surface-emerald); color: var(--lune-teal-700); }
+/* brands: channel-tagged Merchant IDs + POS IDs */
+.chan-tag { display: inline-flex; align-items: center; font-size: 10px; font-weight: var(--weight-bold); letter-spacing: 0.03em; text-transform: uppercase; padding: 2px 7px; border-radius: var(--radius-pill); line-height: 1.5; }
+.chan-tag.online { background: var(--req-ready-bg, rgba(56,82,180,.12)); color: var(--req-ready-ink, #3852B4); }
+.chan-tag.instore { background: var(--surface-emerald); color: var(--lune-teal-700); }
+.id-chip { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 12px; font-weight: var(--weight-semibold); padding: 4px 6px 4px 10px; border-radius: var(--radius-pill); background: var(--surface-muted); color: var(--text-primary); }
+.id-chip .chan-tag { cursor: pointer; font-family: var(--font-sans, inherit); }
+.id-chip .x { cursor: pointer; opacity: .55; font-size: 15px; line-height: 1; } .id-chip .x:hover { opacity: 1; }
+.mid-list { margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-3); }
+.mid-block { border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-sm); padding: var(--space-3) var(--space-4); background: var(--neutral-25); }
+.mid-block .mid-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mid-block .lbl2 { font-size: 11px; font-weight: var(--weight-bold); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-tertiary); }
+.pos-under { margin-top: var(--space-3); padding-left: var(--space-3); border-left: 2px solid var(--border-default); }
+.pos-under .lbl { font-size: 12px; color: var(--text-tertiary); font-weight: var(--weight-medium); margin-bottom: 6px; }
+.add-mid-row { margin-top: var(--space-3); }
+.add-mid-row .pos-inline { width: 210px; }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -1307,19 +1322,19 @@ input, textarea { font-family: inherit; }
 <div class="overlay" id="modal-brand">
   <div class="modal">
     <div class="head-row" style="margin-bottom:var(--space-4)">
-      <div><h2 style="font-size:20px;font-weight:var(--weight-bold);color:var(--text-primary)">Add brand</h2><p style="font-size:13px;color:var(--text-tertiary);margin-top:4px">Add a brand you operate, its Merchant ID, and its POS IDs.</p></div>
+      <div><h2 style="font-size:20px;font-weight:var(--weight-bold);color:var(--text-primary)">Add brand</h2><p style="font-size:13px;color:var(--text-tertiary);margin-top:4px">Add a brand and its Merchant IDs. Add POS IDs under each Merchant ID afterward.</p></div>
       <button class="x" onclick="closeModal('modal-brand')" style="color:var(--text-tertiary)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
     </div>
     <div style="display:flex;flex-direction:column;gap:var(--space-4);">
       <div class="field-line"><label>Brand name</label><input id="nb-name" placeholder="e.g. Tanagra"></div>
-      <div class="field-line"><label>Merchant ID</label><input id="nb-mid" placeholder="e.g. MID-0000"></div>
       <div class="field-line">
-        <label>POS IDs · add one or more</label>
+        <label>Merchant IDs · add one or more (tag each Online / In-store)</label>
         <div class="posadd-row">
-          <input id="nb-pos" placeholder="e.g. POS-0000" onkeydown="if(event.key==='Enter'){event.preventDefault();addNbPos();}">
-          <button class="btn btn-ghost" type="button" onclick="addNbPos()">Add</button>
+          <input id="nb-mid" placeholder="e.g. MID-0000" onkeydown="if(event.key==='Enter'){event.preventDefault();addNbMid();}">
+          <button class="btn btn-ghost" type="button" onclick="addNbMid()">Add</button>
         </div>
-        <div class="pos-chips" id="nb-pos-chips" style="margin-top:10px;"></div>
+        <div class="pos-chips" id="nb-mid-chips" style="margin-top:10px;"></div>
+        <p style="font-size:12px;color:var(--text-tertiary);margin-top:6px;">POS IDs are added under each Merchant ID from the brand card after saving.</p>
       </div>
     </div>
     <div class="modal-actions" style="margin-top:var(--space-5);">
@@ -1676,7 +1691,10 @@ wireTabs('overview-tabs', {
 /* ---------- Profile: brands + Merchant/POS IDs (per merchant account) ---------- */
 const LOGO_PH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="9" cy="9" r="2"></circle><path d="M21 15l-5-5L5 21"></path></svg>';
 let MERCHANT_BRANDS = [];
-let nbPos = [];
+let nbMids = [];
+const CHAN = { online: 'Online', in_store: 'In-store' };
+function chanTag(ch){ return `<span class="chan-tag ${ch === 'online' ? 'online' : 'instore'}">${CHAN[ch] || 'In-store'}</span>`; }
+function chanBtn(ch, oc){ return `<span class="chan-tag ${ch === 'online' ? 'online' : 'instore'}" role="button" tabindex="0" title="Toggle Online / In-store" onclick="${oc}">${CHAN[ch] || 'In-store'}</span>`; }
 function escB(s){ return String(s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
 function brandCode(name){ return (String(name).replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase()) || 'MER'; }
 function seedBrandsForMerchant(m){
@@ -1684,8 +1702,11 @@ function seedBrandsForMerchant(m){
   let s = 0; for (let i=0;i<m.name.length;i++) s = (s*31 + m.name.charCodeAt(i)) >>> 0;
   const base = 1000 + (s % 8999);
   const pos = [];
-  for (let k=0;k<3;k++) pos.push('POS-' + code + '-' + (2200 + ((s >> (k*4)) % 700) + k));
-  MERCHANT_BRANDS = [{ name: m.name, logo: mLogo(m.domain), merchantId: 'MID-' + code + '-' + base, posIds: pos }];
+  for (let k=0;k<3;k++) pos.push({ v: 'POS-' + code + '-' + (2200 + ((s >> (k*4)) % 700) + k), ch: 'in_store' });
+  MERCHANT_BRANDS = [{ name: m.name, logo: mLogo(m.domain), merchantIds: [
+    { v: 'MID-' + code + '-' + base, ch: 'online', posIds: [] },
+    { v: 'MID-' + code + '-' + (base + 100), ch: 'in_store', posIds: pos },
+  ] }];
 }
 const TEAM = ['dennis','mariam','tomas','lucas','aisha.bello','chen.wei','sofia','omar.haddad'];
 function togglePw(btn){ const i = btn.parentNode.querySelector('input'); if (i) i.type = i.type === 'password' ? 'text' : 'password'; }
@@ -1694,7 +1715,7 @@ function updateProfileCard(m){
   const dom = m.domain || (m.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '.ae');
   const set = (id,v) => { const e = mEl(id); if (e) e.textContent = v; };
   set('prof-email', 'dennis@' + dom);
-  set('prof-mid', (MERCHANT_BRANDS[0] && MERCHANT_BRANDS[0].merchantId) || '—');
+  set('prof-mid', (MERCHANT_BRANDS[0] && MERCHANT_BRANDS[0].merchantIds && MERCHANT_BRANDS[0].merchantIds[0] && MERCHANT_BRANDS[0].merchantIds[0].v) || '—');
   set('prof-dispname', m.name);
   const web = mEl('prof-web'); if (web) web.textContent = 'https://www.' + dom;
   const av = mEl('prof-avatar'); if (av) setAvatar(av, m);
@@ -1707,27 +1728,27 @@ function updateProfileCard(m){
 function renderBrands(){
   const host = mEl('brands-list'); if (!host) return;
   if (!MERCHANT_BRANDS.length) { host.innerHTML = '<div class="brands-empty">No brands yet. Add a brand and its Merchant / POS IDs to start matching transactions.</div>'; return; }
-  host.innerHTML = MERCHANT_BRANDS.map(function(b, i){
-    const chips = b.posIds.map(function(p, pi){ return '<span class="pos-chip">' + escB(p) + '<span class="x" role="button" tabindex="0" onclick="removePos(' + i + ',' + pi + ')" aria-label="Remove ' + escB(p) + '">&times;</span></span>'; }).join('');
-    const logo = b.logo ? '<img src="' + escB(b.logo) + '" alt="" onerror="this.outerHTML=LOGO_PH">' : LOGO_PH;
-    return '<div class="brand-item">' +
-      '<div class="brand-item-head"><span class="brand-item-name"><span class="brand-logo-sm">' + logo + '</span>' + escB(b.name) + '</span>' +
-        '<button class="linklike" style="font-size:13px" onclick="removeBrand(' + i + ')">Remove brand</button></div>' +
-      '<div class="brand-ids">' +
-        '<div><div class="lbl">Merchant ID</div><input class="mid-input" value="' + escB(b.merchantId) + '" onchange="setMid(' + i + ', this.value)" aria-label="Merchant ID for ' + escB(b.name) + '"></div>' +
-        '<div><div class="lbl">POS IDs <span class="hint">· matched for qualifying transactions</span></div>' +
-          '<div class="pos-chips">' + chips + '<input class="pos-inline" placeholder="+ Add POS ID" onkeydown="if(event.key===\'Enter\'){addPos(' + i + ', this);}" aria-label="Add POS ID to ' + escB(b.name) + '"></div></div>' +
-      '</div></div>';
+  host.innerHTML = MERCHANT_BRANDS.map((b, i) => {
+    const logo = b.logo ? `<img src="${escB(b.logo)}" alt="" onerror="this.outerHTML=LOGO_PH">` : LOGO_PH;
+    const mids = (b.merchantIds || []).map((m, mi) => {
+      const pos = (m.posIds || []).map((p, pi) =>
+        `<span class="id-chip">${escB(p.v)}${chanBtn(p.ch, `togglePosChan(${i}, ${mi}, ${pi})`)}<span class="x" role="button" tabindex="0" onclick="removePos(${i}, ${mi}, ${pi})" aria-label="Remove ${escB(p.v)}">&times;</span></span>`).join('');
+      return `<div class="mid-block"><div class="mid-head"><span class="lbl2">Merchant ID</span><span class="id-chip">${escB(m.v)}${chanBtn(m.ch, `toggleMidChan(${i}, ${mi})`)}<span class="x" role="button" tabindex="0" onclick="removeMid(${i}, ${mi})" aria-label="Remove ${escB(m.v)}">&times;</span></span></div><div class="pos-under"><div class="lbl">POS IDs <span class="hint">· terminals under this Merchant ID</span></div><div class="pos-chips">${pos}<input class="pos-inline" placeholder="+ Add POS ID" onkeydown="if(event.key==='Enter'){addPos(${i}, ${mi}, this);}" aria-label="Add POS ID"></div></div></div>`;
+    }).join('');
+    return `<div class="brand-item"><div class="brand-item-head"><span class="brand-item-name"><span class="brand-logo-sm">${logo}</span>${escB(b.name)}</span><button class="linklike" style="font-size:13px" onclick="removeBrand(${i})">Remove brand</button></div><div class="mid-list">${mids}</div><div class="add-mid-row"><input class="pos-inline" placeholder="+ Add Merchant ID" onkeydown="if(event.key==='Enter'){addMid(${i}, this);}" aria-label="Add Merchant ID"></div></div>`;
   }).join('');
 }
-function setMid(i, v){ if (MERCHANT_BRANDS[i]) MERCHANT_BRANDS[i].merchantId = v.trim(); }
-function addPos(i, inp){ const v = inp.value.trim(); if (!v) return; if (MERCHANT_BRANDS[i] && !MERCHANT_BRANDS[i].posIds.includes(v)) MERCHANT_BRANDS[i].posIds.push(v); inp.value=''; renderBrands(); }
-function removePos(i, pi){ if (MERCHANT_BRANDS[i]) { MERCHANT_BRANDS[i].posIds.splice(pi,1); renderBrands(); } }
+function addMid(i, inp){ const v = inp.value.trim(); if (!v || !MERCHANT_BRANDS[i]) return; MERCHANT_BRANDS[i].merchantIds = MERCHANT_BRANDS[i].merchantIds || []; if (!MERCHANT_BRANDS[i].merchantIds.some(m => m.v === v)) MERCHANT_BRANDS[i].merchantIds.push({ v: v, ch: 'online', posIds: [] }); inp.value=''; renderBrands(); }
+function removeMid(i, mi){ if (MERCHANT_BRANDS[i]) { MERCHANT_BRANDS[i].merchantIds.splice(mi,1); renderBrands(); } }
+function toggleMidChan(i, mi){ const m = MERCHANT_BRANDS[i].merchantIds[mi]; if (m) { m.ch = m.ch === 'online' ? 'in_store' : 'online'; renderBrands(); } }
+function addPos(i, mi, inp){ const v = inp.value.trim(); if (!v) return; const m = MERCHANT_BRANDS[i].merchantIds[mi]; if (m && !m.posIds.some(p => p.v === v)) m.posIds.push({ v: v, ch: m.ch }); inp.value=''; renderBrands(); }
+function removePos(i, mi, pi){ const m = MERCHANT_BRANDS[i].merchantIds[mi]; if (m) { m.posIds.splice(pi,1); renderBrands(); } }
+function togglePosChan(i, mi, pi){ const p = MERCHANT_BRANDS[i].merchantIds[mi].posIds[pi]; if (p) { p.ch = p.ch === 'online' ? 'in_store' : 'online'; renderBrands(); } }
 function removeBrand(i){ MERCHANT_BRANDS.splice(i,1); renderBrands(); }
-function openAddBrand(){ nbPos = []; ['nb-name','nb-mid','nb-pos'].forEach(function(id){ const e=mEl(id); if(e) e.value=''; }); renderNbPos(); openModal('modal-brand'); }
-function renderNbPos(){ const el = mEl('nb-pos-chips'); if (el) el.innerHTML = nbPos.map(function(p,i){ return '<span class="pos-chip">' + escB(p) + '<span class="x" role="button" tabindex="0" onclick="nbPos.splice(' + i + ',1);renderNbPos();" aria-label="Remove ' + escB(p) + '">&times;</span></span>'; }).join(''); }
-function addNbPos(){ const inp = mEl('nb-pos'); const v = inp.value.trim(); if (!v) return; if (!nbPos.includes(v)) nbPos.push(v); inp.value=''; renderNbPos(); inp.focus(); }
-function saveBrand(){ const name = mEl('nb-name').value.trim(); const mid = mEl('nb-mid').value.trim(); const pending = mEl('nb-pos').value.trim(); if (pending && !nbPos.includes(pending)) nbPos.push(pending); if (!name) { mEl('nb-name').focus(); return; } MERCHANT_BRANDS.push({ name: name, logo: '', merchantId: mid, posIds: nbPos.slice() }); closeModal('modal-brand'); renderBrands(); }
+function openAddBrand(){ nbMids = []; ['nb-name','nb-mid'].forEach(function(id){ const e=mEl(id); if(e) e.value=''; }); renderNbMids(); openModal('modal-brand'); }
+function renderNbMids(){ const el = mEl('nb-mid-chips'); if (!el) return; el.innerHTML = nbMids.map((m,k) => `<span class="id-chip">${escB(m.v)}<span class="chan-tag ${m.ch === 'online' ? 'online' : 'instore'}" role="button" tabindex="0" onclick="nbMids[${k}].ch = nbMids[${k}].ch === 'online' ? 'in_store' : 'online'; renderNbMids();">${CHAN[m.ch]}</span><span class="x" role="button" tabindex="0" onclick="nbMids.splice(${k},1); renderNbMids();" aria-label="Remove ${escB(m.v)}">&times;</span></span>`).join(''); }
+function addNbMid(){ const inp = mEl('nb-mid'); const v = inp.value.trim(); if (!v) return; if (!nbMids.some(m => m.v === v)) nbMids.push({ v: v, ch: 'online', posIds: [] }); inp.value=''; renderNbMids(); inp.focus(); }
+function saveBrand(){ const name = mEl('nb-name').value.trim(); const pm = mEl('nb-mid').value.trim(); if (pm && !nbMids.some(m => m.v === pm)) nbMids.push({ v: pm, ch: 'online', posIds: [] }); if (!name) { mEl('nb-name').focus(); return; } MERCHANT_BRANDS.push({ name: name, logo: '', merchantIds: nbMids.slice() }); closeModal('modal-brand'); renderBrands(); }
 
 renderOverview('live');
 renderRequests();
