@@ -535,6 +535,83 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .cust-card .cc-pct { font-size: 30px; font-weight: 800; }
 .cust-card .cc-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
 .cust-card .cc-sub { font-size: 11.5px; color: rgba(255,255,255,.75); }
+
+/* ===== Brand detail ===== */
+.bd-web { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-tertiary); margin-top: 4px; }
+.bd-tabs { display: inline-flex; gap: 4px; background: var(--surface-muted); border-radius: var(--radius-pill); padding: 4px; margin-bottom: var(--space-5); }
+.bd-tab { border: none; background: none; font: inherit; font-size: 13.5px; font-weight: var(--weight-medium); color: var(--text-secondary); padding: 7px 16px; border-radius: var(--radius-pill); cursor: pointer; }
+.bd-tab.on { background: var(--lune-teal-700); color: #fff; }
+.bd-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); align-items: start; }
+@media (max-width: 900px) { .bd-grid2 { grid-template-columns: 1fr; } }
+.bd-card { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); padding: 22px 24px; }
+.bd-card-h { font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); margin: 0 0 4px; }
+.bd-card-sub { font-size: 13px; color: var(--text-tertiary); margin: 0 0 16px; }
+.bd-snap { padding: 14px 0; border-bottom: var(--border-hairline) solid var(--border-subtle); }
+.bd-snap:first-of-type { padding-top: 4px; }
+.bd-snap:last-child { border-bottom: none; padding-bottom: 0; }
+.bd-l { font-size: 13px; color: var(--text-tertiary); margin-bottom: 4px; }
+.bd-v { font-size: 18px; font-weight: var(--weight-bold); color: var(--text-primary); }
+.bd-social { display: flex; flex-direction: column; gap: 16px; }
+.bd-soc-row { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+.bd-soc-row span { display: flex; flex-direction: column; min-width: 0; }
+.bd-soc-row b { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-secondary); }
+.bd-soc-row span span, .bd-soc-row > span { font-size: 13px; }
+.bd-soc-row > span > :not(b) { color: var(--lune-teal-700); }
+.bd-mid { border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 12px; }
+.bd-mid-h { display: flex; align-items: center; gap: 10px; }
+.bd-mid-lbl { font-size: 12px; color: var(--text-tertiary); }
+.bd-mid-v { font-size: 14px; font-weight: var(--weight-semibold); color: var(--text-primary); font-family: var(--font-mono); }
+.bd-terms { margin-top: 12px; padding-top: 12px; border-top: var(--border-hairline) solid var(--border-subtle); }
+.bd-term-lbl { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 8px; }
+.bd-term { display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-family: var(--font-mono); color: var(--text-secondary); padding: 6px 0; }
+
+/* ===== Onboard / Edit Brand wizard ===== */
+.ob-head { display: flex; align-items: center; gap: 14px; margin-bottom: var(--space-5); }
+.ob-steplbl { font-size: 13px; color: var(--text-tertiary); }
+.ob-head h1 { font-size: 24px; font-weight: var(--weight-bold); margin: 2px 0 0; color: var(--text-primary); }
+.ob-stepper { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0 auto var(--space-6); max-width: 520px; }
+.ob-stepitem { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: var(--weight-medium); color: var(--text-tertiary); }
+.ob-stepitem.on { color: var(--text-primary); }
+.ob-dot { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 1.5px solid var(--border-default); color: var(--text-tertiary); }
+.ob-stepitem.on .ob-dot { background: var(--lune-teal-700); border-color: var(--lune-teal-700); color: #fff; }
+.ob-stepitem.done .ob-dot { background: var(--lune-emerald); border-color: var(--lune-emerald); color: #fff; }
+.ob-stepline { flex: 1; max-width: 120px; height: 1.5px; background: var(--border-default); }
+.ob-card { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); padding: 26px 28px; max-width: 860px; margin: 0 auto; }
+.ob-lbl { display: block; font-size: 13.5px; font-weight: var(--weight-semibold); color: var(--text-primary); margin: 20px 0 8px; }
+.ob-search { display: flex; align-items: center; gap: 8px; height: 46px; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); padding: 0 14px; }
+.ob-search svg { color: var(--text-tertiary); flex: none; }
+.ob-search input { border: none; outline: none; background: transparent; font: inherit; font-size: 14px; flex: 1; color: var(--text-primary); }
+.ob-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+.ob-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px 20px; }
+@media (max-width: 720px) { .ob-row2, .ob-row3 { grid-template-columns: 1fr; } }
+.ob-field { display: flex; flex-direction: column; min-width: 0; }
+.ob-field label { font-size: 13px; color: var(--text-secondary); margin-bottom: 7px; }
+.ob-field input, .ob-field select { height: 44px; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); font: inherit; font-size: 14px; color: var(--text-primary); padding: 0 12px; outline: none; }
+.ob-field input:focus, .ob-field select:focus { border-color: var(--lune-emerald); box-shadow: 0 0 0 3px var(--focus-ring); }
+.ob-soc { display: inline-flex; align-items: center; gap: 7px; }
+.ob-upload { border: 1.5px dashed var(--border-default); border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--text-tertiary); text-align: center; padding: 12px; cursor: pointer; }
+.ob-upload span { font-size: 12.5px; font-weight: var(--weight-medium); color: var(--text-secondary); }
+.ob-upload small { font-size: 10.5px; }
+.ob-sec { font-size: 15px; font-weight: var(--weight-semibold); color: var(--text-primary); margin: 26px 0 4px; }
+.ob-sec-sub { font-size: 13px; color: var(--text-tertiary); margin: 0 0 14px; }
+.ob-opt { font-weight: var(--weight-regular); color: var(--text-tertiary); font-size: 13px; }
+.ob-radios { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 8px 0 22px; }
+@media (max-width: 720px) { .ob-radios { grid-template-columns: 1fr; } }
+.ob-radio { display: flex; align-items: center; gap: 11px; border: 1.5px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); padding: 14px 16px; font: inherit; font-size: 14px; color: var(--text-primary); cursor: pointer; text-align: left; }
+.ob-radio.on { border-color: var(--lune-emerald); background: var(--surface-emerald); }
+.ob-rdot { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid var(--border-default); position: relative; }
+.ob-radio.on .ob-rdot { border-color: var(--lune-teal-700); }
+.ob-radio.on .ob-rdot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--lune-teal-700); }
+.ob-mid-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.btn-sm { padding: 7px 12px; font-size: 13px; }
+.ob-mid-block { border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); padding: 18px; }
+.ob-divider { height: 1px; background: var(--border-subtle); margin: 18px 0; }
+.ob-x { width: 40px; height: 44px; border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); background: var(--bg-surface); color: var(--text-tertiary); font-size: 20px; cursor: pointer; }
+.ob-nomid { display: flex; gap: 12px; align-items: flex-start; background: var(--surface-emerald); border-radius: var(--radius-md); padding: 16px 18px; color: var(--lune-teal-700); }
+.ob-nomid b { display: block; font-size: 14px; margin-bottom: 3px; }
+.ob-nomid span { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
+.ob-foot { display: flex; align-items: center; justify-content: space-between; max-width: 860px; margin: var(--space-5) auto 0; }
+.ob-foot-r { display: inline-flex; gap: 10px; }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -1057,7 +1134,7 @@ input, textarea { font-family: inherit; }
           <p>Manage brand profiles and onboarding details</p>
         </div>
         <div class="ov-actions">
-          <button class="btn btn-primary" onclick="openAddBrand()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Onboard Brand</button>
+          <button class="btn btn-primary" onclick="openOnboardBrand()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Onboard Brand</button>
         </div>
       </div>
       <div class="ov-filters" style="grid-template-columns:1fr;max-width:420px;">
@@ -1069,6 +1146,124 @@ input, textarea { font-family: inherit; }
           <tbody id="brands-screen-body"></tbody>
         </table>
         <div class="ov-foot" id="brands-screen-foot"></div>
+      </div>
+    </section>
+
+    <!-- ===== BRAND DETAIL ===== -->
+    <section class="screen screen-wide" data-screen="brand-detail">
+      <div class="cd-crumb"><span>Brands</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg><span id="bd-crumb" class="cd-crumb-cur">Brand</span></div>
+      <div class="cd-head">
+        <button class="cd-back" data-nav="brands"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <span class="cd-logo" id="bd-logo"></span>
+        <div style="flex:1;min-width:0">
+          <h1 id="bd-name">Brand</h1>
+          <div class="bd-web" id="bd-web"></div>
+        </div>
+        <button class="btn btn-ghost" onclick="openEditBrand()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Edit Brand</button>
+        <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
+      </div>
+      <div class="bd-tabs">
+        <button class="bd-tab on" data-tab="overview" onclick="bdTab('overview')">Brand Overview</button>
+        <button class="bd-tab" data-tab="merchant" onclick="bdTab('merchant')">Merchant Details</button>
+      </div>
+      <div class="bd-panel" id="bd-overview">
+        <div class="bd-grid2">
+          <div class="bd-card">
+            <h3 class="bd-card-h">Business Snapshot</h3>
+            <div class="bd-snap"><div class="bd-l">Average transaction value</div><div class="bd-v" id="bd-atv">AED 250</div></div>
+            <div class="bd-snap"><div class="bd-l">Average monthly orders</div><div class="bd-v" id="bd-amo">2,000</div></div>
+            <div class="bd-snap"><div class="bd-l">Monthly marketing budget</div><div class="bd-v" id="bd-mmb">AED 40,000</div></div>
+          </div>
+          <div class="bd-card">
+            <h3 class="bd-card-h">Social Links</h3>
+            <div class="bd-social" id="bd-social"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bd-panel" id="bd-merchant" hidden>
+        <div class="bd-card">
+          <h3 class="bd-card-h">Merchant Details</h3>
+          <p class="bd-card-sub">View this brand's linked accounts</p>
+          <div id="bd-mids"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ONBOARD / EDIT BRAND (wizard) ===== -->
+    <section class="screen screen-wide" data-screen="onboard-brand">
+      <div class="ob-head">
+        <button class="cd-back" onclick="obCancel()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <div><div class="ob-steplbl" id="ob-steplbl">Step 1 of 2</div><h1 id="ob-title">Onboard Brand</h1></div>
+      </div>
+      <div class="ob-stepper">
+        <div class="ob-stepitem" id="ob-si-1"><span class="ob-dot">1</span>Brand Information</div>
+        <div class="ob-stepline"></div>
+        <div class="ob-stepitem" id="ob-si-2"><span class="ob-dot">2</span>Merchant Details</div>
+      </div>
+
+      <div class="ob-card" id="ob-step-1">
+        <h3 class="bd-card-h">Brand Information</h3>
+        <p class="bd-card-sub">Tell us which brand you're onboarding to Lune.</p>
+        <label class="ob-lbl">Brand lookup</label>
+        <div class="ob-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input placeholder="Try &quot;Faces&quot;, &quot;Tanagra&quot;, &quot;Level shoes&quot;…"></div>
+        <div class="ob-row3" style="grid-template-columns:132px 1fr 1fr;margin-top:18px;">
+          <div class="ob-upload"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M8 8l4-4 4 4"></path><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg><span>Brand Logo</span><small>JPG, PNG up to 5MB</small></div>
+          <div class="ob-field"><label>Official brand name</label><input placeholder="e.g. Faces"></div>
+          <div class="ob-field"><label>Website</label><input placeholder="https://yourbrand.com"></div>
+        </div>
+        <h4 class="ob-sec">Brand profile</h4>
+        <p class="ob-sec-sub">Help us understand your customers and business so we can match you with the right bank offers.</p>
+        <div class="ob-row3">
+          <div class="ob-field"><label>Average transaction value</label><input placeholder="AED 200"></div>
+          <div class="ob-field"><label>Average monthly orders</label><input placeholder="2000"></div>
+          <div class="ob-field"><label>Typical monthly marketing budget</label><input placeholder="AED 40,000"></div>
+        </div>
+        <h4 class="ob-sec">Add social links <span class="ob-opt">(optional)</span></h4>
+        <p class="ob-sec-sub">Connect your other accounts to let people know where to find you.</p>
+        <div class="ob-row2">
+          <div class="ob-field"><label class="ob-soc"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#E1306C" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#E1306C" stroke="none"></circle></svg>Instagram</label><input placeholder="@yourbrand"></div>
+          <div class="ob-field"><label class="ob-soc"><svg viewBox="0 0 24 24" width="15" height="15" fill="#1877F2" stroke="none"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6v1.9h2.8L15.7 15h-2.3v7A10 10 0 0 0 22 12z"></path></svg>Facebook</label><input placeholder="@yourbrand"></div>
+          <div class="ob-field"><label class="ob-soc"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.22-6.82-5.97 6.82H1.66l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.01 4.13H5.05z"></path></svg>X (Twitter)</label><input placeholder="@yourbrand"></div>
+          <div class="ob-field"><label class="ob-soc"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none"><path d="M16.6 5.82a4.28 4.28 0 0 1-1-2.82h-3.2v12.9a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12V8.1a5.9 5.9 0 0 0-.78-.05 5.83 5.83 0 1 0 5.83 5.83V8.3a7.4 7.4 0 0 0 4.32 1.38V6.5a4.28 4.28 0 0 1-3.35-.68z"></path></svg>TikTok</label><input placeholder="@yourbrand"></div>
+        </div>
+      </div>
+
+      <div class="ob-card" id="ob-step-2" hidden>
+        <h3 class="bd-card-h">Merchant Details</h3>
+        <p class="bd-card-sub">This links your point-of-sale accounts so cashback can be tracked and settled correctly.</p>
+        <label class="ob-lbl">Do you know your merchant ID?</label>
+        <div class="ob-radios">
+          <button class="ob-radio on" id="ob-mid-yes" onclick="obMidMode('yes')"><span class="ob-rdot"></span>Yes, I know my merchant ID</button>
+          <button class="ob-radio" id="ob-mid-no" onclick="obMidMode('no')"><span class="ob-rdot"></span>No, I don't know my merchant ID</button>
+        </div>
+        <div id="ob-mid-yes-body">
+          <div class="ob-mid-head"><span class="ob-sec" style="margin:0">Merchant ID</span><button class="btn btn-ghost btn-sm"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Add merchant ID</button></div>
+          <div class="ob-mid-block">
+            <div class="ob-row2">
+              <div class="ob-field"><label>Merchant ID</label><input placeholder="e.g MID-93334-493"></div>
+              <div class="ob-field"><label>Acquirer</label><input placeholder="e.g Stripe"></div>
+            </div>
+            <div class="ob-divider"></div>
+            <div class="ob-row3" style="grid-template-columns:1fr 1fr 1fr auto;align-items:end;">
+              <div class="ob-field"><label>Terminal ID</label><input placeholder="e.g. TID-00921"></div>
+              <div class="ob-field"><label>Channel</label><select><option>In-Store (POS)</option><option>Online</option></select></div>
+              <div class="ob-field"><label>Terminal name</label><input placeholder="Enter terminal name"></div>
+              <button class="ob-x" title="Remove">&times;</button>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:14px"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Add terminal ID</button>
+          </div>
+        </div>
+        <div id="ob-mid-no-body" hidden>
+          <div class="ob-nomid"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4z"></path></svg><div><b>No problem, Lune will take it from here</b><span>We'll match your transactions using your brand and bank details. You can add Merchant IDs later from the brand page.</span></div></div>
+        </div>
+      </div>
+
+      <div class="ob-foot">
+        <button class="btn btn-ghost" onclick="obCancel()">Cancel</button>
+        <div class="ob-foot-r">
+          <button class="btn btn-ghost" id="ob-back" onclick="obBack()" hidden>Back</button>
+          <button class="btn btn-primary" id="ob-next" onclick="obNext()">Continue</button>
+        </div>
       </div>
     </section>
 
@@ -1128,7 +1323,7 @@ input, textarea { font-family: inherit; }
 
     <!-- ===== PROFILE & SETTINGS (account · merchant ID · brands · POS IDs) ===== -->
     <section class="screen" data-screen="profile">
-      <div class="page-head"><h1>Profile &amp; Settings</h1><p>Manage your merchant account, brands, Merchant IDs and POS IDs.</p></div>
+      <div class="page-head"><h1>Settings</h1><p>Manage your profile, merchant details and team.</p></div>
 
       <div class="profile-grid" style="margin-bottom:var(--space-4);">
         <div class="panel settings-card">
@@ -1180,14 +1375,6 @@ input, textarea { font-family: inherit; }
           <div class="field-ro"><span class="lbl">Last updated</span><span class="val">04 Jun 2026 · 14:08 GST</span></div>
         </div>
         <p class="ro-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg> Region and currency are set by Lune when your credentials are issued and can't be changed here.</p>
-      </div>
-
-      <div class="panel settings-card">
-        <div class="sc-head-row">
-          <div class="sc-head"><h3>Brands</h3><p>Brands you operate. Each brand carries its own Merchant ID and POS IDs, used to match qualifying transactions.</p></div>
-          <button class="btn btn-primary" onclick="openAddBrand()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M12 5v14M5 12h14"></path></svg> Add brand</button>
-        </div>
-        <div class="brands-list" id="brands-list"></div>
       </div>
 
       <div class="table-wrap">
@@ -1522,6 +1709,15 @@ input, textarea { font-family: inherit; }
     <p class="msub">Your campaign has been confirmed.<br>You will be notified once it goes live with the bank.</p>
     <div class="confirm-row"><div><div class="ck">Campaign</div><div class="cv" id="confirmed-name">Summer Electronics Cashback</div></div><span class="pill-status approved"><span class="dot"></span>Approved</span></div>
     <button class="btn btn-ghost btn-block" onclick="closeModal('modal-confirmed')">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="modal-brand-done">
+  <div class="modal modal-center">
+    <div class="ic" style="background: var(--status-success); color: var(--status-success-ink);"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"></path></svg></div>
+    <h2 id="brand-done-title">Brand onboarded</h2>
+    <p class="msub" id="brand-done-sub">Your changes have been saved.</p>
+    <button class="btn btn-primary btn-block" onclick="closeModal('modal-brand-done'); go('brands');">Done</button>
   </div>
 </div>
 
@@ -1868,7 +2064,7 @@ function renderDrafts(){
 /* ---------- Brands (list) ---------- */
 function brandScreenRow(r){
   const badge = r.logo ? '<span class="ov-logo"><img src="'+r.logo+'" alt="" onerror="this.remove()"></span>' : '<span class="ov-logo">'+mInitials(r.name)+'</span>';
-  return '<tr>'+
+  return '<tr onclick="openBrandDetail()">'+
     '<td><div class="ov-brand">'+badge+'<div class="ov-cname">'+r.name+'</div></div></td>'+
     '<td class="ov-bank">'+r.web+'</td>'+
     '<td>'+r.total+'</td>'+
@@ -1885,6 +2081,76 @@ function renderBrandsScreen(){
   const list = rows.filter(r => !q || r.name.toLowerCase().includes(q));
   body.innerHTML = list.length ? list.map(brandScreenRow).join('') : '<tr><td colspan="5" class="ov-empty">No brands match your search.</td></tr>';
   const foot = mEl('brands-screen-foot'); if (foot) foot.innerHTML = tableFoot(list.length);
+}
+
+/* ---------- Brand detail ---------- */
+const GLOBE_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"></path></svg>';
+const SOC_IC = {
+  ig: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#E1306C" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1" fill="#E1306C" stroke="none"></circle></svg>',
+  fb: '<svg viewBox="0 0 24 24" width="16" height="16" fill="#1877F2" stroke="none"><path d="M22 12a10 10 0 1 0-11.5 9.9v-7H8v-2.9h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6v1.9h2.8L15.7 15h-2.3v7A10 10 0 0 0 22 12z"></path></svg>',
+  x:  '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.22-6.82-5.97 6.82H1.66l7.73-8.84L1.25 2.25h6.83l4.71 6.23zm-1.16 17.52h1.83L7.01 4.13H5.05z"></path></svg>',
+  tt: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none"><path d="M16.6 5.82a4.28 4.28 0 0 1-1-2.82h-3.2v12.9a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12V8.1a5.9 5.9 0 0 0-.78-.05 5.83 5.83 0 1 0 5.83 5.83V8.3a7.4 7.4 0 0 0 4.32 1.38V6.5a4.28 4.28 0 0 1-3.35-.68z"></path></svg>',
+};
+function openBrandDetail(){
+  const m = MERCHANTS[curMerchant];
+  const dom = m.domain || (m.name.toLowerCase().replace(/[^a-z0-9]/g,'')+'.ae');
+  const handle = m.name.toLowerCase().replace(/[^a-z0-9]/g,'');
+  mSetTxt('bd-crumb', m.name); mSetTxt('bd-name', m.name);
+  mEl('bd-logo').innerHTML = mLogo(m.domain) ? '<img src="'+mLogo(m.domain)+'" alt="" onerror="this.remove()">' : mInitials(m.name);
+  mEl('bd-web').innerHTML = GLOBE_IC + '<span>www.'+dom+'</span>';
+  mEl('bd-social').innerHTML =
+    '<a class="bd-soc-row">'+SOC_IC.ig+'<span><b>Instagram</b>instagram.com/'+handle+'</span></a>'+
+    '<a class="bd-soc-row">'+SOC_IC.fb+'<span><b>Facebook</b>facebook.com/'+handle+'</span></a>'+
+    '<a class="bd-soc-row">'+SOC_IC.x +'<span><b>X (Twitter)</b>x.com/'+handle+'</span></a>'+
+    '<a class="bd-soc-row">'+SOC_IC.tt+'<span><b>TikTok</b>tiktok.com/'+handle+'</span></a>';
+  // merchant IDs (grouped) from the seeded profile brands
+  const b = (MERCHANT_BRANDS && MERCHANT_BRANDS[0]) || { merchantIds: [] };
+  mEl('bd-mids').innerHTML = (b.merchantIds || []).map(function(mid){
+    const terms = (mid.posIds || []).map(function(p){ return '<div class="bd-term">'+p.v+'<span class="chan-tag '+(p.ch==='online'?'online':'instore')+'">'+(CHAN[p.ch]||'In-store')+'</span></div>'; }).join('');
+    return '<div class="bd-mid"><div class="bd-mid-h"><span class="bd-mid-lbl">Merchant ID</span><span class="bd-mid-v">'+mid.v+'</span><span class="chan-tag '+(mid.ch==='online'?'online':'instore')+'">'+(CHAN[mid.ch]||'In-store')+'</span></div>'+(terms?'<div class="bd-terms"><div class="bd-term-lbl">Terminal IDs</div>'+terms+'</div>':'')+'</div>';
+  }).join('') || '<p class="bd-card-sub">No linked accounts yet.</p>';
+  bdTab('overview');
+  go('brand-detail');
+}
+function bdTab(t){
+  document.querySelectorAll('#brand-detail .bd-tab').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
+  mEl('bd-overview').hidden = t !== 'overview';
+  mEl('bd-merchant').hidden = t !== 'merchant';
+}
+
+/* ---------- Onboard / Edit Brand wizard ---------- */
+let obMode = 'onboard';
+function openOnboardBrand(){ obMode='onboard'; obStart(); }
+function openEditBrand(){ obMode='edit'; obStart(); }
+function obStart(){ mSetTxt('ob-title', obMode==='edit'?'Edit Brand':'Onboard Brand'); obMidMode('yes'); obShow(1); go('onboard-brand'); }
+function obShow(step){
+  mEl('ob-step-1').hidden = step !== 1;
+  mEl('ob-step-2').hidden = step !== 2;
+  mSetTxt('ob-steplbl', 'Step '+step+' of 2');
+  mEl('ob-si-1').classList.toggle('done', step > 1);
+  mEl('ob-si-1').classList.toggle('on', step === 1);
+  mEl('ob-si-2').classList.toggle('on', step === 2);
+  mEl('ob-si-1').querySelector('.ob-dot').innerHTML = step > 1 ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"></path></svg>' : '1';
+  mEl('ob-back').hidden = step === 1;
+  mSetTxt('ob-next', step === 2 ? (obMode==='edit'?'Save Changes':'Onboard Brand') : 'Continue');
+  document.querySelector('.main').scrollTop = 0;
+  obStep = step;
+}
+let obStep = 1;
+function obNext(){ if (obStep === 1) obShow(2); else obFinish(); }
+function obBack(){ obShow(1); }
+function obCancel(){ go('brands'); }
+function obMidMode(mode){
+  mEl('ob-mid-yes').classList.toggle('on', mode === 'yes');
+  mEl('ob-mid-no').classList.toggle('on', mode === 'no');
+  mEl('ob-mid-yes-body').hidden = mode !== 'yes';
+  mEl('ob-mid-no-body').hidden = mode !== 'no';
+}
+function obFinish(){
+  const m = MERCHANTS[curMerchant];
+  mSetTxt('brand-done-title', obMode==='edit' ? 'Brand updated' : (m.name + ' is onboarded'));
+  mSetTxt('brand-done-sub', obMode==='edit' ? 'Your changes have been saved.' : 'Your brand is ready. You can now create campaigns for it.');
+  openModal('modal-brand-done');
 }
 
 /* ---------- Campaign requests ---------- */
