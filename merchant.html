@@ -407,6 +407,35 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .pos-under .lbl { font-size: 12px; color: var(--text-tertiary); font-weight: var(--weight-medium); margin-bottom: 6px; }
 .add-mid-row { margin-top: var(--space-3); }
 .add-mid-row .pos-inline { width: 210px; }
+/* ---------- Overview: campaign table (finalized design) ---------- */
+.ov-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-5); }
+.ov-actions { display: flex; gap: var(--space-3); align-items: center; }
+.ov-filters { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: var(--space-4); margin-bottom: var(--space-4); }
+@media (max-width: 1000px) { .ov-filters { grid-template-columns: 1fr 1fr; } }
+.ov-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ov-field > label { font-size: 13px; font-weight: var(--weight-semibold); color: var(--text-primary); }
+.ov-field select, .ov-search { height: 44px; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); font: inherit; font-size: 14px; color: var(--text-primary); padding: 0 12px; outline: none; width: 100%; }
+.ov-field select:focus, .ov-search:focus-within { border-color: var(--lune-emerald); box-shadow: 0 0 0 3px var(--focus-ring); }
+.ov-search { display: flex; align-items: center; gap: 8px; }
+.ov-search input { border: none; outline: none; background: transparent; font: inherit; font-size: 14px; flex: 1; min-width: 0; color: var(--text-primary); }
+.ov-search svg { color: var(--text-tertiary); flex: none; }
+.ov-tablewrap { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.ov-table { width: 100%; border-collapse: collapse; }
+.ov-table thead th { text-align: left; font-size: 12px; font-weight: var(--weight-semibold); color: var(--text-tertiary); padding: 13px 18px; border-bottom: var(--border-hairline) solid var(--border-subtle); white-space: nowrap; background: var(--surface-muted); }
+.ov-table tbody td { padding: 13px 18px; border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 14px; color: var(--text-primary); white-space: nowrap; vertical-align: middle; }
+.ov-table tbody tr { cursor: pointer; transition: background var(--dur-fast) var(--ease-standard); }
+.ov-table tbody tr:hover { background: var(--surface-muted); }
+.ov-table tbody tr:last-child td { border-bottom: none; }
+.ov-brand { display: flex; align-items: center; gap: 12px; }
+.ov-logo { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; border: var(--border-hairline) solid var(--border-subtle); background: #fff; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; font-size: 11px; font-weight: 800; color: var(--lune-teal-700); }
+.ov-logo img { width: 100%; height: 100%; object-fit: contain; }
+.ov-cname { font-weight: var(--weight-semibold); color: var(--text-primary); }
+.ov-bsub { font-size: 12.5px; color: var(--text-tertiary); margin-top: 2px; }
+.ov-bank { color: var(--text-secondary); }
+.ov-empty { text-align: center; color: var(--text-tertiary); padding: 32px; }
+.ov-foot { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; font-size: 13px; color: var(--text-tertiary); }
+.ov-foot b { color: var(--text-secondary); }
+.pill-status.scheduled { background: var(--req-ready-bg, rgba(56,82,180,.12)); color: var(--req-ready-ink, #3852B4); }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -872,16 +901,29 @@ input, textarea { font-family: inherit; }
 
     <!-- ===== OVERVIEW ===== -->
     <section class="screen active" data-screen="overview">
-      <div class="page-head">
-        <h1>Hello, Jumbo</h1>
-        <p>Track your live campaigns and offer performance</p>
+      <div class="ov-head">
+        <div class="page-head" style="margin:0;">
+          <h1>Hello, Jumbo</h1>
+          <p>Track your live campaigns performance</p>
+        </div>
+        <div class="ov-actions">
+          <button class="btn btn-ghost" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Drafts</button>
+          <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
+        </div>
       </div>
-      <div class="tabs" id="overview-tabs">
-        <button class="tab active" data-filter="live">Live <span class="count"></span></button>
-        <button class="tab" data-filter="completed">Completed <span class="count"></span></button>
-        <button class="tab" data-filter="all">All <span class="count"></span></button>
+      <div class="ov-filters">
+        <div class="ov-field"><label>Campaign name</label><div class="ov-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input id="ov-q" placeholder="Search Campaign Name" oninput="renderOverview()"></div></div>
+        <div class="ov-field"><label>Status</label><select id="ov-status" onchange="renderOverview()"><option value="">All Campaigns</option><option value="live">Live</option><option value="scheduled">Scheduled</option><option value="review">In review</option><option value="completed">Completed</option></select></div>
+        <div class="ov-field"><label>Brand</label><select id="ov-brand" onchange="renderOverview()"><option value="">All Brands</option></select></div>
+        <div class="ov-field"><label>Bank</label><select id="ov-bank" onchange="renderOverview()"><option value="">All Banks</option></select></div>
       </div>
-      <div class="card-grid" id="overview-grid"></div>
+      <div class="ov-tablewrap">
+        <table class="ov-table">
+          <thead><tr><th>Brand &amp; Campaign</th><th>Bank</th><th>Cashback</th><th>Status</th><th>Start date</th><th>End date</th><th>Duration</th></tr></thead>
+          <tbody id="overview-body"></tbody>
+        </table>
+        <div class="ov-foot" id="overview-foot"></div>
+      </div>
     </section>
 
     <!-- ===== CAMPAIGN REQUESTS ===== -->
@@ -1527,20 +1569,24 @@ const MERCHANTS = [
 
 /* ---------- Campaigns (overview) — generated for the active merchant ---------- */
 const CAMPAIGN_ROWS = [
-  { name:'Summer Cashback',       cashback:'10%', dates:'1 Jul – 31 Aug', bank:'Abu Dhabi Islamic Bank',   status:'live' },
-  { name:'Weekend Boost',         cashback:'8%',  dates:'1 May – 30 Jun',  bank:'Ajman Bank',               status:'live' },
-  { name:'Loyalty Lift',          cashback:'12%', dates:'15 Aug – 15 Sep', bank:'American Express',          status:'live' },
-  { name:'New Customer Drive',    cashback:'9%',  dates:'1 Jun – 31 Jul',  bank:'D360 Bank',                status:'live' },
-  { name:'Online Order Cashback', cashback:'11%', dates:'10 Jun – 10 Jul', bank:'Beyon Money',              status:'live' },
-  { name:'Seasonal Saver',        cashback:'7%',  dates:'1 Jul – 30 Sep',  bank:'Commercial Bank of Dubai', status:'live' },
-  { name:'Flash Reward',          cashback:'12%', dates:'1 Mar – 30 Mar',  bank:'Abu Dhabi Islamic Bank',   status:'completed' },
-  { name:'Members Reward',        cashback:'9%',  dates:'2 Jan – 31 Jan',  bank:'Ajman Bank',               status:'completed' },
+  { name:'Summer Cashback',       cashback:'10%', dates:'1 Jul – 31 Aug', start:'1 Jul 2026',  end:'31 Aug 2026',          duration:'61 days',  bank:'Abu Dhabi Islamic Bank',   status:'live' },
+  { name:'Weekend Boost',         cashback:'8%',  dates:'1 May – 30 Jun',  start:'1 May 2026',  end:'30 Jun 2026',          duration:'60 days',  bank:'Ajman Bank',               status:'live' },
+  { name:'Loyalty Lift',          cashback:'12%', dates:'15 Aug – 15 Sep', start:'15 Aug 2026', end:'15 Sep 2026',          duration:'31 days',  bank:'American Express',          status:'live' },
+  { name:'New Customer Drive',    cashback:'9%',  dates:'1 Jun – 31 Jul',  start:'1 Jun 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'D360 Bank',                status:'live' },
+  { name:'Online Order Cashback', cashback:'11%', dates:'10 Jun – 10 Jul', start:'10 Jun 2026', end:'10 Jul 2026',          duration:'30 days',  bank:'Beyon Money',              status:'live' },
+  { name:'Seasonal Saver',        cashback:'7%',  dates:'1 Jul – 30 Sep',  start:'1 Jul 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'Commercial Bank of Dubai', status:'live' },
+  { name:'Ramadan Reward',        cashback:'15%', dates:'1 Nov – ',        start:'1 Nov 2026',  end:'Till budget exhaust',  duration:'365 days', bank:'Abu Dhabi Islamic Bank',   status:'scheduled' },
+  { name:'Eid Shopping Festival', cashback:'17%', dates:'1 Jan – 28 Feb',  start:'1 Jan 2026',  end:'28 Feb 2026',          duration:'58 days',  bank:'Emirates NBD',             status:'review' },
+  { name:'Flash Reward',          cashback:'12%', dates:'1 Mar – 30 Mar',  start:'1 Mar 2026',  end:'30 Mar 2026',          duration:'29 days',  bank:'Abu Dhabi Islamic Bank',   status:'completed' },
+  { name:'Members Reward',        cashback:'9%',  dates:'2 Jan – 31 Jan',  start:'2 Jan 2026',  end:'31 Jan 2026',          duration:'29 days',  bank:'Ajman Bank',               status:'completed' },
 ];
 function buildCampaigns(m){
   const cat = KITS[m.kit] || KITS.shopping;
+  const logo = mLogo(m.domain);
   return CAMPAIGN_ROWS.map((r,i)=>({
     name: i===0 ? `Summer ${cat.label} Cashback` : r.name,
-    cashback:r.cashback, dates:r.dates, bank:r.bank, status:r.status,
+    brand: m.name, brandLogo: logo,
+    cashback:r.cashback, dates:r.dates, start:r.start, end:r.end, duration:r.duration, bank:r.bank, status:r.status,
     icon:cat.icon, color:cat.color,
     img:`https://images.unsplash.com/${cat.imgs[i % cat.imgs.length]}?auto=format&fit=crop&w=800&q=60`,
   }));
@@ -1560,8 +1606,8 @@ function setMerchant(idx){
   mSetTxt('acct-name', m.name);
   setAvatar(mEl('acct-avatar'), m);
   CAMPAIGNS = buildCampaigns(m);
-  var at = document.querySelector('#overview-tabs .tab.active');
-  renderOverview(at ? at.dataset.filter : 'live');
+  populateOvFilters();
+  renderOverview();
   // flagship detail
   mSetTxt('detail-title', flagship);
   mSetTxt('detail-campname', flagship);
@@ -1602,7 +1648,8 @@ document.addEventListener('click', function(ev){ var s=mEl('acct-switcher'); if(
 const PILL = {
   live: '<span class="pill-status live"><span class="dot"></span>Live</span>',
   completed: '<span class="pill-status completed"><span class="dot"></span>Completed</span>',
-  review: '<span class="pill-status review"><span class="dot"></span>Under review</span>',
+  review: '<span class="pill-status review"><span class="dot"></span>In review</span>',
+  scheduled: '<span class="pill-status scheduled"><span class="dot"></span>Scheduled</span>',
   ready: '<span class="pill-status ready"><span class="dot"></span>Recommendation ready</span>',
   approved: '<span class="pill-status approved"><span class="dot"></span>Campaign Confirmed</span>',
 };
@@ -1611,24 +1658,37 @@ function tint(color) {
   return `color-mix(in srgb, ${color} 12%, white)`;
 }
 
-function offerCard(c) {
-  return `<button class="offer-card" onclick="openCampaign(${CAMPAIGNS.indexOf(c)})">
-    <div class="offer-hero" style="background:${tint(c.color)};">${catIcon(c.icon, c.color, 44)}<img src="${c.img}" alt="" loading="lazy" onerror="this.remove();"></div>
-    <div class="offer-body">
-      <div class="offer-title-row"><h3>${c.name}</h3>${PILL[c.status]}</div>
-      <div class="offer-meta">
-        <div><div class="lbl">Cashback</div><div class="val">${c.cashback}</div></div>
-        <div><div class="lbl">Duration</div><div class="val">${c.dates}</div></div>
-        <div><div class="lbl">Bank</div><div class="val">${c.bank}</div></div>
-      </div>
-      <span class="btn btn-soft">View Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
-    </div>
-  </button>`;
+function ovLogo(c) {
+  return c.brandLogo
+    ? `<span class="ov-logo"><img src="${c.brandLogo}" alt="" onerror="this.remove()"></span>`
+    : `<span class="ov-logo">${mInitials(c.brand || 'M')}</span>`;
 }
-
-function renderOverview(filter) {
-  const list = CAMPAIGNS.filter((c) => filter === 'all' || c.status === filter);
-  document.getElementById('overview-grid').innerHTML = list.map(offerCard).join('');
+function offerRow(c) {
+  const i = CAMPAIGNS.indexOf(c);
+  return `<tr onclick="openCampaign(${i})">
+    <td><div class="ov-brand">${ovLogo(c)}<div><div class="ov-cname">${c.name}</div><div class="ov-bsub">${c.brand || ''}</div></div></div></td>
+    <td class="ov-bank">${c.bank}</td>
+    <td>${c.cashback}</td>
+    <td>${PILL[c.status] || ''}</td>
+    <td>${c.start || ''}</td>
+    <td>${c.end || ''}</td>
+    <td>${c.duration || ''}</td>
+  </tr>`;
+}
+function populateOvFilters() {
+  const brand = mEl('ov-brand'); if (brand) { const cur = MERCHANTS[curMerchant].name; brand.innerHTML = '<option value="">All Brands</option><option value="' + cur + '">' + cur + '</option>'; }
+  const bankSel = mEl('ov-bank'); if (bankSel) { const banks = [...new Set(CAMPAIGNS.map(c => c.bank))]; bankSel.innerHTML = '<option value="">All Banks</option>' + banks.map(b => '<option value="' + b + '">' + b + '</option>').join(''); }
+}
+function renderOverview() {
+  const body = mEl('overview-body'); if (!body) return;
+  const q = (mEl('ov-q') && mEl('ov-q').value.trim().toLowerCase()) || '';
+  const st = (mEl('ov-status') && mEl('ov-status').value) || '';
+  const br = (mEl('ov-brand') && mEl('ov-brand').value) || '';
+  const bk = (mEl('ov-bank') && mEl('ov-bank').value) || '';
+  const list = CAMPAIGNS.filter(c =>
+    (!q || c.name.toLowerCase().includes(q)) && (!st || c.status === st) && (!br || c.brand === br) && (!bk || c.bank === bk));
+  body.innerHTML = list.length ? list.map(offerRow).join('') : '<tr><td colspan="7" class="ov-empty">No campaigns match your filters.</td></tr>';
+  const foot = mEl('overview-foot'); if (foot) foot.innerHTML = '<span>Showing <b>' + list.length + '</b> of ' + CAMPAIGNS.length + ' campaigns</span><span>Page 1 of 1</span>';
 }
 
 /* ---------- Campaign requests ---------- */
@@ -1671,23 +1731,6 @@ function renderRequests() {
   }).join('');
 }
 
-/* ---------- Tab groups ---------- */
-function wireTabs(id, counts, render) {
-  const tabs = document.getElementById(id);
-  tabs.querySelectorAll('.tab').forEach((tab) => {
-    tab.querySelector('.count').textContent = counts[tab.dataset.filter];
-    tab.addEventListener('click', () => {
-      tabs.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-      render(tab.dataset.filter);
-    });
-  });
-}
-wireTabs('overview-tabs', {
-  live: CAMPAIGNS.filter((c) => c.status === 'live').length,
-  completed: CAMPAIGNS.filter((c) => c.status === 'completed').length,
-  all: CAMPAIGNS.length,
-}, renderOverview);
 /* ---------- Profile: brands + Merchant/POS IDs (per merchant account) ---------- */
 const LOGO_PH = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"></rect><circle cx="9" cy="9" r="2"></circle><path d="M21 15l-5-5L5 21"></path></svg>';
 let MERCHANT_BRANDS = [];
@@ -1750,7 +1793,7 @@ function renderNbMids(){ const el = mEl('nb-mid-chips'); if (!el) return; el.inn
 function addNbMid(){ const inp = mEl('nb-mid'); const v = inp.value.trim(); if (!v) return; if (!nbMids.some(m => m.v === v)) nbMids.push({ v: v, ch: 'online', posIds: [] }); inp.value=''; renderNbMids(); inp.focus(); }
 function saveBrand(){ const name = mEl('nb-name').value.trim(); const pm = mEl('nb-mid').value.trim(); if (pm && !nbMids.some(m => m.v === pm)) nbMids.push({ v: pm, ch: 'online', posIds: [] }); if (!name) { mEl('nb-name').focus(); return; } MERCHANT_BRANDS.push({ name: name, logo: '', merchantIds: nbMids.slice() }); closeModal('modal-brand'); renderBrands(); }
 
-renderOverview('live');
+renderOverview();
 renderRequests();
 renderAcctMenu();
 setMerchant(0);
