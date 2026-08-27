@@ -1008,6 +1008,10 @@ input, textarea { font-family: inherit; }
 .acct-logo img{width:100%;height:100%;object-fit:contain}
 .acct-item .an{font-size:13.5px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .acct-item .ac{font-size:11px;color:var(--text-tertiary);text-transform:capitalize}
+.amdiv{height:1px;background:var(--border-subtle);margin:6px 4px}
+.acct-logout .acct-logo{color:var(--text-secondary)}
+.acct-logout .an{color:var(--text-secondary)}
+.acct-logout:hover .an,.acct-logout:hover .acct-logo{color:#c0392b}
 </style>
 <div class="app" id="app" data-sidebar="light" data-heroes="photo">
 
@@ -1954,7 +1958,7 @@ function renderAcctMenu(){
     var mark = l ? '<img src="' + l + '" alt="">' : mInitials(m.name);
     var lbl = KITS[m.kit] ? KITS[m.kit].label : '';
     return '<button type="button" class="acct-item' + (i===curMerchant?' on':'') + '" onclick="chooseMerchant(event,' + i + ')"><span class="acct-logo">' + mark + '</span><span style="min-width:0"><span class="an">' + m.name + '</span><span class="ac">' + lbl + '</span></span></button>';
-  }).join('');
+  }).join('') + '<div class="amdiv"></div><button type="button" class="acct-item acct-logout" onclick="location.href=\'login.html\'"><span class="acct-logo"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg></span><span class="an">Log out</span></button>';
 }
 function chooseMerchant(e,i){ e.stopPropagation(); setMerchant(i); renderAcctMenu(); closeAcctMenu(); }
 function toggleAcctMenu(e){ e.stopPropagation(); var s=mEl('acct-switcher'), mn=mEl('acct-menu'); if(!mn) return; var open=mn.classList.toggle('open'); if(s) s.classList.toggle('open', open); }
