@@ -612,6 +612,39 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .ob-nomid span { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
 .ob-foot { display: flex; align-items: center; justify-content: space-between; max-width: 860px; margin: var(--space-5) auto 0; }
 .ob-foot-r { display: inline-flex; gap: 10px; }
+
+/* ===== Create Campaign wizard ===== */
+.cc-stepper { max-width: 620px; }
+.cc-goals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 8px 0 4px; }
+@media (max-width: 820px) { .cc-goals { grid-template-columns: 1fr 1fr; } }
+.cc-goal { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; border: 1.5px solid var(--border-default); border-radius: var(--r-md, var(--radius-md)); border-radius: var(--radius-md); background: var(--bg-surface); padding: 16px; font: inherit; font-size: 14px; font-weight: var(--weight-semibold); color: var(--text-secondary); cursor: pointer; text-align: left; transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard); }
+.cc-goal svg { color: var(--text-tertiary); }
+.cc-goal.on { border-color: var(--lune-emerald); background: var(--surface-emerald); color: var(--text-primary); }
+.cc-goal.on svg { color: var(--lune-teal-700); }
+.cc-util { display: flex; gap: 18px; align-items: center; height: 44px; }
+.cc-util-opt { display: inline-flex; align-items: center; gap: 8px; border: none; background: none; font: inherit; font-size: 14px; color: var(--text-secondary); cursor: pointer; }
+.cc-util-opt.on { color: var(--text-primary); }
+.cc-util-opt .ob-rdot { width: 18px; height: 18px; }
+.cc-util-opt.on .ob-rdot { border-color: var(--lune-teal-700); }
+.cc-util-opt.on .ob-rdot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--lune-teal-700); }
+.cc-util-opt .ob-rdot { position: relative; }
+.cc-check { width: 20px; height: 20px; flex: none; border-radius: 5px; border: 1.5px solid var(--border-default); background: var(--bg-surface); cursor: pointer; position: relative; }
+.cc-check.on { background: var(--lune-emerald); border-color: var(--lune-emerald); }
+.cc-check.on::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.cc-mid { border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 10px; overflow: hidden; }
+.cc-mid-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
+.cc-mid-id { font-weight: var(--weight-semibold); font-family: var(--font-mono); font-size: 14px; color: var(--text-primary); }
+.cc-mid-acq { margin-left: auto; color: var(--text-tertiary); font-size: 13px; }
+.cc-mid .cd-chev { transition: transform var(--dur-fast) var(--ease-standard); }
+.cc-mid.open .cd-chev { transform: rotate(180deg); }
+.cc-terms { display: none; background: var(--surface-muted); padding: 6px 16px 12px; }
+.cc-mid.open .cc-terms { display: block; }
+.cc-term { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: var(--border-hairline) solid var(--border-subtle); }
+.cc-term:last-child { border-bottom: none; }
+.cc-term-id { font-family: var(--font-mono); font-size: 13.5px; color: var(--text-secondary); min-width: 96px; }
+.cc-term-name { margin-left: auto; color: var(--text-tertiary); font-size: 13px; }
+.cc-rev-head { display: flex; align-items: center; gap: 12px; background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); padding: 14px 18px; margin-bottom: var(--space-4); }
+.cc-rev-head .cd-logo { width: 40px; height: 40px; }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -1088,7 +1121,7 @@ input, textarea { font-family: inherit; }
         </div>
         <div class="ov-actions">
           <button class="btn btn-ghost" type="button" data-nav="drafts"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Drafts</button>
-          <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
+          <button class="btn btn-primary" onclick="openCreateCampaign()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
         </div>
       </div>
       <div class="ov-filters">
@@ -1115,7 +1148,7 @@ input, textarea { font-family: inherit; }
         </div>
         <div class="ov-actions">
           <button class="btn btn-ghost" data-nav="overview"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>Go to Campaigns</button>
-          <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
+          <button class="btn btn-primary" onclick="openCreateCampaign()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
         </div>
       </div>
       <div class="ov-filters" style="grid-template-columns:1fr;max-width:420px;">
@@ -1164,7 +1197,7 @@ input, textarea { font-family: inherit; }
           <div class="bd-web" id="bd-web"></div>
         </div>
         <button class="btn btn-ghost" onclick="openEditBrand()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>Edit Brand</button>
-        <button class="btn btn-primary" data-nav="wizard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
+        <button class="btn btn-primary" onclick="openCreateCampaign()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Create Campaign</button>
       </div>
       <div class="bd-tabs">
         <button class="bd-tab on" data-tab="overview" onclick="bdTab('overview')">Brand Overview</button>
@@ -1267,6 +1300,108 @@ input, textarea { font-family: inherit; }
         <div class="ob-foot-r">
           <button class="btn btn-ghost" id="ob-back" onclick="obBack()" hidden>Back</button>
           <button class="btn btn-primary" id="ob-next" onclick="obNext()">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CREATE CAMPAIGN (wizard) ===== -->
+    <section class="screen screen-wide" data-screen="create-campaign">
+      <div class="ob-head">
+        <button class="cd-back" onclick="ccCancel()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <div><div class="ob-steplbl" id="cc-steplbl">Step 1 of 3</div><h1>Create Campaign</h1></div>
+        <button class="btn btn-ghost" style="margin-left:auto" onclick="ccSaveDraft()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>Save draft</button>
+      </div>
+      <div class="ob-stepper cc-stepper">
+        <div class="ob-stepitem on" id="cc-si-1"><span class="ob-dot">1</span>Campaign Details</div>
+        <div class="ob-stepline"></div>
+        <div class="ob-stepitem" id="cc-si-2"><span class="ob-dot">2</span>Merchant Details</div>
+        <div class="ob-stepline"></div>
+        <div class="ob-stepitem" id="cc-si-3"><span class="ob-dot">3</span>Review</div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="ob-card" id="cc-step-1">
+        <h3 class="bd-card-h">Campaign Details</h3>
+        <p class="bd-card-sub">Choose the brand and describe what this campaign is about.</p>
+        <div class="ob-row2">
+          <div class="ob-field"><label>Brand</label><select id="cc-brand"></select></div>
+          <div class="ob-field"><label>Campaign name</label><input id="cc-name" placeholder="E.g. Ramadan Beauty Treats 10% Cashback"></div>
+        </div>
+        <label class="ob-lbl">Campaign Goals</label>
+        <div class="cc-goals" id="cc-goals">
+          <button type="button" class="cc-goal on" data-goal="Acquire customers" onclick="ccPickGoal(this)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"></circle><path d="M3 20a6 6 0 0 1 12 0"></path><path d="M17 8h4M19 6v4"></path></svg><span>Acquire customers</span></button>
+          <button type="button" class="cc-goal" data-goal="Win back customers" onclick="ccPickGoal(this)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7"></path><path d="M3 21v-5h5"></path></svg><span>Win back customers</span></button>
+          <button type="button" class="cc-goal" data-goal="Increase frequency" onclick="ccPickGoal(this)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 7-7"></path><path d="M14 8h6v6"></path></svg><span>Increase frequency</span></button>
+          <button type="button" class="cc-goal" data-goal="Grow average spend" onclick="ccPickGoal(this)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg><span>Grow average spend</span></button>
+        </div>
+        <h4 class="ob-sec">Campaign Settings</h4>
+        <div class="ob-row2">
+          <div class="ob-field"><label>Campaign budget</label><input id="cc-budget" placeholder="AED 55,000"></div>
+          <div class="ob-field"><label>Cashback percentage</label><input id="cc-cashback" placeholder="10 %"></div>
+          <div class="ob-field"><label>Cashback cap</label><input id="cc-cap" placeholder="AED 300"></div>
+          <div class="ob-field"><label>Minimum spend <span class="ob-opt">(optional)</span></label><input id="cc-minspend" placeholder="AED 200"></div>
+          <div class="ob-field"><label>Hold period</label><select id="cc-hold"><option>14 days</option><option selected>30 days</option><option>45 days</option><option>60 days</option></select></div>
+          <div class="ob-field"><label>How should the budget be utilized?</label>
+            <div class="cc-util">
+              <button type="button" class="cc-util-opt on" data-u="exhaust" onclick="ccPickUtil(this)"><span class="ob-rdot"></span>Run till budget is exhausted</button>
+              <button type="button" class="cc-util-opt" data-u="fixed" onclick="ccPickUtil(this)"><span class="ob-rdot"></span>Fixed duration</button>
+            </div>
+          </div>
+          <div class="ob-field"><label>Start date</label><input id="cc-start" type="text" placeholder="Jul 1, 2026" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'"></div>
+          <div class="ob-field"><label>End date</label><input id="cc-end" type="text" placeholder="Aug 30, 2026" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'"></div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="ob-card" id="cc-step-2" hidden>
+        <h3 class="bd-card-h">Merchant Details</h3>
+        <p class="bd-card-sub">Select the merchant IDs and terminals this campaign runs on.</p>
+        <div class="ob-row3" style="grid-template-columns:2fr 1fr 1fr;margin-bottom:18px;">
+          <div class="ob-field"><label>Search ID</label><div class="ob-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg><input placeholder="Search Merchant ID or Terminal ID"></div></div>
+          <div class="ob-field"><label>Channel</label><select><option>All</option><option>In-Store</option><option>Online</option></select></div>
+          <div class="ob-field"><label>Label</label><select><option>All</option></select></div>
+        </div>
+        <div id="cc-mids"></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="cc-step-3" hidden>
+        <div class="ob-card" style="max-width:none;margin-bottom:var(--space-4)">
+          <h3 class="bd-card-h">Review Campaign</h3>
+          <p class="bd-card-sub">Check the details below before submitting. Your campaign will be reviewed and matched with a bank partner.</p>
+        </div>
+        <div class="cd-grid">
+          <div class="cd-left">
+            <div class="cc-rev-head"><span class="cd-logo" id="cc-rev-logo"></span><div><div class="ov-cname" id="cc-rev-name" style="font-size:15px"></div><div class="ov-bsub" id="cc-rev-brand"></div></div></div>
+            <div class="cd-card open">
+              <button class="cd-card-head" onclick="toggleCd(this)"><span>Campaign Details</span><svg class="cd-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button>
+              <div class="cd-card-body"><div class="cd-kv-grid" id="cc-rev-kv"></div></div>
+            </div>
+            <div class="cd-card">
+              <button class="cd-card-head" onclick="toggleCd(this)"><span>Merchant Details</span><svg class="cd-chev" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></button>
+              <div class="cd-card-body"><div id="cc-rev-mids"></div></div>
+            </div>
+          </div>
+          <div class="cd-right">
+            <div class="shp-panel">
+              <div class="shp-head">
+                <span class="shp-eye"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>What shoppers will see</span>
+                <div class="shp-toggle" id="cc-shp-toggle">
+                  <button data-v="card" onclick="ccShpView('card')">Card</button>
+                  <button data-v="detail" class="on" onclick="ccShpView('detail')">Detail</button>
+                </div>
+              </div>
+              <div class="shp-stage"><div class="phone"><div class="phone-scr" id="cc-shp-screen"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ob-foot">
+        <button class="btn btn-ghost" onclick="ccCancel()">Cancel</button>
+        <div class="ob-foot-r">
+          <button class="btn btn-ghost" id="cc-back" onclick="ccBack()" hidden>Back</button>
+          <button class="btn btn-primary" id="cc-next" onclick="ccNext()">Continue</button>
         </div>
       </div>
     </section>
@@ -1725,6 +1860,27 @@ input, textarea { font-family: inherit; }
   </div>
 </div>
 
+<div class="overlay" id="modal-campaign-done">
+  <div class="modal modal-center">
+    <div class="ic" style="background: var(--status-success); color: var(--status-success-ink);"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"></path></svg></div>
+    <h2>Campaign submitted successfully</h2>
+    <p class="msub" id="campaign-done-sub">Your campaign has been submitted for review. You will be notified once a bank partner approves it.</p>
+    <button class="btn btn-primary btn-block" onclick="closeModal('modal-campaign-done'); go('overview');">Go to Campaigns</button>
+  </div>
+</div>
+
+<div class="overlay" id="modal-draft-saved">
+  <div class="modal modal-center">
+    <div class="ic" style="background: var(--status-success); color: var(--status-success-ink);"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"></path></svg></div>
+    <h2>Campaign saved as draft</h2>
+    <p class="msub">This campaign hasn't been submitted yet. You can come back any time to review and continue where you left off.</p>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost btn-block" onclick="closeModal('modal-draft-saved'); go('drafts');">View Drafts</button>
+      <button class="btn btn-primary btn-block" onclick="closeModal('modal-draft-saved'); go('overview');">Go to Campaigns</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="modal-summary">
   <div class="modal modal-summary">
     <div class="sum-head">
@@ -1830,6 +1986,7 @@ function go(screen) {
     'request-empty': 'nav-overview',
     'campaign-requests': 'nav-overview',
     'wizard': 'nav-overview',
+    'create-campaign': 'nav-overview',
     'recommendation': 'nav-overview',
     'brands': 'nav-brands',
     'brand-detail': 'nav-brands',
@@ -2156,6 +2313,86 @@ function obFinish(){
   mSetTxt('brand-done-sub', obMode==='edit' ? 'Your changes have been saved.' : 'Your brand is ready. You can now create campaigns for it.');
   openModal('modal-brand-done');
 }
+
+/* ---------- Create Campaign wizard ---------- */
+let ccStep = 1, ccGoal = 'Grow average spend', ccUtil = 'exhaust', ccShopper = null;
+function openCreateCampaign(){
+  const m = MERCHANTS[curMerchant];
+  const b = mEl('cc-brand'); if (b) b.innerHTML = '<option>'+m.name+'</option>';
+  ccGoal = 'Grow average spend'; ccUtil = 'exhaust';
+  document.querySelectorAll('#cc-goals .cc-goal').forEach(function(g){ g.classList.toggle('on', g.dataset.goal === ccGoal); });
+  document.querySelectorAll('.cc-util-opt').forEach(function(u){ u.classList.toggle('on', u.dataset.u === ccUtil); });
+  // merchant id selector (step 2)
+  const midHost = mEl('cc-mids');
+  const brand = (MERCHANT_BRANDS && MERCHANT_BRANDS[0]) || { merchantIds: [] };
+  midHost.innerHTML = (brand.merchantIds || []).map(function(mid, i){
+    const terms = (mid.posIds && mid.posIds.length ? mid.posIds : [{v:mid.v.replace('MID','TID'),ch:mid.ch}]).map(function(p){
+      return '<div class="cc-term"><span class="cc-check"></span><span class="cc-term-id">'+p.v+'</span><span class="chan-tag '+(p.ch==='online'?'online':'instore')+'">'+(CHAN[p.ch]||'In-store')+'</span><span class="cc-term-name">'+MERCHANTS[curMerchant].name+' terminal</span></div>';
+    }).join('');
+    return '<div class="cc-mid'+(i===0?' open':'')+'"><div class="cc-mid-head" onclick="this.parentElement.classList.toggle(\'open\')"><span class="cc-check"></span><span class="cc-mid-id">'+mid.v+'</span><span class="cc-mid-acq">Stripe</span><svg class="cd-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></div><div class="cc-terms">'+terms+'</div></div>';
+  }).join('');
+  midHost.querySelectorAll('.cc-check').forEach(function(c){ c.addEventListener('click', function(e){ e.stopPropagation(); c.classList.toggle('on'); }); });
+  ccShow(1);
+  go('create-campaign');
+}
+function ccPickGoal(el){ ccGoal = el.dataset.goal; document.querySelectorAll('#cc-goals .cc-goal').forEach(function(g){ g.classList.toggle('on', g === el); }); }
+function ccPickUtil(el){ ccUtil = el.dataset.u; document.querySelectorAll('.cc-util-opt').forEach(function(u){ u.classList.toggle('on', u === el); }); }
+function ccShow(step){
+  ccStep = step;
+  mEl('cc-step-1').hidden = step !== 1;
+  mEl('cc-step-2').hidden = step !== 2;
+  mEl('cc-step-3').hidden = step !== 3;
+  mSetTxt('cc-steplbl', 'Step '+step+' of 3');
+  for (let i=1;i<=3;i++){
+    const si = mEl('cc-si-'+i);
+    si.classList.toggle('on', i === step);
+    si.classList.toggle('done', i < step);
+    si.querySelector('.ob-dot').innerHTML = i < step ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"></path></svg>' : i;
+  }
+  mEl('cc-back').hidden = step === 1;
+  mSetTxt('cc-next', step === 3 ? 'Create Campaign' : 'Continue');
+  if (step === 3) ccRenderReview();
+  document.querySelector('.main').scrollTop = 0;
+}
+function ccVal(id, dflt){ const e = mEl(id); return (e && e.value.trim()) ? e.value.trim() : dflt; }
+function ccBuild(){
+  const m = MERCHANTS[curMerchant];
+  const cat = KITS[m.kit] || KITS.shopping;
+  let cash = ccVal('cc-cashback','10'); cash = cash.replace(/[^0-9.]/g,'') || '10'; cash = cash + '%';
+  return {
+    name: ccVal('cc-name', 'Ramadan Beauty Treats '+cash+' Cashback'),
+    brand: m.name, brandLogo: mLogo(m.domain), noun: cat.noun,
+    cashback: cash, goal: ccGoal, budget: ccVal('cc-budget','AED 50,000'),
+    holdPeriod: ccVal('cc-hold','30 days'), minSpend: ccVal('cc-minspend','AED 200'),
+    cashbackCap: ccVal('cc-cap','AED 300'), duration: ccUtil==='exhaust' ? 'Till budget exhaust' : '60 days',
+    start: ccVal('cc-start','Jul 1, 2026'), end: ccUtil==='exhaust' ? 'Till budget exhaust' : ccVal('cc-end','Aug 30, 2026'),
+  };
+}
+function ccRenderReview(){
+  const c = ccBuild(); ccShopper = c;
+  mEl('cc-rev-logo').innerHTML = c.brandLogo ? '<img src="'+c.brandLogo+'" alt="" onerror="this.remove()">' : mInitials(c.brand);
+  mSetTxt('cc-rev-name', c.name); mSetTxt('cc-rev-brand', c.brand);
+  mEl('cc-rev-kv').innerHTML =
+    cdKV('brand','Brand',c.brand) + cdKV('cashback','Cashback',c.cashback) +
+    cdKV('goal','Campaign goal',c.goal) + cdKV('budget','Campaign budget',c.budget) +
+    cdKV('hold','Hold period',c.holdPeriod) + cdKV('min','Minimum spend',c.minSpend) +
+    cdKV('duration','Offer period',c.duration) + cdKV('cap','Cashback cap',c.cashbackCap) +
+    cdKV('date','Start date',c.start) + cdKV('date','End date',c.end);
+  const brand = (MERCHANT_BRANDS && MERCHANT_BRANDS[0]) || { merchantIds: [] };
+  mEl('cc-rev-mids').innerHTML = (brand.merchantIds||[]).map(function(mid){
+    return '<div class="cd-dist-row">'+CD_IC.id+'<span class="b">'+mid.v+'</span><span class="r">'+(CHAN[mid.ch]||'In-store')+'</span></div>';
+  }).join('');
+  ccShpView('detail');
+}
+function ccShpView(v){
+  document.querySelectorAll('#cc-shp-toggle button').forEach(function(b){ b.classList.toggle('on', b.dataset.v === v); });
+  if (ccShopper) mEl('cc-shp-screen').innerHTML = v === 'card' ? shopperCard(ccShopper) : shopperDetail(ccShopper);
+}
+function ccNext(){ if (ccStep < 3) ccShow(ccStep + 1); else ccSubmit(); }
+function ccBack(){ if (ccStep > 1) ccShow(ccStep - 1); }
+function ccCancel(){ go('overview'); }
+function ccSaveDraft(){ openModal('modal-draft-saved'); }
+function ccSubmit(){ openModal('modal-campaign-done'); }
 
 /* ---------- Campaign requests ---------- */
 const REQUESTS = [
