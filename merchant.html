@@ -645,6 +645,16 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .cc-term-name { margin-left: auto; color: var(--text-tertiary); font-size: 13px; }
 .cc-rev-head { display: flex; align-items: center; gap: 12px; background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); padding: 14px 18px; margin-bottom: var(--space-4); }
 .cc-rev-head .cd-logo { width: 40px; height: 40px; }
+/* affix inputs (AED / % / days) */
+.ob-inpwrap { display: flex; align-items: center; gap: 8px; height: 44px; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); padding: 0 12px; }
+.ob-inpwrap:focus-within { border-color: var(--lune-emerald); box-shadow: 0 0 0 3px var(--focus-ring); }
+.ob-inpwrap input { border: none; outline: none; background: transparent; font: inherit; font-size: 14px; flex: 1; min-width: 0; color: var(--text-primary); height: 100%; padding: 0; }
+.ob-inpwrap input:focus { box-shadow: none; border: none; }
+.ob-inpwrap .afx { flex: none; font-size: 14px; font-weight: var(--weight-medium); color: var(--text-tertiary); }
+.ob-inpwrap .afx.suf { order: 2; }
+.ob-field.locked input { background: var(--surface-muted); color: var(--text-tertiary); cursor: not-allowed; border-color: var(--border-subtle); }
+/* distribution / merchant-detail rows: keep the leading icon small */
+.cd-dist-row > svg { width: 16px; height: 16px; flex: none; color: var(--text-tertiary); }
 .panel { background: var(--surface-card); border: var(--border-hairline) solid var(--border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-xs); }
 .preview-head { padding: var(--space-5) var(--space-6); border-bottom: var(--border-hairline) solid var(--border-subtle); font-size: 16px; font-weight: var(--weight-semibold); color: var(--text-primary); }
 .preview-body { padding: var(--space-5) var(--space-6); }
@@ -1336,11 +1346,11 @@ input, textarea { font-family: inherit; }
         </div>
         <h4 class="ob-sec">Campaign Settings</h4>
         <div class="ob-row2">
-          <div class="ob-field"><label>Campaign budget</label><input id="cc-budget" placeholder="AED 55,000"></div>
-          <div class="ob-field"><label>Cashback percentage</label><input id="cc-cashback" placeholder="10 %"></div>
-          <div class="ob-field"><label>Cashback cap</label><input id="cc-cap" placeholder="AED 300"></div>
-          <div class="ob-field"><label>Minimum spend <span class="ob-opt">(optional)</span></label><input id="cc-minspend" placeholder="AED 200"></div>
-          <div class="ob-field"><label>Hold period</label><select id="cc-hold"><option>14 days</option><option selected>30 days</option><option>45 days</option><option>60 days</option></select></div>
+          <div class="ob-field"><label>Campaign budget</label><div class="ob-inpwrap"><span class="afx">AED</span><input id="cc-budget" inputmode="numeric" placeholder="55,000"></div></div>
+          <div class="ob-field"><label>Cashback percentage</label><div class="ob-inpwrap"><input id="cc-cashback" inputmode="numeric" placeholder="10"><span class="afx suf">%</span></div></div>
+          <div class="ob-field"><label>Cashback cap</label><div class="ob-inpwrap"><span class="afx">AED</span><input id="cc-cap" inputmode="numeric" placeholder="300"></div></div>
+          <div class="ob-field"><label>Minimum spend <span class="ob-opt">(optional)</span></label><div class="ob-inpwrap"><span class="afx">AED</span><input id="cc-minspend" inputmode="numeric" placeholder="200"></div></div>
+          <div class="ob-field"><label>Hold period</label><div class="ob-inpwrap"><input id="cc-hold" inputmode="numeric" value="30" placeholder="30"><span class="afx suf">days</span></div></div>
           <div class="ob-field"><label>How should the budget be utilized?</label>
             <div class="cc-util">
               <button type="button" class="cc-util-opt on" data-u="exhaust" onclick="ccPickUtil(this)"><span class="ob-rdot"></span>Run till budget is exhausted</button>
@@ -1348,7 +1358,7 @@ input, textarea { font-family: inherit; }
             </div>
           </div>
           <div class="ob-field"><label>Start date</label><input id="cc-start" type="text" placeholder="Jul 1, 2026" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'"></div>
-          <div class="ob-field"><label>End date</label><input id="cc-end" type="text" placeholder="Aug 30, 2026" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'"></div>
+          <div class="ob-field" id="cc-end-field"><label>End date</label><input id="cc-end" type="text" placeholder="Aug 30, 2026" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'"></div>
         </div>
       </div>
 
@@ -2332,11 +2342,19 @@ function openCreateCampaign(){
     return '<div class="cc-mid'+(i===0?' open':'')+'"><div class="cc-mid-head" onclick="this.parentElement.classList.toggle(\'open\')"><span class="cc-check"></span><span class="cc-mid-id">'+mid.v+'</span><span class="cc-mid-acq">Stripe</span><svg class="cd-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></div><div class="cc-terms">'+terms+'</div></div>';
   }).join('');
   midHost.querySelectorAll('.cc-check').forEach(function(c){ c.addEventListener('click', function(e){ e.stopPropagation(); c.classList.toggle('on'); }); });
+  ccSyncEnd();
   ccShow(1);
   go('create-campaign');
 }
 function ccPickGoal(el){ ccGoal = el.dataset.goal; document.querySelectorAll('#cc-goals .cc-goal').forEach(function(g){ g.classList.toggle('on', g === el); }); }
-function ccPickUtil(el){ ccUtil = el.dataset.u; document.querySelectorAll('.cc-util-opt').forEach(function(u){ u.classList.toggle('on', u === el); }); }
+function ccPickUtil(el){ ccUtil = el.dataset.u; document.querySelectorAll('.cc-util-opt').forEach(function(u){ u.classList.toggle('on', u === el); }); ccSyncEnd(); }
+function ccSyncEnd(){
+  const e = mEl('cc-end'), f = mEl('cc-end-field'); if (!e || !f) return;
+  const lock = ccUtil === 'exhaust';
+  e.disabled = lock; f.classList.toggle('locked', lock);
+  if (lock) { e.type = 'text'; e.value = ''; e.placeholder = 'Till budget exhaust'; }
+  else { e.placeholder = 'Aug 30, 2026'; }
+}
 function ccShow(step){
   ccStep = step;
   mEl('cc-step-1').hidden = step !== 1;
@@ -2355,16 +2373,18 @@ function ccShow(step){
   document.querySelector('.main').scrollTop = 0;
 }
 function ccVal(id, dflt){ const e = mEl(id); return (e && e.value.trim()) ? e.value.trim() : dflt; }
+function ccAed(id, dflt){ const v = ccVal(id, ''); return v ? 'AED ' + v.replace(/^AED\s*/i,'') : dflt; }
 function ccBuild(){
   const m = MERCHANTS[curMerchant];
   const cat = KITS[m.kit] || KITS.shopping;
   let cash = ccVal('cc-cashback','10'); cash = cash.replace(/[^0-9.]/g,'') || '10'; cash = cash + '%';
+  const hold = (ccVal('cc-hold','30').replace(/[^0-9]/g,'') || '30') + ' days';
   return {
     name: ccVal('cc-name', 'Ramadan Beauty Treats '+cash+' Cashback'),
     brand: m.name, brandLogo: mLogo(m.domain), noun: cat.noun,
-    cashback: cash, goal: ccGoal, budget: ccVal('cc-budget','AED 50,000'),
-    holdPeriod: ccVal('cc-hold','30 days'), minSpend: ccVal('cc-minspend','AED 200'),
-    cashbackCap: ccVal('cc-cap','AED 300'), duration: ccUtil==='exhaust' ? 'Till budget exhaust' : '60 days',
+    cashback: cash, goal: ccGoal, budget: ccAed('cc-budget','AED 50,000'),
+    holdPeriod: hold, minSpend: ccAed('cc-minspend','AED 200'),
+    cashbackCap: ccAed('cc-cap','AED 300'), duration: ccUtil==='exhaust' ? 'Till budget exhaust' : '60 days',
     start: ccVal('cc-start','Jul 1, 2026'), end: ccUtil==='exhaust' ? 'Till budget exhaust' : ccVal('cc-end','Aug 30, 2026'),
   };
 }
