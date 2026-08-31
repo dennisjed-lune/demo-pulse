@@ -438,6 +438,8 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 .bank-cell { display: inline-flex; align-items: center; gap: 9px; color: var(--text-secondary); }
 .bank-logo { width: 26px; height: 26px; flex: 0 0 26px; border-radius: 7px; border: var(--border-hairline) solid var(--border-subtle); background: #fff; display: inline-flex; align-items: center; justify-content: center; overflow: hidden; font-size: 9px; font-weight: 800; color: var(--lune-teal-700); }
 .bank-logo img { width: 100%; height: 100%; object-fit: contain; }
+.bank-pending { display: inline-flex; align-items: center; gap: 7px; color: var(--text-tertiary); font-size: 13.5px; }
+.bank-pending .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--neutral-300); }
 .ov-table thead th .th-sort { display: inline-flex; vertical-align: middle; margin-left: 5px; color: var(--neutral-300); }
 .tfoot-l, .tfoot-r { display: inline-flex; align-items: center; gap: 12px; }
 .tfoot-sel { display: inline-flex; align-items: center; gap: 6px; border: var(--border-hairline) solid var(--border-default); border-radius: var(--radius-sm); padding: 4px 8px; color: var(--text-secondary); font-weight: var(--weight-medium); }
@@ -2177,11 +2179,18 @@ function bankCell(name) {
     : `<span class="bank-logo">${mInitials(name)}</span>`;
   return `<span class="bank-cell">${badge}<span>${name}</span></span>`;
 }
+/* A bank is only matched by Lune once a campaign is approved (scheduled/live/completed).
+   While it's in review, no bank is assigned yet. */
+function campBank(c){ return c.status === 'review' ? '' : c.bank; }
+function bankCellFor(c){
+  const b = campBank(c);
+  return b ? bankCell(b) : '<span class="bank-pending"><span class="dot"></span>Pending</span>';
+}
 function offerRow(c) {
   const i = CAMPAIGNS.indexOf(c);
   return `<tr onclick="openCampaign(${i})">
     <td><div class="ov-brand">${ovLogo(c)}<div><div class="ov-cname">${c.name}</div><div class="ov-bsub">${c.brand || ''}</div></div></div></td>
-    <td>${bankCell(c.bank)}</td>
+    <td>${bankCellFor(c)}</td>
     <td>${c.cashback}</td>
     <td>${PILL[c.status] || ''}</td>
     <td>${c.start || ''}</td>
@@ -2191,7 +2200,7 @@ function offerRow(c) {
 }
 function populateOvFilters() {
   const brand = mEl('ov-brand'); if (brand) { const cur = MERCHANTS[curMerchant].name; brand.innerHTML = '<option value="">All Brands</option><option value="' + cur + '">' + cur + '</option>'; }
-  const bankSel = mEl('ov-bank'); if (bankSel) { const banks = [...new Set(CAMPAIGNS.map(c => c.bank))]; bankSel.innerHTML = '<option value="">All Banks</option>' + banks.map(b => '<option value="' + b + '">' + b + '</option>').join(''); }
+  const bankSel = mEl('ov-bank'); if (bankSel) { const banks = [...new Set(CAMPAIGNS.map(campBank).filter(Boolean))]; bankSel.innerHTML = '<option value="">All Banks</option>' + banks.map(b => '<option value="' + b + '">' + b + '</option>').join(''); }
 }
 function renderOverview() {
   const body = mEl('overview-body'); if (!body) return;
@@ -2200,7 +2209,7 @@ function renderOverview() {
   const br = (mEl('ov-brand') && mEl('ov-brand').value) || '';
   const bk = (mEl('ov-bank') && mEl('ov-bank').value) || '';
   const list = CAMPAIGNS.filter(c =>
-    (!q || c.name.toLowerCase().includes(q)) && (!st || c.status === st) && (!br || c.brand === br) && (!bk || c.bank === bk));
+    (!q || c.name.toLowerCase().includes(q)) && (!st || c.status === st) && (!br || c.brand === br) && (!bk || campBank(c) === bk));
   body.innerHTML = list.length ? list.map(offerRow).join('') : '<tr><td colspan="7" class="ov-empty">No campaigns match your filters.</td></tr>';
   const foot = mEl('overview-foot'); if (foot) foot.innerHTML = tableFoot(list.length);
 }
@@ -2620,7 +2629,7 @@ function openCampaign(i) {
   // distribution
   document.getElementById('detail-distribution').innerHTML =
     '<div class="cd-dist-row">'+CD_IC.store+'<span class="b">Channel</span><span class="r">Online &amp; In-store</span></div>'+
-    '<div class="cd-dist-row">'+CD_IC.id+'<span class="b">Bank</span><span class="r">'+c.bank+'</span></div>'+
+    '<div class="cd-dist-row">'+CD_IC.id+'<span class="b">Bank</span><span class="r">'+(campBank(c) || 'Pending — Lune assigns a bank partner on approval')+'</span></div>'+
     '<div class="cd-dist-row">'+CD_IC.region+'<span class="b">Availability</span><span class="r">All UAE locations</span></div>';
   // shopper preview (default Detail)
   setShpView('detail');
