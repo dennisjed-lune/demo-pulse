@@ -541,7 +541,8 @@ tbody tr.rowlink:hover { background: var(--neutral-25); }
 /* ===== Brand detail ===== */
 .bd-web { display: flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--text-tertiary); margin-top: 4px; }
 .bd-tabs { display: inline-flex; gap: 4px; background: var(--surface-muted); border-radius: var(--radius-pill); padding: 4px; margin-bottom: var(--space-5); }
-.bd-tab { border: none; background: none; font: inherit; font-size: 13.5px; font-weight: var(--weight-medium); color: var(--text-secondary); padding: 7px 16px; border-radius: var(--radius-pill); cursor: pointer; }
+.bd-tab { border: none; background: none; font: inherit; font-size: 13.5px; font-weight: var(--weight-medium); color: var(--text-secondary); padding: 7px 16px; border-radius: var(--radius-pill); cursor: pointer; transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard); }
+.bd-tab:hover:not(.on) { color: var(--text-primary); }
 .bd-tab.on { background: var(--lune-teal-700); color: #fff; }
 .bd-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); align-items: start; }
 @media (max-width: 900px) { .bd-grid2 { grid-template-columns: 1fr; } }
@@ -2293,7 +2294,7 @@ function openBrandDetail(){
   go('brand-detail');
 }
 function bdTab(t){
-  document.querySelectorAll('#brand-detail .bd-tab').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
+  document.querySelectorAll('[data-screen="brand-detail"] .bd-tab').forEach(function(b){ b.classList.toggle('on', b.dataset.tab === t); });
   mEl('bd-overview').hidden = t !== 'overview';
   mEl('bd-merchant').hidden = t !== 'merchant';
 }
