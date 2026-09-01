@@ -419,6 +419,23 @@ input, textarea { font-family: inherit; }
 .nav-prod .prod-mark { width: 22px; height: 22px; border-radius: 7px; flex: none; display: grid; place-items: center; }
 .nav-prod .prod-mark img { width: 20px; height: 20px; }
 
+/* Figma sidebar chrome */
+.sb-brand { display: flex; align-items: center; justify-content: space-between; margin-bottom: calc(var(--u)*2.5); }
+.sb-brand .brand-mark { margin-bottom: 0; padding: 4px; text-decoration: none; color: inherit; }
+.sb-brand .brand-logo { width: 34px; height: 34px; }
+.sb-brand .brand-logo img { width: 22px; height: 22px; }
+.sb-collapse { width: 30px; height: 30px; border-radius: var(--radius-sm); display: grid; place-items: center; color: var(--ink-3); flex: none; }
+.sb-collapse:hover { background: var(--brand-tint); color: var(--ink-2); }
+.sb-nav { display: flex; flex-direction: column; gap: 2px; }
+.nav-group { display: flex; flex-direction: column; gap: 2px; }
+.nav-item > span:first-child { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-ext { margin-left: auto; opacity: .5; }
+.sb-foot { margin-top: auto; padding-top: calc(var(--u)*2); display: flex; align-items: center; gap: 11px; border-top: 1px solid var(--line-soft); margin-top: auto; }
+.sb-avatar { width: 36px; height: 36px; border-radius: 50%; flex: none; background: var(--brand); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+.sb-user { min-width: 0; }
+.sb-user-name { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user-plan { font-size: 12px; color: var(--ink-3); }
+
 .sidebar-foot { margin-top: auto; padding-top: calc(var(--u)*2.5); }
 .user-chip { display: flex; align-items: center; gap: 11px; padding: 9px; border-radius: var(--radius); border: 1px solid var(--line); }
 .user-av {
@@ -572,9 +589,18 @@ input, textarea { font-family: inherit; }
 .pill.accepted { color: var(--st-accepted-ink); background: var(--st-accepted); }
 .pill.completed{ color: var(--st-done-ink); background: var(--st-done); }
 .pill.rejected { color: var(--st-rej-ink); background: var(--st-rej); }
+.pill.scheduled{ color: #3852B4; background: rgba(56,82,180,.12); }
 @keyframes livepulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,255,255,.7); } 50%{ box-shadow: 0 0 0 4px rgba(255,255,255,0); } }
 
 /* ---------- Pagination ---------- */
+.list-foot { display: flex; align-items: center; justify-content: center; padding: calc(var(--u)*2) calc(var(--u)*2.25); font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line-soft); }
+.foot-tag { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: 12px; }
+.foot-tag .pdot { width: 7px; height: 7px; border-radius: 50%; flex: none; background: currentColor; }
+.foot-tag b { font-weight: 700; }
+.foot-tag.pending { color: var(--st-pending-ink); }
+.foot-tag.live { color: var(--brand-strong); }
+.foot-tag.completed { color: var(--st-done-ink); }
+.foot-tag.rejected { color: var(--st-rej-ink); }
 .pager { display: flex; align-items: center; gap: 14px; padding: calc(var(--u)*1.75) calc(var(--u)*2.25); }
 .pager-info { font-size: 13px; color: var(--ink-3); }
 .pager-info b { color: var(--ink-2); }
@@ -1708,30 +1734,55 @@ Object.assign(window, {
   const { Icon } = window;
   const { useState, useEffect, useRef } = React;
 
-  function Sidebar({ pendingCount, bankName, onHome }) {
+  function Sidebar({ pendingCount, bankName, view, onHome, onCards }) {
+    const item = (icon, label, opts) => {
+      opts = opts || {};
+      return (
+        <button className={'nav-item' + (opts.active ? ' active' : '') + (opts.child ? ' nav-child' : '')}
+                onClick={opts.onClick}>
+          {icon ? <Icon name={icon} size={19} /> : null}
+          <span>{label}</span>
+          {opts.badge ? <span className="nav-badge">{opts.badge}</span> : null}
+          {opts.external ? <Icon name="chevR" size={14} className="nav-ext" /> : null}
+        </button>
+      );
+    };
     return (
       <aside className="sidebar">
-        <a href="index.html" title="Back to demo home" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
-          <div className="brand-mark">
+        <div className="sb-brand">
+          <a href="index.html" title="Back to demo home" className="brand-mark">
             <div className="brand-logo">
               <img src={(window.__resources && window.__resources['ds/brand/lune-icon-dark.svg']) || 'ds/brand/lune-icon-dark.svg'} alt="Lune" />
             </div>
-            <div>
-              <div className="brand-name">Lune</div>
-              <div className="brand-sub">{bankName || 'Demo Environment'}</div>
-            </div>
-          </div>
-        </a>
+            <div className="brand-name">Lune</div>
+          </a>
+          <button className="sb-collapse" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
+          </button>
+        </div>
 
-        <div className="nav-label">Products</div>
-        <button className="nav-prod active nav-item" style={{ gap: 11 }} onClick={onHome}>
-          <span className="prod-mark"><img src={(window.__resources && window.__resources['ds/brand/lune-icon-light.svg']) || 'ds/brand/lune-icon-light.svg'} alt="" /></span>
-          Pulse
-        </button>
-        <button className="nav-item nav-child active" style={{ marginTop: 2 }} onClick={onHome}>
-          Campaign Manager
-          {pendingCount ? <span className="nav-badge">{pendingCount}</span> : null}
-        </button>
+        <nav className="sb-nav">
+          {item('grid', 'Overview')}
+          {item('layers', 'Enrichment')}
+          <div className="nav-group">
+            {item('pulse', 'Pulse', { group: true })}
+            {item(null, 'Campaign Manager', { child: true, active: view === 'list' || view === 'detail', onClick: onHome, badge: pendingCount || undefined })}
+            {item(null, 'Card Management', { child: true, active: view === 'cards', onClick: onCards })}
+          </div>
+          {item('spark', 'Analytics')}
+          {item('receipt', 'Billing')}
+          {item('book', 'Documentation', { external: true })}
+          {item('gear', 'Settings')}
+          {item('chat', 'Contact us')}
+        </nav>
+
+        <div className="sb-foot">
+          <span className="sb-avatar">AS</span>
+          <div className="sb-user">
+            <div className="sb-user-name">Alexandre Soued</div>
+            <div className="sb-user-plan">Basic plan</div>
+          </div>
+        </div>
       </aside>
     );
   }
@@ -1791,10 +1842,10 @@ Object.assign(window, {
     );
   }
 
-  function Shell({ crumbs, onCrumb, onHome, onSearch, notifications, pendingCount, bankName, children }) {
+  function Shell({ crumbs, onCrumb, onHome, onCards, onSearch, notifications, pendingCount, bankName, view, children }) {
     return (
       <div className="app">
-        <Sidebar pendingCount={pendingCount} bankName={bankName} onHome={onHome} />
+        <Sidebar pendingCount={pendingCount} bankName={bankName} view={view} onHome={onHome} onCards={onCards} />
         <main className="main">
           <Topbar crumbs={crumbs} onCrumb={onCrumb} onSearch={onSearch} notifications={notifications} />
           {children}
@@ -1815,37 +1866,30 @@ Object.assign(window, {
 
   const TABS = [
     { id: 'pending', label: 'Review Pending' },
-    { id: 'live', label: 'Live' },
+    { id: 'live', label: 'Accepted' },
     { id: 'completed', label: 'Completed' },
     { id: 'rejected', label: 'Rejected' },
   ];
 
-  const KPIS = [
-    { key: 'pending', label: 'Pending', accent: '#C79212' },
-    { key: 'live', label: 'Live now', accent: 'var(--brand)' },
-    { key: 'completed', label: 'Accepted', accent: '#3E7E96' },
-    { key: 'rejected', label: 'Rejected', accent: '#D23A52' },
-  ];
-
-  // column config per tab
-  function columns(tab, searching) {
+  // Figma column set: Merchant·Campaign / Cash back / Budget / Audience / <date> / Status
+  function columns(tab) {
     const merch = { key: 'merch', label: 'Merchant · Campaign' };
-    const cb = { key: 'cb', label: 'Cash back', num: false };
+    const cb = { key: 'cb', label: 'Cash back' };
+    const budget = { key: 'budget', label: 'Budget' };
+    const aud = { key: 'aud', label: 'Audience' };
     const status = { key: 'status', label: 'Status' };
-    const cat = { key: 'cat', label: 'Category' };
-    const recv = { key: 'recv', label: 'Received', num: true };
-    if (tab === 'completed') {
-      return [merch, cb, { key: 'activated', label: 'Activated', num: true }, { key: 'closedOn', label: 'Closed on' }, cat, status];
-    }
-    if (tab === 'rejected') {
-      return [merch, cb, { key: 'budget', label: 'Budget (AED)', num: true }, { key: 'rejectedOn', label: 'Rejected on' }, cat, status];
-    }
-    const dateCol = tab === 'live'
-      ? { key: 'liveOn', label: 'Live on' }
-      : { key: 'createdOn', label: 'Created on' };
-    const cols = [merch, cb, { key: 'budget', label: 'Budget (AED)', num: true }, { key: 'aud', label: 'Audience', num: true }, dateCol, cat, status];
-    if (searching) cols.splice(5, 0, recv);
-    return cols;
+    const date = tab === 'completed' ? { key: 'closedOn', label: 'Closed on' }
+      : tab === 'rejected' ? { key: 'rejectedOn', label: 'Rejected on' }
+      : tab === 'pending' ? { key: 'createdOn', label: 'Submitted' }
+      : { key: 'liveOn', label: 'Live on' };
+    return [merch, cb, budget, aud, date, status];
+  }
+
+  // Accepted campaigns read as Scheduled (not yet started) or Live.
+  function rowStatus(c) {
+    if (c.status !== 'live') return c.status;
+    var d = c.start ? new Date(c.start) : null;
+    return (d && !isNaN(d) && d > new Date()) ? 'scheduled' : 'live';
   }
 
   function Cell({ col, c }) {
@@ -1862,9 +1906,9 @@ Object.assign(window, {
             </div>
           </td>
         );
-      case 'cb': return <td><span className="cashback-val tnum">{c.cashback}%</span></td>;
-      case 'budget': return <td className="num tnum">{fmtNum(c.budget)}</td>;
-      case 'aud': return <td className="num tnum">{fmtNum(c.audience)}</td>;
+      case 'cb': return <td><span className="cashback-val tnum">{String(c.cashback).padStart(2, '0')}%</span></td>;
+      case 'budget': return <td className="tnum">AED {fmtNum(c.budget)}</td>;
+      case 'aud': return <td className="tnum">{fmtNum(c.audience)}</td>;
       case 'recv': return <td className="num tnum">{abbrev(c.audience)}</td>;
       case 'activated': return <td className="num tnum">{fmtNum(c.activated || 0)}</td>;
       case 'createdOn': return <td>{c.createdOn}</td>;
@@ -1875,7 +1919,7 @@ Object.assign(window, {
       case 'closedOn': return <td>{c.closedOn}</td>;
       case 'rejectedOn': return <td>{c.rejectedOn}</td>;
       case 'cat': return <td><CatTag cat={c.cat} /></td>;
-      case 'status': return <td><StatusPill status={c.status} /></td>;
+      case 'status': return <td><StatusPill status={rowStatus(c)} /></td>;
       default: return <td />;
     }
   }
@@ -1923,7 +1967,7 @@ Object.assign(window, {
     const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
     const safePage = Math.min(page, totalPages);
     const pageRows = rows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
-    const cols = columns(tab, searching);
+    const cols = columns(tab);
 
     function changeTab(id) { setTab(id); setPage(1); setQuery(''); setSort(null); }
     function onSearch(v) { setQuery(v); setPage(1); }
@@ -1939,25 +1983,6 @@ Object.assign(window, {
         <div className="page-head">
           <div className="page-title">Campaign Manager</div>
           <div className="page-desc">Dive into real-time analytics for your ongoing campaigns and evaluate offer effectiveness.</div>
-        </div>
-
-        {/* KPI strip */}
-        <div className="kpi-strip">
-          {KPIS.map(k => (
-            <div key={k.key} className="kpi" style={{ '--kpi-accent': k.accent }}>
-              <div className="kpi-label">{k.label}</div>
-              <div className="kpi-value tnum">
-                {String(counts[k.key]).padStart(2, '0')}
-              </div>
-              <div className="kpi-foot">
-                <span className="kpi-dot" />
-                {k.key === 'pending' && 'Awaiting your decision'}
-                {k.key === 'live' && 'Matching transactions now'}
-                {k.key === 'completed' && 'Signed off to date'}
-                {k.key === 'rejected' && 'Returned to Lune'}
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* list card */}
@@ -1980,11 +2005,6 @@ Object.assign(window, {
                 onChange={e => onSearch(e.target.value)}
               />
             </div>
-            <button className="btn btn-ghost csv-btn" title="Export the current list as CSV"
-                    onClick={() => exportCsv(rows, searching ? 'search' : tab)} disabled={rows.length === 0}>
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 2.5v7.5M8 10 5.2 7.2M8 10l2.8-2.8M3 13.5h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              Export
-            </button>
           </div>
 
           {rows.length === 0 ? (
@@ -2024,11 +2044,10 @@ Object.assign(window, {
           )}
 
           {rows.length > 0 && (
-            <div className="pager">
-              <div className="pager-info">
-                Showing <b className="tnum">{rows.length}</b>
-                {searching ? ' results' : ' campaigns'}
-              </div>
+            <div className="list-foot">
+              {searching
+                ? <span><b className="tnum">{rows.length}</b> {rows.length === 1 ? 'result' : 'results'}</span>
+                : <span className={'foot-tag ' + tab}><span className="pdot" />{(TABS.find(t => t.id === tab) || {}).label} · <b className="tnum">{rows.length}</b>/{counts[tab]}</span>}
             </div>
           )}
         </div>
@@ -2871,7 +2890,9 @@ Object.assign(window, {
       scrollTop();
     }
 
-    const crumbs = route.name === 'list'
+    const crumbs = route.name === 'cards'
+      ? ['Pulse', 'Card Management']
+      : route.name === 'list'
       ? ['Pulse', 'Campaign Manager']
       : route.name === 'confirm'
         ? ['Pulse', 'Campaign Manager', route.kind === 'accept' ? 'Accepted' : 'Returned']
@@ -2898,12 +2919,20 @@ Object.assign(window, {
         crumbs={crumbs}
         onCrumb={(i) => { if (i <= 1) back(); }}
         onHome={back}
+        onCards={() => { setRoute({ name: 'cards' }); scrollTop(); }}
         onSearch={goSearch}
         notifications={notifications}
         pendingCount={window.PULSE.counts.pending}
         bankName={t.bankName}
+        view={route.name === 'cards' ? 'cards' : (route.name === 'list' ? 'list' : 'detail')}
       >
         {route.name === 'list' && <ListScreen onOpen={open} />}
+
+        {route.name === 'cards' && (
+          <div className="page"><div className="page-head"><div className="page-title">Card Management</div><div className="page-desc">Manage the card BINs eligible for Pulse cashback offers.</div></div>
+            <div className="list-card"><div className="empty-state"><Icon name="wallet" size={44} /><div style={{ fontWeight: 600, color: 'var(--ink-2)' }}>Card Management</div><div style={{ fontSize: 13, marginTop: 4 }}>Coming in the next pass.</div></div></div>
+          </div>
+        )}
 
         {route.name === 'detail' && current && (
           <DetailScreen
