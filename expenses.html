@@ -1926,8 +1926,8 @@ const D = () => window.EXP_DATA;
 
 // Spend donut — small icon chips on the ring + a clean legend below (shared style with Cashflow).
 function SpendHero({ T, total, cats, onCategory }) {
-  const top = cats.slice(0, 5);
-  const otherTotal = cats.slice(5).reduce((s, c) => s + c.total, 0);
+  const top = cats.slice(0, 4);
+  const otherTotal = cats.slice(4).reduce((s, c) => s + c.total, 0);
   const segs = top.map((c) => ({ ...c }));
   if (otherTotal > 0.5) segs.push({ id: 'other', name: 'Other', total: otherTotal, color: '#C74E93', glyph: 'miscellaneous', other: true });
   const sum = segs.reduce((s, c) => s + c.total, 0) || 1;
