@@ -1274,6 +1274,8 @@ function UIIcon({ name, size = 20, stroke = 'currentColor', sw = 1.8 }) {
     sparkles: <g {...p}><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Z"/></g>,
     image:    <g {...p}><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M5 18l4.5-4.5a1.5 1.5 0 0 1 2 0l3 3M14 15l2-2a1.5 1.5 0 0 1 2 0l2.5 2.5"/></g>,
     dots:     <g fill={stroke}><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></g>,
+    arrowR:   <g {...p}><path d="M5 12h14M13 6l6 6-6 6"/></g>,
+    wallet:   <g {...p}><path d="M3 7a2 2 0 0 1 2-2h12v4"/><path d="M3 7v10a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"/><path d="M21 11v4h-4a2 2 0 0 1 0-4h4Z"/></g>,
   };
   return <svg width={size} height={size} viewBox="0 0 24 24" style={{ display: 'block' }}>{g[name]}</svg>;
 }
@@ -1922,36 +1924,67 @@ Object.assign(window, { FeedbackSheet, TxnListSheet, CategoryGrid, LoopDiagram }
 
 const D = () => window.EXP_DATA;
 
-// Hero donut — high-level landing view
-function BreakdownHero({ T, onCategory }) {
-  const { CATEGORY_SPEND, TOTAL, PREV } = D();
-  const prevTotal = Object.values(PREV).reduce((a, b) => a + b, 0);
-  const delta = Math.round(((TOTAL - prevTotal) / prevTotal) * 100);
-  const up = delta >= 0;
+// Spend donut with category icons sitting on the ring + labels around it.
+function SpendHero({ T, total, cats, onCategory }) {
+  const top = cats.slice(0, 5);
+  const otherTotal = cats.slice(5).reduce((s, c) => s + c.total, 0);
+  const segs = top.map((c) => ({ ...c }));
+  if (otherTotal > 0.5) segs.push({ id: 'other', name: 'Other', total: otherTotal, color: '#C74E93', glyph: 'miscellaneous', other: true });
+  const sum = segs.reduce((s, c) => s + c.total, 0) || 1;
 
-  const deltaChip = (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12.5, fontWeight: 600,
-      color: up ? T.posInk : T.negInk,
-      background: up ? T.posBg : T.negBg,
-      padding: '4px 9px', borderRadius: 999 }}>
-      <UIIcon name={up ? 'arrowUp' : 'arrowDn'} size={13} stroke="currentColor" />
-      {Math.abs(delta)}% vs last month
-    </div>
-  );
+  const W = 300, H = 300, cx = W / 2, cy = H / 2;
+  const thickness = 16, size = 176, r = (size - thickness) / 2;
+  const C = 2 * Math.PI * r, gap = 0.02;
+  let acc = 0;
+  const laid = segs.map((s) => {
+    const frac = s.total / sum;
+    const mid = acc + frac / 2; acc += frac;
+    const ang = mid * 2 * Math.PI - Math.PI / 2;
+    return { ...s, frac, start: (acc - frac), ix: cx + r * Math.cos(ang), iy: cy + r * Math.sin(ang), right: Math.cos(ang) >= 0 };
+  });
 
   return (
-    <Card T={T} pad={20} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <Donut data={CATEGORY_SPEND} total={TOTAL} size={208} thickness={24} dark={T.dark} ink={T.ink} muted={T.muted} onSlice={onCategory} />
-      <div style={{ marginTop: 16 }}>{deltaChip}</div>
-      <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', gap: '9px 16px', marginTop: 18, justifyContent: 'center' }}>
-        {CATEGORY_SPEND.slice(0, 5).map((c) => (
-          <div key={c.id} onClick={() => onCategory(c.id)} style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer' }}>
-            <span style={{ width: 9, height: 9, borderRadius: 3, background: c.color }} />
-            <span style={{ fontSize: 12.5, color: T.muted, fontWeight: 540 }}>{c.name}</span>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ position: 'relative', width: W, height: H }}>
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', inset: 0 }}>
+          <g style={{ transform: `rotate(-90deg)`, transformOrigin: `${cx}px ${cy}px` }}>
+            {laid.map((s) => (
+              <circle key={s.id} cx={cx} cy={cy} r={r} fill="none" stroke={s.color} strokeWidth={thickness}
+                strokeDasharray={`${Math.max(0.001, (s.frac - gap)) * C} ${C}`} strokeDashoffset={-s.start * C} strokeLinecap="round" />
+            ))}
+          </g>
+        </svg>
+        {/* center total */}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+          <div style={{ fontSize: 12.5, color: T.muted, fontWeight: 540 }}>Total Spend</div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: T.ink, marginTop: 2, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(total)}</div>
+        </div>
+        {/* on-ring icons + labels */}
+        {laid.map((s) => (
+          <div key={s.id} onClick={() => !s.other && onCategory(s.id)} style={{ position: 'absolute', left: s.ix, top: s.iy, transform: 'translate(-50%,-50%)', cursor: s.other ? 'default' : 'pointer' }}>
+            <div style={{ background: T.surface, borderRadius: 12, boxShadow: '0 3px 10px rgba(0,0,0,0.13)', border: `1px solid ${T.faint}` }}>
+              <CategoryMark glyph={s.glyph} color={s.color} dark={T.dark} size={40} radius={12} />
+            </div>
+            <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', whiteSpace: 'nowrap',
+              [s.right ? 'left' : 'right']: 48, textAlign: s.right ? 'left' : 'right' }}>
+              <div style={{ fontSize: 12, color: T.muted, fontWeight: 540 }}>{s.name}</div>
+              <div style={{ fontSize: 14, fontWeight: 680, color: T.ink, fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(s.total)}</div>
+            </div>
           </div>
         ))}
       </div>
-    </Card>
+    </div>
+  );
+}
+
+function TrendsButton({ T, icon, label, onClick }) {
+  return (
+    <button onClick={onClick} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10, padding: '16px 16px',
+      border: `1px solid ${T.line}`, borderRadius: 16, background: T.surface, cursor: 'pointer', textAlign: 'left' }}>
+      <span style={{ color: T.accent }}><UIIcon name={icon} size={20} stroke="currentColor" /></span>
+      <span style={{ flex: 1, fontSize: 14.5, fontWeight: 680, color: T.ink, lineHeight: 1.2 }}>{label}</span>
+      <UIIcon name="arrowR" size={18} stroke={T.ink} />
+    </button>
   );
 }
 
@@ -1959,21 +1992,22 @@ function Overview({ T, showLogos, nav, onPeriod, period, greeting }) {
   const { CATEGORY_SPEND, TOTAL, TRANSACTIONS } = D();
   return (
     <Screen T={T}>
-      <AppHeader T={T} eyebrow={greeting} title="Expenses" period={period} onPeriod={onPeriod} />
-      <div style={{ marginTop: 18 }}>
-        <BreakdownHero T={T} onCategory={(id) => nav.push('category', { id })} />
+      <AppHeader T={T} title="Spends" period={period} onPeriod={onPeriod} />
+      <div style={{ marginTop: 6 }}>
+        <SpendHero T={T} total={TOTAL} cats={CATEGORY_SPEND} onCategory={(id) => nav.push('category', { id })} />
       </div>
 
-      <SectionTitle T={T} action="Category trends" onAction={() => nav.push('trends')}>Top categories</SectionTitle>
-      <Card T={T} pad="2px 18px">
-        {CATEGORY_SPEND.slice(0, 5).map((c, i, a) => (
-          <CategoryRow key={c.id} T={T} cat={c} total={TOTAL} onClick={() => nav.push('category', { id: c.id })} divider={i < a.length - 1} />
-        ))}
-      </Card>
+      <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
+        <TrendsButton T={T} icon="trend" label="Category Trends" onClick={() => nav.push('trends')} />
+        <TrendsButton T={T} icon="wallet" label="Brand Trends" onClick={() => nav.push('brands')} />
+      </div>
 
-      <SectionTitle T={T} action="View all" onAction={() => nav.push('allTxns')}>Recent</SectionTitle>
+      <SectionTitle T={T} action="View all" onAction={() => nav.push('allTxns')}>Transactions</SectionTitle>
+      <div style={{ fontSize: 12, color: T.muted, margin: '-6px 2px 8px', lineHeight: 1.45 }}>
+        Disclaimer: Details presented here may display transactions that are up to 24 hours old.
+      </div>
       <Card T={T} pad="2px 18px">
-        {TRANSACTIONS.slice(0, 5).map((t, i, a) => (
+        {TRANSACTIONS.slice(0, 6).map((t, i, a) => (
           <TxnRow key={t.id} T={T} txn={t} showLogos={showLogos} onClick={() => nav.openTxn(t)} divider={i < a.length - 1} />
         ))}
       </Card>
@@ -2341,6 +2375,7 @@ function ExpensesApp() {
       case 'overview': return <Overview {...common} greeting="Good evening, Layla" />;
       case 'breakdown': return <Breakdown {...common} />;
       case 'trends': return <Trends {...common} />;
+      case 'brands': return <Trends {...common} />;
       case 'category': return <CategoryDetail {...common} id={top.params.id} />;
       case 'allTxns': return <AllTransactions {...common} />;
       case 'categories': return <CategoriesGuide {...common} />;
