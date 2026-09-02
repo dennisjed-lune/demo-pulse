@@ -1924,7 +1924,7 @@ Object.assign(window, { FeedbackSheet, TxnListSheet, CategoryGrid, LoopDiagram }
 
 const D = () => window.EXP_DATA;
 
-// Spend donut with category icons sitting on the ring + labels around it.
+// Spend donut — small icon chips on the ring + a clean legend below (shared style with Cashflow).
 function SpendHero({ T, total, cats, onCategory }) {
   const top = cats.slice(0, 5);
   const otherTotal = cats.slice(5).reduce((s, c) => s + c.total, 0);
@@ -1932,48 +1932,46 @@ function SpendHero({ T, total, cats, onCategory }) {
   if (otherTotal > 0.5) segs.push({ id: 'other', name: 'Other', total: otherTotal, color: '#C74E93', glyph: 'miscellaneous', other: true });
   const sum = segs.reduce((s, c) => s + c.total, 0) || 1;
 
-  const W = 300, H = 300, cx = W / 2, cy = H / 2;
-  const thickness = 16, size = 176, r = (size - thickness) / 2;
-  const C = 2 * Math.PI * r, gap = 0.02;
+  const R = 74, SW = 12, C = 2 * Math.PI * R, size = 2 * (R + 22), gap = 0.014;
   let acc = 0;
-  const laid = segs.map((s) => {
-    const frac = s.total / sum;
-    const mid = acc + frac / 2; acc += frac;
-    const ang = mid * 2 * Math.PI - Math.PI / 2;
-    return { ...s, frac, start: (acc - frac), ix: cx + r * Math.cos(ang), iy: cy + r * Math.sin(ang), right: Math.cos(ang) >= 0 };
-  });
+  const arcs = segs.map((s) => { const frac = s.total / sum; const a = { ...s, start: acc, frac }; acc += frac; return a; });
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <div style={{ position: 'relative', width: W, height: H }}>
-        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', inset: 0 }}>
-          <g style={{ transform: `rotate(-90deg)`, transformOrigin: `${cx}px ${cy}px` }}>
-            {laid.map((s) => (
-              <circle key={s.id} cx={cx} cy={cy} r={r} fill="none" stroke={s.color} strokeWidth={thickness}
-                strokeDasharray={`${Math.max(0.001, (s.frac - gap)) * C} ${C}`} strokeDashoffset={-s.start * C} strokeLinecap="round" />
-            ))}
-          </g>
+    <Card T={T} pad={20}>
+      <div style={{ position: 'relative', width: size, height: size, margin: '0 auto' }}>
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: 'rotate(-90deg)' }}>
+          {arcs.map((a) => (
+            <circle key={a.id} cx={size / 2} cy={size / 2} r={R} fill="none" stroke={a.color} strokeWidth={SW} strokeLinecap="round"
+              strokeDasharray={`${Math.max(0.001, (a.frac - gap)) * C} ${C}`} strokeDashoffset={-a.start * C} />
+          ))}
         </svg>
-        {/* center total */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-          <div style={{ fontSize: 12.5, color: T.muted, fontWeight: 540 }}>Total Spend</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: T.ink, marginTop: 2, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(total)}</div>
+        {arcs.map((a) => {
+          const mid = (a.start + a.frac / 2) * 2 * Math.PI - Math.PI / 2;
+          const x = size / 2 + Math.cos(mid) * R, y = size / 2 + Math.sin(mid) * R;
+          return (
+            <div key={a.id} onClick={() => !a.other && onCategory(a.id)} style={{ position: 'absolute', left: x, top: y, transform: 'translate(-50%,-50%)', width: 28, height: 28, borderRadius: 9, background: T.surface, boxShadow: '0 1px 5px rgba(0,0,0,0.16)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: a.other ? 'default' : 'pointer' }}>
+              <span style={{ width: 24, height: 24, borderRadius: 7, background: hexA(a.color, 0.16), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CatGlyph glyph={a.glyph} size={14} color={a.color} />
+              </span>
+            </div>
+          );
+        })}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, pointerEvents: 'none' }}>
+          <span style={{ fontSize: 12.5, fontWeight: 540, color: T.muted }}>Total Spend</span>
+          <span style={{ fontSize: 23, fontWeight: 700, color: T.ink, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(total)}</span>
         </div>
-        {/* on-ring icons + labels */}
-        {laid.map((s) => (
-          <div key={s.id} onClick={() => !s.other && onCategory(s.id)} style={{ position: 'absolute', left: s.ix, top: s.iy, transform: 'translate(-50%,-50%)', cursor: s.other ? 'default' : 'pointer' }}>
-            <div style={{ background: T.surface, borderRadius: 12, boxShadow: '0 3px 10px rgba(0,0,0,0.13)', border: `1px solid ${T.faint}` }}>
-              <CategoryMark glyph={s.glyph} color={s.color} dark={T.dark} size={40} radius={12} />
-            </div>
-            <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', whiteSpace: 'nowrap',
-              [s.right ? 'left' : 'right']: 48, textAlign: s.right ? 'left' : 'right' }}>
-              <div style={{ fontSize: 12, color: T.muted, fontWeight: 540 }}>{s.name}</div>
-              <div style={{ fontSize: 14, fontWeight: 680, color: T.ink, fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(s.total)}</div>
-            </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 11, marginTop: 16 }}>
+        {arcs.map((a) => (
+          <div key={a.id} onClick={() => !a.other && onCategory(a.id)} style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: a.other ? 'default' : 'pointer' }}>
+            <span style={{ width: 9, height: 9, borderRadius: 3, background: a.color, flex: 'none' }} />
+            <span style={{ fontSize: 13.5, fontWeight: 540, color: T.ink, flex: 1, minWidth: 0 }}>{a.name}</span>
+            <span style={{ fontSize: 12, fontWeight: 540, color: T.muted, width: 40, textAlign: 'right' }}>{Math.round(a.total / sum * 100)}%</span>
+            <span style={{ fontSize: 13.5, fontWeight: 680, color: T.ink, width: 100, textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(a.total)}</span>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -2090,7 +2088,53 @@ function Trends({ T, nav, onPeriod, period }) {
   );
 }
 
-Object.assign(window, { Overview, Breakdown, Trends, BreakdownHero });
+// Brand Trends — every brand across categories, ranked by spend.
+function BrandTrends({ T, nav, onPeriod, period, showLogos }) {
+  const { BRANDS, CATEGORIES } = window.EXP_DATA;
+  const catById = {}; CATEGORIES.forEach((c) => { catById[c.id] = c; });
+  const all = [];
+  Object.keys(BRANDS).forEach((cid) => { BRANDS[cid].forEach((b) => { const cat = catById[Number(cid)] || {}; all.push({ ...b, cid: Number(cid), color: cat.color, glyph: cat.glyph, category: cat.name }); }); });
+  const ranked = all.sort((a, b) => b.total - a.total);
+  const peak = (ranked[0] && ranked[0].total) || 1;
+  const brandTotal = ranked.reduce((s, b) => s + b.total, 0);
+  const shown = ranked.slice(0, 12);
+  return (
+    <Screen T={T}>
+      <AppHeader T={T} title="Brand Trends" onBack={() => nav.pop()} period={period} onPeriod={onPeriod} />
+      <div style={{ marginTop: 18 }}>
+        <Card T={T} pad={20}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
+            <span style={{ fontSize: 13.5, color: T.muted, fontWeight: 540 }}>Top brands by spend</span>
+            <span style={{ fontSize: 13.5, fontWeight: 680, color: T.ink }}>AED {fmtAED(brandTotal)}</span>
+          </div>
+          {shown.map((b, i, a) => {
+            const share = Math.round(b.total / peak * 100);
+            return (
+              <div key={b.name} onClick={() => nav.push('category', { id: b.cid })} style={{ display: 'flex', alignItems: 'center', gap: 13, padding: '11px 0', cursor: 'pointer', position: 'relative' }}>
+                <MerchantMark name={b.name} glyph={b.glyph} catColor={b.color} showLogos={showLogos} dark={T.dark} size={40} radius={12} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+                    <span style={{ fontSize: 14.5, fontWeight: 560, color: T.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.name}</span>
+                    <span style={{ fontSize: 14.5, fontWeight: 620, color: T.ink, fontVariantNumeric: 'tabular-nums' }}>AED {fmtAED(b.total)}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 7 }}>
+                    <div style={{ flex: 1, height: 5, borderRadius: 999, background: T.faint, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${share}%`, background: b.color, borderRadius: 999 }} />
+                    </div>
+                    <span style={{ fontSize: 12, color: T.muted, width: 62, textAlign: 'right' }}>{b.count} txns</span>
+                  </div>
+                </div>
+                {i < a.length - 1 && <div style={{ position: 'absolute', left: 53, right: 0, bottom: 0, height: 1, background: T.faint }} />}
+              </div>
+            );
+          })}
+        </Card>
+      </div>
+    </Screen>
+  );
+}
+
+Object.assign(window, { Overview, Breakdown, Trends, BrandTrends, SpendHero });
 
 </script>
 
@@ -2375,7 +2419,7 @@ function ExpensesApp() {
       case 'overview': return <Overview {...common} greeting="Good evening, Layla" />;
       case 'breakdown': return <Breakdown {...common} />;
       case 'trends': return <Trends {...common} />;
-      case 'brands': return <Trends {...common} />;
+      case 'brands': return <BrandTrends {...common} />;
       case 'category': return <CategoryDetail {...common} id={top.params.id} />;
       case 'allTxns': return <AllTransactions {...common} />;
       case 'categories': return <CategoriesGuide {...common} />;
