@@ -92,6 +92,7 @@ const IN_GROUPS = [
 const OUT_GROUPS = [
   { key: 'everyday', label: 'Everyday spending', color: '#D6219C', glyph: 'tag' },
   { key: 'bills',    label: 'Bills',             color: '#1D4FB8', glyph: 'home' },
+  { key: 'subs',     label: 'Subscriptions',     color: '#7C3AED', glyph: 'repeat' },
   { key: 'savings',  label: 'Savings',           color: '#00A651', glyph: 'pig' },
 ];
 const groupOf = (key, dir) => (dir === 'in' ? IN_GROUPS : OUT_GROUPS).find(g => g.key === key);
@@ -144,6 +145,9 @@ const BRANDS = {
   noon:     { name: 'Noon',                            short: 'N',  color: '#B99B00', cat: 'Shopping',         group: 'everyday', dir: 'out', freq: 'Occasional', raw: 'NOON COM FZ LLC DUBAI' },
   adnoc:    { name: 'ADNOC',                           short: 'AD', color: '#005EB8', cat: 'Transport',        group: 'everyday', dir: 'out', freq: 'Weekly',    raw: 'ADNOC DISTRIBUTION 774 DXB' },
   savings:  { name: 'Transfer to Savings Pot',         short: 'S',  color: '#0A634D', cat: 'Savings',          group: 'savings',  dir: 'out', freq: 'Monthly',   raw: 'STANDING ORDER SAVINGS POT 07' },
+  netflix:  { name: 'Netflix',                         short: 'NF', color: '#E50914', cat: 'Subscriptions',    group: 'subs',     dir: 'out', freq: 'Monthly',   raw: 'NETFLIX.COM AMSTERDAM NL' },
+  spotify:  { name: 'Spotify Premium',                 short: 'SP', color: '#1DB954', cat: 'Subscriptions',    group: 'subs',     dir: 'out', freq: 'Monthly',   raw: 'SPOTIFY AB STOCKHOLM SE' },
+  icloud:   { name: 'iCloud+',                         short: 'iC', color: '#3693F3', cat: 'Subscriptions',    group: 'subs',     dir: 'out', freq: 'Monthly',   raw: 'APPLE.COM/BILL ITUNES.COM' },
 };
 
 /* ── transaction generator: ONE source of truth ─────────────────
@@ -175,6 +179,10 @@ function monthTxns(y, m, full) {
   if (m % 3 === 2) add(17, 'apple', -Math.round(v(1450, 350, 13) * peak), 'emerald');
   if (m % 2 === 0) add(20, 'noon', -v(410, 130, 14), 'cashback');
   add(26, 'savings', -2000, 'platinum');
+  /* subscriptions — fixed monthly */
+  add(2,  'netflix', -56, 'cashback');
+  add(7,  'spotify', -22, 'cashback');
+  add(15, 'icloud', -12, 'cashback');
   return txns.sort((a, b) => b.day - a.day);
 }
 
@@ -1111,6 +1119,69 @@ function FlowTile({ dir, total, count, onOpen }) {
     </div>
   );
 }
+/* ── recurring (income · billing · subscriptions) ───────────────── */
+function RecurringSheet({ activeCards, onClose, onOpenEntity }) {
+  const six = useMemo(() => historySeries(activeCards), [activeCards]);
+  const monthlyFor = (brandId) => {
+    const totals = six.map(s => s.txns.filter(t => t.brandId === brandId).reduce((a, t) => a + Math.abs(t.amount), 0)).filter(v => v > 0);
+    return totals.length ? totals.reduce((a, b) => a + b, 0) / totals.length : 0;
+  };
+  const pick = (fn) => Object.keys(BRANDS).filter(id => fn(BRANDS[id]))
+    .map(id => ({ brandId: id, brand: BRANDS[id], monthly: monthlyFor(id) }))
+    .filter(x => x.monthly > 0).sort((a, b) => b.monthly - a.monthly);
+  const income = pick(b => b.dir === 'in' && b.freq !== 'Occasional');
+  const billing = pick(b => b.group === 'bills');
+  const subs = pick(b => b.group === 'subs');
+  const sum = (arr) => arr.reduce((a, x) => a + x.monthly, 0);
+  const inMo = sum(income), outMo = sum(billing) + sum(subs);
+  const count = income.length + billing.length + subs.length;
+
+  const row = (x, i, n, dir, tint) => (
+    <div key={x.brandId} {...pressable(() => onOpenEntity(x, dir))}
+      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 2px', borderBottom: i < n - 1 ? `1px solid ${T.grid}` : 'none', cursor: 'pointer' }}>
+      <Mark brand={x.brand} size={40} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 14.5, fontWeight: 650, color: T.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{x.brand.name}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 4 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: tint, background: hexA(tint, 0.12), borderRadius: 999, padding: '2px 8px' }}><Icon name="repeat" size={10} stroke={tint} sw={2.4} />{x.brand.freq}</span>
+          <span style={{ fontSize: 12, color: T.muted }}>{x.brand.cat}</span>
+        </div>
+      </div>
+      <div style={{ textAlign: 'right' }}>
+        <Amount value={x.monthly} size={14.5} color={dir === 'in' ? T.green : T.ink} sign={dir === 'in' ? '+' : '−'} />
+        <div style={{ fontSize: 10.5, color: T.muted2, marginTop: 2 }}>per month</div>
+      </div>
+    </div>
+  );
+  const section = (title, items, dir, tint) => items.length === 0 ? null : (
+    <React.Fragment>
+      <SectionTitle right={`AED ${fmtAED(sum(items))}/mo`}>{title}</SectionTitle>
+      <Card style={{ padding: '2px 14px' }}>{items.map((x, i) => row(x, i, items.length, dir, tint))}</Card>
+    </React.Fragment>
+  );
+
+  return (
+    <Sheet title="Recurring" onClose={onClose}>
+      <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+        <div style={{ flex: 1, background: T.greenChip, borderRadius: 12, padding: '12px 14px' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Recurring income</div>
+          <div style={{ marginTop: 3 }}><Amount value={inMo} size={19} color={T.green} sign="+" /></div>
+          <div style={{ fontSize: 10.5, color: T.muted2, marginTop: 2 }}>per month</div>
+        </div>
+        <div style={{ flex: 1, background: T.redChip, borderRadius: 12, padding: '12px 14px' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: T.muted }}>Recurring spend</div>
+          <div style={{ marginTop: 3 }}><Amount value={outMo} size={19} color={T.redText} sign="−" /></div>
+          <div style={{ fontSize: 10.5, color: T.muted2, marginTop: 2 }}>bills + subscriptions</div>
+        </div>
+      </div>
+      <InsightBanner tone="green" icon="repeat">Lune detected {count} recurring transactions — income, bills and subscriptions that repeat each cycle.</InsightBanner>
+      {section('Income', income, 'in', T.green)}
+      {section('Billing', billing, 'out', T.blue)}
+      {section('Subscriptions', subs, 'out', '#7C3AED')}
+    </Sheet>
+  );
+}
+
 function Landing({ period, activeCards, open, nextStage }) {
   const led = useLedger(period, activeCards);
   const proj = useProjection(period, activeCards);
@@ -1151,7 +1222,16 @@ function Landing({ period, activeCards, open, nextStage }) {
             </div>
           </Card>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: T.keptPanel, borderRadius: 14, padding: '14px 14px', marginTop: 14 }}>
+          <Card onClick={() => open({ kind: 'recurring' })} style={{ marginTop: 14, padding: 14, display: 'flex', alignItems: 'center', gap: 12 }} className="cf-press">
+            <span style={{ width: 40, height: 40, borderRadius: 12, background: hexA('#7C3AED', 0.12), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Icon name="repeat" size={20} stroke="#7C3AED" sw={2} /></span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: T.ink }}>Recurring</div>
+              <div style={{ fontSize: 12, fontWeight: 500, color: T.muted, marginTop: 2 }}>Income, bills &amp; subscriptions that repeat</div>
+            </div>
+            <Icon name="chevR" size={18} stroke={T.muted2} sw={2} />
+          </Card>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: T.keptPanel, borderRadius: 14, padding: '14px 14px', marginTop: 12 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: T.ink }}>Cashflow history</div>
               <div style={{ fontSize: 12, fontWeight: 500, color: T.muted, marginTop: 3, lineHeight: 1.5 }}>See how your inflow and outflow changed over time.</div>
@@ -1290,6 +1370,8 @@ function App() {
       case 'period':   return <PeriodSheet {...common} period={period} onSet={setPeriod} />;
       case 'cards':    return <CardsSheet {...common} activeCards={activeCards} onSet={setActiveCards} />;
       case 'trends':   return <TrendsSheet {...common} activeCards={activeCards} />;
+      case 'recurring': return <RecurringSheet {...common} activeCards={activeCards}
+                          onOpenEntity={(top, dir) => push({ kind: 'entity', top, dir })} />;
       case 'flow':     return <FlowSheet {...common} dir={s.dir} period={period} activeCards={activeCards}
                           onOpenPeriod={() => push({ kind: 'period' })}
                           onOpenEntity={(top) => push({ kind: 'entity', top, dir: s.dir })}
