@@ -2335,10 +2335,41 @@ function obFinish(){
 
 /* ---------- Create Campaign wizard ---------- */
 let ccStep = 1, ccGoal = 'Grow average spend', ccUtil = 'exhaust', ccShopper = null;
+/* The campaign this pre-fills is the one that appears as the pending request in the
+   bank journey and top of the offer list in the customer journey, so a single
+   campaign can be followed across all three. If any figure changes here, change it
+   in bank.html (the `detailed` hero) and customer.html (the 'jumbo' offer) too. */
+const CC_PREFILL = {
+  name: 'Back to School Electronics',
+  goal: 'Grow average spend',
+  budget: '180,000',
+  cashback: '10',
+  cap: '300',
+  minspend: '200',
+  hold: '14',
+  start: '2026-09-15',
+  util: 'exhaust',   // runs till budget is exhausted, so no end date is entered
+};
+
 function openCreateCampaign(){
   const m = MERCHANTS[curMerchant];
   const b = mEl('cc-brand'); if (b) b.innerHTML = '<option>'+m.name+'</option>';
-  ccGoal = 'Grow average spend'; ccUtil = 'exhaust';
+
+  // Pre-fill every field so the campaign can be walked through in a pitch
+  // without typing, with a campaign name that fits the active merchant.
+  const cat = KITS[m.kit] || KITS.shopping;
+  const pf = Object.assign({}, CC_PREFILL, { name: cat.label + ' Cashback Boost' });
+  [['cc-name','name'],['cc-budget','budget'],['cc-cashback','cashback'],
+   ['cc-cap','cap'],['cc-minspend','minspend'],['cc-hold','hold']].forEach(function(pair){
+    const el = mEl(pair[0]); if (el) el.value = pf ? pf[pair[1]] : '';
+  });
+  const st = mEl('cc-start');
+  if (st) {
+    if (pf) { st.type = 'date'; st.value = pf.start; }
+    else { st.type = 'text'; st.value = ''; }
+  }
+
+  ccGoal = pf ? pf.goal : 'Grow average spend'; ccUtil = pf ? pf.util : 'exhaust';
   document.querySelectorAll('#cc-goals .cc-goal').forEach(function(g){ g.classList.toggle('on', g.dataset.goal === ccGoal); });
   document.querySelectorAll('.cc-util-opt').forEach(function(u){ u.classList.toggle('on', u.dataset.u === ccUtil); });
   // merchant id selector (step 2)
@@ -2351,6 +2382,9 @@ function openCreateCampaign(){
     return '<div class="cc-mid'+(i===0?' open':'')+'"><div class="cc-mid-head" onclick="this.parentElement.classList.toggle(\'open\')"><span class="cc-check"></span><span class="cc-mid-id">'+mid.v+'</span><span class="cc-mid-acq">Stripe</span><svg class="cd-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></div><div class="cc-terms">'+terms+'</div></div>';
   }).join('');
   midHost.querySelectorAll('.cc-check').forEach(function(c){ c.addEventListener('click', function(e){ e.stopPropagation(); c.classList.toggle('on'); }); });
+  // Terminals are an allow-list, so step 2 is a dead end if nothing is selected.
+  // Pre-select them alongside the rest of the pre-fill.
+  if (pf) midHost.querySelectorAll('.cc-check').forEach(function(c){ c.classList.add('on'); });
   ccSyncEnd();
   ccShow(1);
   go('create-campaign');
@@ -2980,6 +3014,41 @@ function wizStep(dir) {
 }
 function resetWizard() { step = 1; renderWiz(); resetBrands(); }
 renderWiz();
+</script>
+
+<!-- Return to the Pulse pitch. Rendered only when the visitor arrived from deck.html
+     via ?from=<section>, so the standalone demos behave exactly as before. -->
+<style>
+.deck-return{
+  position:fixed; right:18px; bottom:18px; z-index:99999;
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  font-size:13px; font-weight:700; text-decoration:none; line-height:1;
+  white-space:nowrap; width:auto; max-width:none; box-sizing:border-box;
+  color:#fff; background:#002E2A;
+  padding:12px 17px; border-radius:999px;
+  box-shadow:0 6px 20px -6px rgba(7,3,18,.34);
+  transition:background .18s, transform .18s;
+}
+.deck-return:hover{background:#0A634D; transform:translateY(-1px)}
+.deck-return svg{transition:transform .18s}
+.deck-return:hover svg{transform:translateX(-2px)}
+@media print{.deck-return{display:none}}
+</style>
+<script>
+(function(){
+  try{
+    var allowed={leak:1,targeting:1,relevance:1,live:1};
+    var from=new URLSearchParams(window.location.search).get('from');
+    if(!from||!allowed[from])return;
+    var a=document.createElement('a');
+    a.className='deck-return';
+    a.href='deck.html#'+from;
+    a.setAttribute('aria-label','Back to the Pulse pitch');
+    a.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the pitch';
+    document.body.appendChild(a);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
