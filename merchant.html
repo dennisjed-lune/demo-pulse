@@ -2074,10 +2074,33 @@ const CAMPAIGN_ROWS = [
   { name:'Flash Reward',          cashback:'12%', goal:'Grow average spend',  budget:'AED 25,000', dates:'1 Mar – 30 Mar',  start:'1 Mar 2026',  end:'30 Mar 2026',          duration:'29 days',  bank:'Abu Dhabi Islamic Bank',   status:'completed' },
   { name:'Members Reward',        cashback:'9%',  goal:'Win back customers',  budget:'AED 40,000', dates:'2 Jan – 31 Jan',  start:'2 Jan 2026',  end:'31 Jan 2026',          duration:'29 days',  bank:'Ajman Bank',               status:'completed' },
 ];
+/* ---- Campaigns created in the wizard, shared across the merchant / bank /
+   customer demos through localStorage (same origin). ---- */
+const UC_KEY = 'LUNE_PULSE_CAMPAIGNS';
+function ucLoad(){ try { return JSON.parse(localStorage.getItem(UC_KEY) || '[]'); } catch(e){ return []; } }
+function ucSave(rec){ try { const a = ucLoad(); a.push(rec); localStorage.setItem(UC_KEY, JSON.stringify(a)); } catch(e){} }
+function ucFmtDate(v){ if(!v) return ''; const d = new Date(v); return isNaN(d) ? v : d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'}); }
+function ucToCampaign(rec){
+  const cat = KITS[rec.kit] || KITS.shopping;
+  const start = ucFmtDate(rec.start);
+  const end = rec.util === 'exhaust' ? 'Till budget exhaust' : ucFmtDate(rec.end);
+  return {
+    name: rec.campaign, brand: rec.merchant, brandLogo: mLogo(rec.merchantDomain),
+    cashback: rec.cashbackPct + '%', goal: rec.goal,
+    budget: 'AED ' + Number(rec.budgetAED).toLocaleString('en-US'),
+    holdPeriod: rec.holdDays + ' days', minSpend: 'AED ' + Number(rec.minSpendAED).toLocaleString('en-US'),
+    cashbackCap: 'AED ' + Number(rec.capAED).toLocaleString('en-US'),
+    dates: start + (end ? ' – ' + end : ''), start: start, end: end,
+    duration: rec.util === 'exhaust' ? '365 days' : '60 days',
+    bank: '', status: rec.status || 'review', icon: cat.icon, color: cat.color, noun: cat.noun,
+    img: 'https://images.unsplash.com/' + cat.imgs[0] + '?auto=format&fit=crop&w=800&q=60',
+    __user: true,
+  };
+}
 function buildCampaigns(m){
   const cat = KITS[m.kit] || KITS.shopping;
   const logo = mLogo(m.domain);
-  return CAMPAIGN_ROWS.map((r,i)=>({
+  const base = CAMPAIGN_ROWS.map((r,i)=>({
     name: i===0 ? `Summer ${cat.label} Cashback` : r.name,
     brand: m.name, brandLogo: logo,
     cashback:r.cashback, goal:r.goal, budget:r.budget,
@@ -2086,6 +2109,8 @@ function buildCampaigns(m){
     icon:cat.icon, color:cat.color, noun:cat.noun,
     img:`https://images.unsplash.com/${cat.imgs[i % cat.imgs.length]}?auto=format&fit=crop&w=800&q=60`,
   }));
+  const mine = ucLoad().filter(r => r.merchant === m.name).map(ucToCampaign);
+  return mine.concat(base);
 }
 let CAMPAIGNS = buildCampaigns(MERCHANTS[0]);
 
@@ -2455,7 +2480,24 @@ function ccNext(){ if (ccStep < 3) ccShow(ccStep + 1); else ccSubmit(); }
 function ccBack(){ if (ccStep > 1) ccShow(ccStep - 1); }
 function ccCancel(){ go('overview'); }
 function ccSaveDraft(){ openModal('modal-draft-saved'); }
-function ccSubmit(){ openModal('modal-campaign-done'); }
+function ccSubmit(){
+  const m = MERCHANTS[curMerchant];
+  const cat = KITS[m.kit] || KITS.shopping;
+  const num = (id, dflt) => parseInt(ccVal(id, String(dflt)).replace(/[^0-9]/g,''), 10) || dflt;
+  ucSave({
+    id: 'uc_' + Date.now(), createdAt: Date.now(),
+    merchant: m.name, merchantDomain: m.domain, kit: m.kit,
+    campaign: ccVal('cc-name', cat.label + ' Cashback Boost'),
+    cashbackPct: parseFloat(ccVal('cc-cashback','10').replace(/[^0-9.]/g,'')) || 10,
+    budgetAED: num('cc-budget', 180000), capAED: num('cc-cap', 300),
+    minSpendAED: num('cc-minspend', 200), holdDays: num('cc-hold', 14),
+    goal: ccGoal, util: ccUtil, start: ccVal('cc-start',''), end: ccVal('cc-end',''),
+    status: 'review',
+  });
+  CAMPAIGNS = buildCampaigns(m);
+  populateOvFilters(); renderOverview();
+  openModal('modal-campaign-done');
+}
 
 /* ---------- Campaign requests ---------- */
 const REQUESTS = [

@@ -949,13 +949,16 @@ window.__resources = {
   // ---- HERO + detailed campaigns (PRD examples) -------------
   const detailed = [
     mk({
-      merchant: 'Jumbo', campaign: 'Summer Electronics Cashback', cat: 'elec',
+      // The campaign the merchant portal pre-fills and the customer journey shows
+      // top of list. Keep these figures in step with openCreateCampaign() in
+      // merchant.html and the 'jumbo' offer in customer.html.
+      merchant: 'Jumbo', campaign: 'Back to School Electronics', cat: 'elec',
       status: 'pending', cashback: 10, budget: 180000, audience: 212640,
-      createdOn: '14 Jun 2026', received: '14 Jun, 10:48 GST', cap: 300,
-      start: '1 Jul 2026', end: '31 Aug 2026', refundWindow: 14, ref: 'JB-2606-A',
+      createdOn: '1 Sep 2026', received: '1 Sep, 10:48 GST', cap: 300,
+      start: '15 Sep 2026', end: '30 Nov 2026', refundWindow: 14, ref: 'JB-2609-A',
       summary: [
         ['t','10% cashback'], ['n',' at '], ['t','Jumbo'], ['n',', capped at '],
-        ['t','AED 300 per cardholder'], ['n',', on electronics purchases above AED 200 across the summer season.'],
+        ['t','AED 300 per cardholder'], ['n',', on electronics purchases above AED 200.'],
       ],
       conditions: [
         'Spends on electronics — AED 1,000+ per quarter',
@@ -1068,7 +1071,30 @@ window.__resources = {
     }));
   });
 
-  const campaigns = detailed.concat(fillers);
+  // ---- campaigns created in the merchant Create-Campaign wizard, shared
+  //      across demos via localStorage; they land in the bank's Review queue.
+  const KIT_TO_CAT = { electronics:'elec', audio:'elec', travel:'travel', mobility:'travel', tours:'travel', luggage:'travel', dining:'food', beauty:'beauty', fragrance:'beauty', pharmacy:'beauty', wellness:'beauty', homeware:'home', laundry:'home', property:'home', grocery:'grocery' };
+  let userCampaigns = [];
+  try {
+    const dfmt = (v) => { const d = new Date(v); return isNaN(d) ? (v || '') : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }); };
+    userCampaigns = (JSON.parse(localStorage.getItem('LUNE_PULSE_CAMPAIGNS') || '[]')).map((rec) => {
+      const cat = KIT_TO_CAT[rec.kit] || 'fashion';
+      const cd = new Date(rec.createdAt || Date.now());
+      const aud = Math.min(400000, Math.max(60000, Math.round((rec.budgetAED || 60000) / 3)));
+      return mk({
+        id: rec.id, merchant: rec.merchant, campaign: rec.campaign, cat,
+        status: 'pending', cashback: rec.cashbackPct, budget: rec.budgetAED, audience: aud,
+        cap: rec.capAED, refundWindow: rec.holdDays,
+        createdOn: dfmt(cd), received: dfmt(cd) + ', 10:00 GST',
+        start: dfmt(rec.start), end: rec.util === 'exhaust' ? 'Till budget exhaust' : dfmt(rec.end),
+        ref: initials(rec.merchant).toUpperCase() + '-26' + String(rec.id).slice(-3),
+        summary: [['t', rec.cashbackPct + '% cashback'], ['n', ' at '], ['t', rec.merchant], ['n', ', capped at '], ['t', 'AED ' + rec.capAED + ' per cardholder'], ['n', ', for a ' + CAT[cat].label.toLowerCase() + ' campaign.']],
+        conditions: [`Spends on ${CAT[cat].label.toLowerCase()} — AED ${rec.capAED}+ in last 60 days`],
+      });
+    });
+  } catch (e) {}
+
+  const campaigns = userCampaigns.concat(detailed).concat(fillers);
 
   const byStatus = (s) => campaigns.filter(c => c.status === s);
   const find = (id) => campaigns.find(c => c.id === id);
@@ -2992,6 +3018,41 @@ Object.assign(window, {
   ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 })();
 
+</script>
+
+<!-- Return to the Pulse pitch. Rendered only when the visitor arrived from deck.html
+     via ?from=<section>, so the standalone demos behave exactly as before. -->
+<style>
+.deck-return{
+  position:fixed; right:18px; bottom:18px; z-index:99999;
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  font-size:13px; font-weight:700; text-decoration:none; line-height:1;
+  white-space:nowrap; width:auto; max-width:none; box-sizing:border-box;
+  color:#fff; background:#002E2A;
+  padding:12px 17px; border-radius:999px;
+  box-shadow:0 6px 20px -6px rgba(7,3,18,.34);
+  transition:background .18s, transform .18s;
+}
+.deck-return:hover{background:#0A634D; transform:translateY(-1px)}
+.deck-return svg{transition:transform .18s}
+.deck-return:hover svg{transform:translateX(-2px)}
+@media print{.deck-return{display:none}}
+</style>
+<script>
+(function(){
+  try{
+    var allowed={leak:1,targeting:1,relevance:1,live:1};
+    var from=new URLSearchParams(window.location.search).get('from');
+    if(!from||!allowed[from])return;
+    var a=document.createElement('a');
+    a.className='deck-return';
+    a.href='deck.html#'+from;
+    a.setAttribute('aria-label','Back to the Pulse pitch');
+    a.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the pitch';
+    document.body.appendChild(a);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>

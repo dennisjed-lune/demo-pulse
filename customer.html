@@ -8,7 +8,7 @@
   /* ============================================================
      Lune Design System tokens (inlined from the DS bundle)
      ============================================================ */
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Cormorant+Garamond:ital,wght@1,500;1,600;1,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
   :root {
     /* ---- Brand core ---- */
@@ -87,8 +87,6 @@
     /* ---- Typography ---- */
     --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont,
                  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-display: "Cormorant Garamond", ui-serif, Georgia,
-                    "Times New Roman", serif;
     --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
     --weight-regular: 400;
@@ -97,7 +95,16 @@
     --weight-bold:    700;
     --weight-extra:   800;
 
-    --text-body-size: 14px; --text-body-lh: 1.5;
+    --text-body-size: 15px; --text-body-lh: 1.5;
+
+    /* ---- Type scale — six steps, no half-pixels, roles assigned once.
+       Nothing in this prototype may set a font-size outside this scale. ---- */
+    --fs-display: 30px;   /* the earnings figure — one per screen          */
+    --fs-value:   22px;   /* offer value, screen title, sheet title        */
+    --fs-title:   17px;   /* section headings, empty-state heading         */
+    --fs-body:    15px;   /* body copy, buttons, brand names               */
+    --fs-meta:    13px;   /* validity, secondary copy, T&Cs                */
+    --fs-micro:   11px;   /* badges, small labels                         */
 
     --tracking-tight: -0.02em;
     --tracking-normal: 0;
@@ -167,348 +174,427 @@
   ::selection { background: var(--lune-mint); color: var(--lune-teal); }
 
   /* ============================================================
-     Lune Pulse — prototype styles (from pulse.css)
+     Lune Pulse — customer journey
+     ------------------------------------------------------------
+     Colour rule (bank-themable SDK): the ONLY hues on this screen
+     come from the bank's primary and secondary. Everything else is
+     neutral. The accessible variants below are computed in JS from
+     the two bank hexes (see accessibleInk / deepSurface) so white
+     text clears 4.5:1 on every bank theme, not just the green one.
      ============================================================ */
+
+  /* ====== z-index scale ====== */
+  :root {
+    --z-media:      1;
+    --z-badge:      2;
+    --z-lockup:     3;
+    --z-sticky:    10;
+    --z-backdrop:  30;
+    --z-sheet:     31;
+  }
 
   /* ====== Stage ====== */
   .p-stage {
     min-height: 100vh;
     display: flex; align-items: center; justify-content: center;
-    background: var(--neutral-50);
-    padding: 24px;
+    background: var(--bg-sunken);
+    padding: var(--space-6);
   }
 
   /* ====== Screen ====== */
   .p-screen {
-    --p-accent-press: color-mix(in oklab, var(--p-accent), black 14%);
-    --p-accent-soft: color-mix(in oklab, var(--p-accent), white 90%);
-    --p-accent-soft-2: color-mix(in oklab, var(--p-accent), white 82%);
-    --p-accent-deep: color-mix(in oklab, var(--p-accent), black 38%);
     height: 100%;
     display: flex; flex-direction: column;
-    background: var(--neutral-25);
+    background: var(--bg-canvas);
     font-family: var(--font-sans);
     color: var(--text-primary);
     position: relative;
     overflow: hidden;
   }
 
+  /* ====== Focus — one rule, using the token that already exists ====== */
+  .p-screen :focus-visible {
+    outline: var(--border-thick) solid var(--p-primary-ink);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+  .p-screen :focus:not(:focus-visible) { outline: none; }
+
   /* ====== Header ====== */
   .p-nav {
-    display: flex; align-items: center; gap: var(--space-2);
-    padding: 64px var(--space-4) 0;
+    display: flex; align-items: center; gap: var(--space-1);
+    padding: 60px var(--space-4) var(--space-3);
+    background: var(--bg-canvas);
+    /* no z-index: the device status bar must stay above this header */
+    position: relative;
+    flex-shrink: 0;
   }
+  .p-nav::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px; background: var(--border-default);
+    opacity: 0; transition: opacity var(--dur-base) var(--ease-standard);
+  }
+  .p-nav.is-scrolled::after { opacity: 1; }
   .p-nav-back {
-    width: 36px; height: 36px; border: none; background: none; cursor: pointer;
+    width: 44px; height: 44px; border: none; background: none; cursor: pointer;
+    font: inherit;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-primary); margin-left: -8px; border-radius: var(--radius-pill);
+    color: var(--text-primary); margin-left: -12px;
+    border-radius: var(--radius-pill);
   }
   .p-title {
-    font-size: 26px; font-weight: var(--weight-bold);
-    letter-spacing: var(--tracking-tight); line-height: 1.3;
+    font-size: var(--fs-value); font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight); line-height: 1.25;
   }
-  .p-tabs {
-    display: flex; gap: var(--space-2);
-    padding: var(--space-3) var(--space-4) 0;
-    border-bottom: var(--border-hairline) solid var(--border-subtle);
-    background: var(--neutral-25);
-  }
-  .p-tab {
-    appearance: none; border: none; background: none; cursor: pointer;
-    font-family: inherit; font-size: 15px; font-weight: var(--weight-semibold);
-    color: var(--text-tertiary);
-    padding: var(--space-2) var(--space-3) var(--space-3);
-    position: relative; min-height: 44px;
-  }
-  .p-tab.is-active { color: var(--p-accent); }
-  .p-tab::after {
-    content: ""; position: absolute; left: var(--space-3); right: var(--space-3);
-    bottom: -1px; height: 3px; border-radius: 3px 3px 0 0;
-    background: transparent; transition: background var(--dur-base) var(--ease-standard);
-  }
-  .p-tab.is-active::after { background: var(--p-accent); }
 
   /* ====== Scroll body ====== */
   .p-body {
     flex: 1; overflow-y: auto; overscroll-behavior: contain;
-    padding: var(--space-4) var(--space-4) 48px;
+    padding: var(--space-4) var(--space-4) var(--space-12);
     scrollbar-width: none;
   }
   .p-body::-webkit-scrollbar { display: none; }
+  /* a modal sheet owns the scroll: the list behind it must not move */
+  .p-screen.has-sheet .p-body { overflow: hidden; }
 
-  /* ====== Activation banner ====== */
-  .p-banner {
-    display: flex; align-items: center; gap: var(--space-3);
-    background: var(--p-accent-soft);
-    border: var(--border-hairline) solid color-mix(in oklab, var(--p-accent), white 70%);
+  /* ====== Earnings — the one coloured surface, from the bank primary ====== */
+  .p-earn {
+    background: var(--p-primary-deep);
+    color: var(--neutral-0);
+    border-radius: var(--p-r-card, var(--radius-lg));
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+  .p-earn-amount {
+    font-size: var(--fs-display); font-weight: var(--weight-extra);
+    letter-spacing: var(--tracking-tight); line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .p-earn-sub {
+    font-size: var(--fs-meta); color: var(--neutral-0);
+    margin-top: var(--space-1);
+  }
+  .p-earn-split {
+    display: flex; flex-direction: column; gap: var(--space-1);
+    margin-top: var(--space-4);
+    border-top: var(--border-hairline) solid rgba(255,255,255,0.24);
+    padding-top: var(--space-3);
+  }
+  .p-earn-line {
+    display: flex; align-items: center; gap: var(--space-2);
+    min-height: 44px; width: 100%;
+    font-family: inherit; font-size: var(--fs-body);
+    color: var(--neutral-0); text-align: left;
+    background: none; border: none; padding: 0;
+    border-radius: var(--radius-sm);
+  }
+  .p-earn-dot {
+    width: 8px; height: 8px; border-radius: var(--radius-pill);
+    flex-shrink: 0; background: var(--neutral-0);
+  }
+  .p-earn-line.is-pending .p-earn-dot { background: var(--p-secondary); }
+  .p-earn-amt { font-weight: var(--weight-bold); font-variant-numeric: tabular-nums; }
+  .p-earn-lbl { color: var(--neutral-0); }
+  .p-earn-when {
+    display: block; font-size: var(--fs-meta);
+    color: rgba(255,255,255,0.82); margin-top: 1px;
+  }
+
+  /* ====== How it works — neutral, teaches instead of nagging ====== */
+  .p-howto {
+    display: flex; align-items: flex-start; gap: var(--space-3);
+    background: var(--surface-muted);
     border-radius: var(--p-r-card, var(--radius-md));
-    padding: var(--space-3) var(--space-4);
-    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
   }
-  .p-banner-icon {
-    width: 38px; height: 38px; flex-shrink: 0;
-    border-radius: var(--radius-pill);
-    background: var(--p-accent); color: #fff;
-    display: flex; align-items: center; justify-content: center;
+  .p-howto-icon { color: var(--text-secondary); flex-shrink: 0; margin-top: 1px; }
+  .p-howto-t {
+    font-size: var(--fs-body); font-weight: var(--weight-semibold);
+    line-height: 1.35;
   }
-  .p-banner-title { font-size: 14px; font-weight: var(--weight-bold); line-height: 1.35; }
-  .p-banner-sub { font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; }
+  .p-howto-s {
+    font-size: var(--fs-meta); color: var(--text-secondary);
+    line-height: 1.45; margin-top: 2px;
+  }
 
-  /* ====== Offer card ====== */
+  /* ====== Section heading ====== */
+  .p-section-h {
+    font-size: var(--fs-title); font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-3);
+  }
+  .p-section-h + .p-section-h,
+  .p-card + .p-section-h { margin-top: var(--space-6); }
+  .p-section-count { color: var(--text-secondary); font-weight: var(--weight-semibold); }
+
+  /* ====== Offer card ======
+     Brand-first: merchant logo lockup straddles the campaign banner,
+     and the cashback value is the largest type on the card — never
+     set over the photograph. */
   .p-card {
-    background: var(--bg-surface);
+    background: var(--surface-card);
     border-radius: var(--p-r-card, var(--radius-lg));
     box-shadow: var(--shadow-sm);
     border: var(--border-hairline) solid var(--border-subtle);
     overflow: hidden;
     margin-bottom: var(--space-4);
   }
-  .p-hero {
-    position: relative; overflow: hidden;
-    background: var(--neutral-100);
+
+  /* the whole card body is the details affordance — real button, so it
+     is keyboard reachable and gets the focus ring for free */
+  .p-card-open {
+    display: block; width: 100%; padding: 0; border: none;
+    background: none; color: inherit;
+    /* `font: inherit` not `font-family`: a bare button would otherwise sit at
+       the UA's 13.333px, off the type scale */
+    font: inherit;
+    text-align: left; cursor: pointer;
   }
-  .p-hero img {
+
+  .p-media {
+    position: relative; height: 116px; overflow: hidden;
+    background: var(--surface-muted);
+    z-index: var(--z-media);
+  }
+  .p-media img {
     width: 100%; height: 100%; object-fit: cover; display: block;
+    opacity: 0; transition: opacity var(--dur-slow) var(--ease-standard);
   }
-  .p-hero-scrim {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(7,3,18,0.42) 0%, rgba(7,3,18,0.05) 45%, rgba(7,3,18,0.55) 100%);
+  .p-media img.is-loaded { opacity: 1; }
+  /* skeleton while the campaign banner loads — no more grey slab */
+  .p-media.is-loading::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+      var(--surface-muted) 0%, var(--neutral-100) 50%, var(--surface-muted) 100%);
+    background-size: 200% 100%;
+    animation: p-shimmer 1.4s linear infinite;
   }
-  .p-new-badge {
-    position: absolute; top: 10px; right: 10px; z-index: 3;
-    font-size: 10.5px; font-weight: var(--weight-bold); letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--lune-teal); background: var(--lune-mint);
-    padding: 4px 9px; border-radius: var(--radius-pill);
-    box-shadow: 0 4px 12px -4px rgba(7,3,18,0.4);
+  @keyframes p-shimmer { to { background-position: -200% 0; } }
+  /* if the campaign has no creative (or it fails), fall back to the
+     bank's own tint rather than a dead grey box */
+  .p-media.is-fallback {
+    background: var(--p-primary-tint-2);
   }
-  .p-chip {
-    position: absolute; top: var(--space-3); left: var(--space-3);
-    display: flex; align-items: center; gap: 7px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(8px);
-    border-radius: var(--radius-pill);
-    padding: 4px 12px 4px 4px;
-  }
-  .p-chip-logo {
-    width: 24px; height: 24px; border-radius: var(--radius-pill);
-    background: var(--lune-teal); color: #fff;
-    font-size: 12px; font-weight: var(--weight-bold);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .p-chip-name { font-size: 12px; font-weight: var(--weight-semibold); color: var(--lune-teal); }
-  .p-headline {
-    position: absolute; left: var(--space-4); right: var(--space-4); bottom: var(--space-3);
-    color: #fff; font-size: 18px; font-weight: var(--weight-bold);
-    line-height: 1.3; letter-spacing: var(--tracking-tight);
-    text-shadow: 0 1px 8px rgba(7,3,18,0.35);
-    text-wrap: balance;
-  }
-  .p-validity {
-    font-size: 12px; color: var(--text-tertiary);
-    display: flex; align-items: center; gap: var(--space-2);
-  }
-  .p-validity strong { color: var(--text-secondary); font-weight: var(--weight-semibold); }
-  .p-card-foot { padding: var(--space-3) var(--space-4) var(--space-4); }
-  .p-cta-row { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+  /* Colour mode: the merchant's own brand colour as a flat identity block.
+     Always available, never wrong, no request to fail. */
+  .p-media.is-colour { height: 76px; }
+  .p-sheet-media.is-colour { height: 96px; }
 
-  /* Layout: classic */
-  .p-card.layout-classic .p-hero { height: 150px; }
-
-  /* Layout: immersive */
-  .p-card.layout-immersive .p-hero { height: 200px; }
-  .p-card.layout-immersive .p-headline { bottom: 34px; font-size: 20px; }
-  .p-validity-onimage {
-    position: absolute; left: var(--space-4); bottom: var(--space-3);
-    font-size: 11.5px; color: rgba(255,255,255,0.85);
-  }
-  .p-card.layout-immersive .p-card-foot { padding-top: var(--space-3); }
-
-  /* Layout: split */
-  .p-card.layout-split .p-split-top {
-    display: flex; gap: var(--space-3); padding: var(--space-3);
-  }
-  .p-card.layout-split .p-hero {
-    width: 92px; height: 92px; flex-shrink: 0;
-    border-radius: calc(var(--p-r-card, 16px) - 6px);
-  }
-  .p-card.layout-split .p-split-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .p-split-brandline { display: flex; align-items: center; gap: 6px; }
-  .p-card.layout-split .p-chip-logo { width: 20px; height: 20px; font-size: 10px; }
-  .p-split-brand { font-size: 12px; font-weight: var(--weight-semibold); color: var(--text-secondary); }
-  .p-split-headline {
-    font-size: 15.5px; font-weight: var(--weight-bold); line-height: 1.3;
-    letter-spacing: var(--tracking-tight); color: var(--text-primary);
-  }
-  .p-card.layout-split .p-card-foot { padding: 0 var(--space-3) var(--space-3); }
-  .p-card.layout-split .p-cta-row { margin-top: 0; }
-
-  /* Ended state */
-  .p-card.is-ended .p-hero img { filter: grayscale(0.9); opacity: 0.7; }
-  .p-card.is-ended .p-headline { opacity: 0.85; }
-  .p-ended-divider {
-    display: flex; align-items: center; gap: var(--space-3);
-    margin: var(--space-5) 0 var(--space-4);
-    color: var(--text-tertiary);
-    font-size: 11px; font-weight: var(--weight-bold);
+  .p-badge {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    z-index: var(--z-badge);
+    font-size: var(--fs-micro); font-weight: var(--weight-bold);
     letter-spacing: var(--tracking-wide); text-transform: uppercase;
+    color: var(--p-on-secondary); background: var(--p-secondary);
+    padding: 5px 10px; border-radius: var(--radius-pill);
   }
-  .p-ended-divider::before, .p-ended-divider::after {
-    content: ""; flex: 1; height: 1px; background: var(--border-default);
+
+  .p-card-head {
+    display: flex; align-items: flex-end; gap: var(--space-3);
+    padding: 0 var(--space-4);
+    margin-top: -26px;
+    position: relative; z-index: var(--z-lockup);
+  }
+  .p-logo {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: var(--radius-md);
+    background: var(--neutral-0);
+    box-shadow: 0 0 0 1px rgba(7,3,18,0.08), var(--shadow-sm);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; padding: 6px;
+    font-size: var(--fs-body); font-weight: var(--weight-bold);
+    color: var(--text-primary);
+  }
+  .p-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .p-brand {
+    font-size: var(--fs-meta); font-weight: var(--weight-semibold);
+    color: var(--text-secondary); padding-bottom: var(--space-2);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .p-card-copy { padding: var(--space-3) var(--space-4) 0; }
+  .p-value {
+    font-size: var(--fs-value); font-weight: var(--weight-extra);
+    letter-spacing: var(--tracking-tight); line-height: 1.2;
+    color: var(--text-primary);
+  }
+  .p-value-sub {
+    font-size: var(--fs-body); color: var(--text-secondary);
+    line-height: 1.35; margin-top: 1px;
+  }
+  .p-meta {
+    font-size: var(--fs-meta); color: var(--text-secondary);
+    margin-top: var(--space-2);
+    display: flex; align-items: center; gap: var(--space-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .p-meta-sep { color: var(--text-secondary); }
+
+  .p-card-foot { padding: var(--space-4); }
+  .p-cta-row { display: flex; gap: var(--space-2); }
+
+  /* Ended — signalled by a label, not by hue or desaturation alone */
+  .p-card.is-ended .p-media img { filter: grayscale(1); opacity: 0.55; }
+  .p-card.is-ended .p-value { color: var(--text-secondary); }
+  /* Ended: a stacked text block, so it can never collide with the button,
+     and it reports what the offer actually paid rather than just dying. */
+  .p-ended-note { min-width: 0; }
+  .p-ended-when {
+    font-size: var(--fs-meta); color: var(--text-secondary);
+  }
+  .p-ended-earned {
+    font-size: var(--fs-body); font-weight: var(--weight-semibold);
+    color: var(--text-primary); margin-top: 1px;
   }
 
   /* ====== Buttons ====== */
   .p-btn {
     appearance: none; cursor: pointer; border: none;
-    font-family: inherit; font-size: 14px; font-weight: var(--weight-semibold);
+    font-family: inherit; font-size: var(--fs-body); font-weight: var(--weight-semibold);
     min-height: 44px; padding: 0 var(--space-4);
     border-radius: var(--p-r-btn, var(--radius-md));
-    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    flex: 1; position: relative;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    flex: 1; position: relative; white-space: nowrap;
     transition: background var(--dur-fast) var(--ease-standard),
-                color var(--dur-fast) var(--ease-standard),
+                box-shadow var(--dur-fast) var(--ease-standard),
                 transform var(--dur-fast) var(--ease-standard);
   }
   .p-btn:active { transform: scale(0.98); }
-  .p-btn-primary { background: var(--p-accent); color: #fff; }
-  .p-btn-primary:hover { background: var(--p-accent-press); }
+  /* the accessible variant of the bank primary, so white text clears
+     4.5:1 whichever hex the bank ships */
+  .p-btn-primary { background: var(--p-primary-ink); color: var(--neutral-0); }
+  .p-btn-primary:hover { background: var(--p-primary-press); }
   .p-btn-secondary {
-    background: var(--bg-surface); color: var(--text-primary);
-    box-shadow: inset 0 0 0 var(--border-thick) var(--border-default);
+    background: var(--surface-card); color: var(--text-primary);
+    box-shadow: inset 0 0 0 var(--border-hairline) var(--border-default);
   }
-  .p-btn-secondary:hover { box-shadow: inset 0 0 0 var(--border-thick) var(--border-strong); }
-  .p-btn-disabled, .p-btn-disabled:hover {
-    background: var(--neutral-50); color: var(--text-tertiary);
-    cursor: default; transform: none;
+  .p-btn-secondary:hover { box-shadow: inset 0 0 0 var(--border-hairline) var(--border-strong); }
+
+  /* ====== Activated — a status row, not a disabled button ======
+     Different SHAPE from the ended state, not a different hue, and it
+     stays in the reading order instead of being `disabled`. */
+  .p-status {
+    flex: 1; display: flex; align-items: center; gap: var(--space-2);
+    min-height: 44px; padding: 0 var(--space-3);
+    border-radius: var(--p-r-btn, var(--radius-md));
+    background: var(--p-primary-tint);
+    color: var(--p-primary-on-tint);
+    font-size: var(--fs-body); font-weight: var(--weight-semibold);
   }
-  .p-btn-disabled:active { transform: none; }
-  .p-btn-activated, .p-btn-activated:hover {
-    background: var(--p-accent-soft); color: var(--p-accent-deep);
-    cursor: default;
-  }
-  .p-btn-activated:active { transform: none; }
+  .p-status-icon { flex-shrink: 0; display: flex; }
 
   /* Activation feedback */
   @media (prefers-reduced-motion: no-preference) {
-    .fb-morph { animation: p-morph-in 480ms var(--ease-emphasis); }
+    .fb-morph { animation: p-morph-in var(--dur-slow) var(--ease-emphasis); }
     @keyframes p-morph-in {
-      0% { transform: scale(0.96); }
-      45% { transform: scale(1.04); }
+      0%   { transform: scale(0.96); }
+      45%  { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
     .fb-morph .p-check-path {
       stroke-dasharray: 24; stroke-dashoffset: 24;
-      animation: p-check-draw 360ms 120ms var(--ease-out) forwards;
+      animation: p-check-draw var(--dur-slow) var(--dur-fast) var(--ease-out) forwards;
     }
     @keyframes p-check-draw { to { stroke-dashoffset: 0; } }
-    .fb-pulse::after {
-      content: ""; position: absolute; inset: 0;
-      border-radius: inherit;
-      box-shadow: 0 0 0 0 color-mix(in oklab, var(--p-accent), transparent 30%);
-      animation: p-pulse-ring 700ms var(--ease-out) forwards;
-      pointer-events: none;
-    }
-    @keyframes p-pulse-ring {
-      0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--p-accent), transparent 30%); opacity: 1; }
-      100% { box-shadow: 0 0 0 14px color-mix(in oklab, var(--p-accent), transparent 100%); opacity: 0; }
-    }
   }
 
   /* ====== Empty state ====== */
   .p-empty {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: var(--space-8) var(--space-8) var(--space-16);
-    min-height: 420px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; padding: var(--space-10) var(--space-6);
   }
   .p-empty-icon {
-    width: 72px; height: 72px; border-radius: var(--radius-pill);
-    background: var(--p-accent-soft); color: var(--p-accent);
+    width: 64px; height: 64px; border-radius: var(--radius-pill);
+    background: var(--surface-muted); color: var(--text-secondary);
     display: flex; align-items: center; justify-content: center;
     margin-bottom: var(--space-5);
   }
-  .p-empty-h { font-size: 17px; font-weight: var(--weight-bold); margin-bottom: var(--space-2); }
-  .p-empty-b { font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; max-width: 240px; }
-
-  /* ====== Activity summary ====== */
-  .p-summary {
-    background: linear-gradient(150deg, var(--p-accent) 0%, var(--p-accent-deep) 120%);
-    color: #fff;
-    border-radius: var(--p-r-card, var(--radius-lg));
-    padding: var(--space-6) var(--space-5) var(--space-5);
-    box-shadow: var(--shadow-md);
+  .p-empty-h {
+    font-size: var(--fs-title); font-weight: var(--weight-bold);
+    margin-bottom: var(--space-2);
   }
-  .p-summary-label {
-    font-size: 12px; font-weight: var(--weight-bold);
-    letter-spacing: var(--tracking-wide); text-transform: uppercase;
-    opacity: 0.8; margin-bottom: var(--space-3);
+  .p-empty-b {
+    font-size: var(--fs-meta); color: var(--text-secondary);
+    line-height: 1.5; max-width: 260px; margin-bottom: var(--space-5);
   }
-  .p-summary-amount {
-    font-size: 38px; font-weight: var(--weight-extra);
-    letter-spacing: var(--tracking-tight); line-height: 1.1;
-  }
-  .p-summary-amount small { font-size: 19px; font-weight: var(--weight-semibold); opacity: 0.85; margin-left: 4px; }
-  .p-summary-sub { font-size: 13px; opacity: 0.78; margin-top: 6px; }
-  .p-summary-stats {
-    display: flex; margin-top: var(--space-5);
-    border-top: 1px solid rgba(255,255,255,0.22); padding-top: var(--space-4);
-  }
-  .p-summary-stat { flex: 1; }
-  .p-summary-stat + .p-summary-stat {
-    border-left: 1px solid rgba(255,255,255,0.22);
-    padding-left: var(--space-4);
-  }
-  .p-summary-stat-amt { font-size: 17px; font-weight: var(--weight-bold); }
-  .p-summary-stat-lbl { font-size: 12px; opacity: 0.78; margin-top: 2px; }
-
-  /* Compact summary */
-  .p-summary.is-compact { padding: var(--space-5) var(--space-5) var(--space-4); margin-bottom: var(--space-4); }
-  .p-summary.is-compact .p-summary-label { margin-bottom: var(--space-2); }
-  .p-summary.is-compact .p-summary-amount { font-size: 30px; }
-  .p-summary.is-compact .p-summary-amount small { font-size: 16px; }
-  .p-summary.is-compact .p-summary-sub { margin-top: 2px; }
-  .p-summary.is-compact .p-summary-stats { margin-top: var(--space-4); padding-top: var(--space-3); }
-  .p-summary.is-compact .p-summary-stat-amt { font-size: 15px; }
+  .p-empty .p-btn { flex: 0 0 auto; }
 
   /* ====== Bottom sheet ====== */
+  /* Both the backdrop and the sheet default to their VISIBLE state and
+     animate in on mount. A class-flip transition would never fire in a
+     hidden tab or a headless renderer, so the sheet could mount invisible. */
   .p-sheet-backdrop {
-    position: absolute; inset: 0; z-index: 30;
+    position: absolute; inset: 0; z-index: var(--z-backdrop);
     background: rgba(7,3,18,0.45);
-    opacity: 0; transition: opacity var(--dur-slow) var(--ease-standard);
+    animation: p-fade-in var(--dur-slow) var(--ease-standard) both;
   }
-  .p-sheet-backdrop.is-open { opacity: 1; }
+  .p-sheet-backdrop.is-closing { animation: p-fade-out var(--dur-slow) var(--ease-standard) both; }
+  @keyframes p-fade-in  { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes p-fade-out { from { opacity: 1 } to { opacity: 0 } }
   .p-sheet {
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 31;
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: var(--z-sheet);
     height: 88%;
     background: var(--bg-surface);
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     box-shadow: var(--shadow-xl);
     display: flex; flex-direction: column;
-    transform: translateY(100%);
-    transition: transform var(--dur-slow) var(--ease-emphasis);
-    touch-action: none;
+    overflow: hidden;
+    animation: p-sheet-in var(--dur-slow) var(--ease-emphasis) both;
   }
-  .p-sheet.is-open { transform: translateY(0); }
-  .p-sheet.is-dragging { transition: none; }
-  .p-sheet-handle-zone {
-    position: absolute; top: 0; left: 0; right: 0; height: 28px; z-index: 5;
-    display: flex; justify-content: center; padding-top: 8px; cursor: grab;
+  @keyframes p-sheet-in  { from { transform: translateY(100%) } to { transform: translateY(0) } }
+  @keyframes p-sheet-out { from { transform: translateY(0) } to { transform: translateY(100%) } }
+  .p-sheet.is-closing { animation: p-sheet-out var(--dur-slow) var(--ease-standard) both; }
+  .p-sheet.is-dragging { animation: none; }
+  .p-sheet-grab {
+    flex-shrink: 0; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab; touch-action: none;
+    background: var(--bg-surface);
+    position: relative; z-index: var(--z-lockup);
   }
-  .p-sheet-handle { width: 40px; height: 4.5px; border-radius: 4px; background: rgba(255,255,255,0.75); }
-  .p-sheet-scroll { flex: 1; overflow-y: auto; scrollbar-width: none; border-radius: inherit; }
+  .p-sheet-handle {
+    width: 40px; height: 4px; border-radius: var(--radius-pill);
+    background: var(--border-strong);
+  }
+  .p-sheet-scroll {
+    flex: 1; overflow-y: auto; touch-action: pan-y;
+    overscroll-behavior: contain; scrollbar-width: none;
+  }
   .p-sheet-scroll::-webkit-scrollbar { display: none; }
-  .p-sheet-hero { position: relative; height: 210px; flex-shrink: 0; background: var(--neutral-100); }
-  .p-sheet-hero img { width: 100%; height: 100%; object-fit: cover; }
   .p-sheet-close {
-    position: absolute; top: var(--space-3); right: var(--space-3);
-    width: 34px; height: 34px; border: none; cursor: pointer;
+    position: absolute; top: 0; right: var(--space-2);
+    width: 44px; height: 44px; border: none; cursor: pointer;
     border-radius: var(--radius-pill);
-    background: rgba(7,3,18,0.45); color: #fff;
-    backdrop-filter: blur(6px);
+    background: none; color: var(--text-secondary);
     display: flex; align-items: center; justify-content: center;
   }
-  .p-sheet-hero .p-chip { top: 38px; }
-  .p-sheet-body { padding: var(--space-5) var(--space-5) var(--space-4); display: flex; flex-direction: column; gap: var(--space-6); }
-  .p-sheet-h { font-size: 15px; font-weight: var(--weight-bold); margin-bottom: var(--space-2); }
-  .p-sheet-p { font-size: 13.5px; line-height: 1.55; color: var(--text-secondary); }
+  .p-sheet-media {
+    height: 132px; flex-shrink: 0; overflow: hidden;
+    background: var(--surface-muted); position: relative;
+  }
+  .p-sheet-media img { width: 100%; height: 100%; object-fit: cover; }
+  .p-sheet-head {
+    display: flex; align-items: flex-end; gap: var(--space-3);
+    padding: 0 var(--space-5); margin-top: -26px;
+    position: relative; z-index: var(--z-lockup);
+  }
+  .p-sheet-title { padding: var(--space-3) var(--space-5) 0; }
+  .p-sheet-value {
+    font-size: var(--fs-value); font-weight: var(--weight-extra);
+    letter-spacing: var(--tracking-tight); line-height: 1.2;
+  }
+  .p-sheet-value-sub {
+    font-size: var(--fs-body); color: var(--text-secondary); margin-top: 1px;
+  }
+  .p-sheet-body {
+    padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-6);
+  }
+  .p-sheet-h {
+    font-size: var(--fs-title); font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-tight); margin-bottom: var(--space-3);
+  }
+  .p-sheet-p { font-size: var(--fs-body); line-height: 1.5; color: var(--text-secondary); }
 
   /* Steps */
   .p-steps { display: flex; flex-direction: column; }
@@ -517,30 +603,36 @@
   .p-step-icon {
     width: 40px; height: 40px; flex-shrink: 0;
     border-radius: var(--radius-pill);
-    background: var(--p-accent-soft); color: var(--p-accent);
+    background: var(--surface-muted); color: var(--text-primary);
     display: flex; align-items: center; justify-content: center;
   }
-  .p-step-line { width: 2px; flex: 1; min-height: 18px; background: var(--p-accent-soft-2); margin: 4px 0; }
-  .p-step-text { padding-bottom: var(--space-5); padding-top: 2px; }
+  .p-step-line {
+    width: 2px; flex: 1; min-height: 16px;
+    background: var(--border-subtle); margin: var(--space-1) 0;
+  }
+  .p-step-text { padding-bottom: var(--space-5); padding-top: var(--space-2); }
   .p-step:last-child .p-step-text { padding-bottom: 0; }
-  .p-step-t { font-size: 13.5px; font-weight: var(--weight-semibold); line-height: 1.4; }
-  .p-step-s { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.45; }
+  .p-step-t { font-size: var(--fs-body); font-weight: var(--weight-semibold); line-height: 1.35; }
+  .p-step-s { font-size: var(--fs-meta); color: var(--text-secondary); margin-top: 2px; line-height: 1.45; }
 
   /* T&Cs */
-  .p-terms { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: var(--space-2); }
-  .p-terms li { font-size: 13px; line-height: 1.5; color: var(--text-secondary); }
-  .p-terms li::marker { color: var(--p-accent); }
+  .p-terms { margin: 0; padding-left: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+  .p-terms li { font-size: var(--fs-meta); line-height: 1.5; color: var(--text-secondary); }
+  .p-terms li::marker { color: var(--border-strong); }
 
   /* Sticky CTA */
   .p-sheet-cta {
     flex-shrink: 0; padding: var(--space-3) var(--space-5) var(--space-8);
     background: var(--bg-surface);
     border-top: var(--border-hairline) solid var(--border-subtle);
-    display: flex;
+    display: flex; gap: var(--space-2);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .p-sheet, .p-sheet-backdrop, .p-btn { transition: none; }
+    .p-btn, .p-media img, .p-nav::after { transition: none; }
+    /* no slide: the sheet is already in its visible state */
+    .p-sheet, .p-sheet-backdrop, .p-sheet.is-closing, .p-sheet-backdrop.is-closing,
+    .p-media.is-loading::after { animation: none; }
   }
 </style>
 </head>
@@ -1010,6 +1102,17 @@ const PIcon = {
       <path d="M15 4l-8 8 8 8"></path>
     </svg>
   ),
+  chevron: (s = 18) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 4l8 8-8 8"></path>
+    </svg>
+  ),
+  info: (s = 20) => (
+    <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M12 11v5.5M12 7.6v.9"></path>
+    </svg>
+  ),
   tag: (s = 28) => (
     <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12.6 2.6h7.3a1.5 1.5 0 0 1 1.5 1.5v7.3a1.5 1.5 0 0 1-.44 1.06l-8.8 8.8a1.5 1.5 0 0 1-2.12 0l-7.3-7.3a1.5 1.5 0 0 1 0-2.12l8.8-8.8a1.5 1.5 0 0 1 1.06-.44z"></path>
@@ -1022,287 +1125,492 @@ Object.assign(window, { PIcon });
 
 <!-- pulse-data.jsx -->
 <script type="text/babel" data-presets="react">
+// Campaign creative is merchant-supplied in production. Every image below was
+// visually vetted for competitor branding before use in a client-facing demo.
 const PULSE_OFFERS = [
+  /* The campaign created in the merchant portal and approved in the bank portal,
+     so one campaign is traceable across all three journeys. Kept top of the list,
+     and deliberately NOT in PULSE_SEED_ACTIVATIONS so the activation step can be
+     demonstrated live. No `img`: the flat brand-colour block is used instead, which
+     avoids any risk of competitor branding appearing in campaign photography. */
   {
-    id: 'expedia', brand: 'Expedia', initial: 'E',
-    headline: 'Get 8% Cashback on travel bookings',
-    validTill: '30 Sep 2026', maxAed: 500, channel: 'ecommerce',
-    img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&q=80&auto=format&fit=crop',
+    brandColor: '#003478', id: 'jumbo', brand: 'Jumbo', initial: 'J',
+    pct: '10%', on: 'electronics',
+    validTill: '30 Nov 2026', maxAed: 300, channel: 'both',
+    description: 'Back to school, sorted — 10% cashback on electronics at Jumbo.',
+    step1: ['Shop Jumbo in store or online', 'Both channels qualify for this offer.'],
+    terms: ['Minimum spend of AED 200 per transaction', 'Cashback is capped at AED 300 for this offer', 'Electronics purchases only'],
+    // isNew both earns the "Just added" badge and sorts this offer to the top of the
+    // live list (see the sort in PApp). Only one offer should carry it.
+    status: 'active', isNew: true,
+  },
+  {
+    brandColor: '#FFC94B', id: 'expedia', brand: 'Expedia', initial: 'E',
+    pct: '8%', on: 'travel bookings',
+    validTill: '30 Nov 2026', maxAed: 500, channel: 'ecommerce',
+    img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=900&h=300&q=75&auto=format&fit=crop',
     description: 'Go further — 8% cashback on flights and hotels booked through Expedia.',
     step1: ['Book at Expedia online', 'Book anytime through the Expedia website or app.'],
-    terms: ['Maximum cashback of AED 500 per campaign', 'Flights and hotels only', 'Cancelled bookings forfeit cashback'],
+    terms: ['Cashback is capped at AED 500 for this offer', 'Flights and hotels only', 'Cancelled bookings forfeit cashback'],
     status: 'active',
   },
   {
-    id: 'eyewa', brand: 'Eyewa', initial: 'E',
-    headline: 'Get 15% Cashback on eyewear',
-    validTill: '31 Aug 2026', maxAed: 200, channel: 'both',
-    img: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?w=900&q=80&auto=format&fit=crop',
+    brandColor: '#3FA0A0', id: 'eyewa', brand: 'Eyewa', initial: 'E',
+    pct: '15%', on: 'eyewear',
+    validTill: '31 Oct 2026', maxAed: 200, channel: 'both',
+    img: 'https://images.unsplash.com/photo-1508296695146-257a814070b4?w=900&h=300&q=75&auto=format&fit=crop',
     description: 'See clearly for less — 15% cashback on glasses, sunglasses and lenses at Eyewa.',
-    step1: ['Shop at any Eyewa stores & Online', 'Shop seamlessly both online and in-store.'],
-    terms: ['Maximum cashback of AED 200 per campaign', 'Prescription and non-prescription eyewear', 'Not valid with other promotions'],
+    step1: ['Shop Eyewa in store or online', 'Both channels qualify for this offer.'],
+    terms: ['Cashback is capped at AED 200 for this offer', 'Prescription and non-prescription eyewear', 'Not valid with other promotions'],
     status: 'active',
   },
   {
-    id: 'themeal', brand: 'The Meal', initial: 'T',
-    headline: 'Get 20% Cashback on dining',
-    validTill: '15 Aug 2026', maxAed: 150, channel: 'ecommerce',
-    img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80&auto=format&fit=crop',
-    description: 'Order in and save — 20% cashback on every order from The Meal.',
-    step1: ['Order at The Meal online', 'Order anytime through The Meal app or website.'],
-    terms: ['Maximum cashback of AED 150 per campaign', 'Delivery orders only', 'Service fees excluded'],
+    brandColor: '#F9E900', id: 'noon', brand: 'Noon', initial: 'N',
+    pct: '20%', on: 'noon Food orders',
+    validTill: '30 Sep 2026', maxAed: 150, channel: 'ecommerce',
+    img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&h=300&q=75&auto=format&fit=crop',
+    description: 'Order in and save — 20% cashback on every noon Food delivery order.',
+    step1: ['Order on noon Food', 'Order anytime through the noon app or website.'],
+    terms: ['Cashback is capped at AED 150 for this offer', 'Delivery orders only', 'Service fees excluded'],
     status: 'active',
   },
   {
-    id: 'ajmal', brand: 'Ajmal Perfumes', initial: 'A',
-    headline: 'Get 12% Cashback on fragrances',
-    validTill: '20 Jul 2026', maxAed: 250, channel: 'both',
-    img: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=900&q=80&auto=format&fit=crop',
-    description: 'Find your signature scent — 12% cashback on all fragrances at Ajmal Perfumes.',
-    step1: ['Shop at any Ajmal Perfumes stores & Online', 'Shop seamlessly both online and in-store.'],
-    terms: ['Maximum cashback of AED 250 per campaign', 'Full-price fragrances only', 'Gift sets excluded'],
+    brandColor: '#26315E', id: 'bbw', brand: 'Bath & Body Works', initial: 'B',
+    pct: '12%', on: 'fragrance & body care',
+    validTill: '31 Dec 2026', maxAed: 250, channel: 'both',
+    img: 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=900&h=300&q=75&auto=format&fit=crop',
+    description: 'Find your signature scent — 12% cashback on fragrance and body care at Bath & Body Works.',
+    step1: ['Shop Bath & Body Works in store or online', 'Both channels qualify for this offer.'],
+    terms: ['Cashback is capped at AED 250 for this offer', 'Full-price items only', 'Gift sets excluded'],
     status: 'active',
   },
   {
-    id: 'rayna', brand: 'Rayna Tours', initial: 'R',
-    headline: 'Get 10% Cashback on tours & attractions',
-    validTill: '30 Sep 2026', maxAed: 300, channel: 'ecommerce',
-    img: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=900&q=80&auto=format&fit=crop',
+    brandColor: '#9E2B25', id: 'rayna', brand: 'Rayna Tours', initial: 'R',
+    pct: '10%', on: 'tours & attractions',
+    validTill: '31 Oct 2026', maxAed: 300, channel: 'ecommerce',
+    img: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?w=900&h=300&q=75&auto=format&fit=crop',
     description: 'Explore more — 10% cashback on tours, tickets and attractions booked with Rayna Tours.',
     step1: ['Book at Rayna Tours online', 'Book anytime through the Rayna Tours website or app.'],
-    terms: ['Maximum cashback of AED 300 per campaign', 'Tours and attraction tickets only', 'Cancelled bookings forfeit cashback'],
+    terms: ['Cashback is capped at AED 300 for this offer', 'Tours and attraction tickets only', 'Cancelled bookings forfeit cashback'],
     status: 'active',
   },
   {
-    id: 'reebok', brand: 'Reebok', initial: 'R',
-    headline: 'Get 15% Cashback on activewear',
-    validTill: '31 Jul 2026', maxAed: 250, channel: 'both',
-    img: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80&auto=format&fit=crop',
+    brandColor: '#101820', id: 'reebok', brand: 'Reebok', initial: 'R',
+    pct: '15%', on: 'activewear',
+    validTill: '30 Nov 2026', maxAed: 250, channel: 'both',
+    img: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&h=300&q=75&auto=format&fit=crop',
     description: 'Move more, spend less — 15% cashback on footwear and activewear at Reebok.',
-    step1: ['Shop at any Reebok stores & Online', 'Shop seamlessly both online and in-store.'],
-    terms: ['Maximum cashback of AED 250 per campaign', 'Full-price items only', 'Not valid with other promotions'],
+    step1: ['Shop Reebok in store or online', 'Both channels qualify for this offer.'],
+    terms: ['Cashback is capped at AED 250 for this offer', 'Full-price items only', 'Not valid with other promotions'],
     status: 'active',
   },
   {
-    id: 'btb', brand: 'Beyond the Beach', initial: 'B',
-    headline: 'Get 12% Cashback on beachwear',
-    validTill: '30 Jun 2026', maxAed: 300, channel: 'both',
-    img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80&auto=format&fit=crop',
+    brandColor: '#2E8B7A', id: 'btb', brand: 'Beyond the Beach', initial: 'B',
+    pct: '12%', on: 'beachwear',
+    validTill: '30 Sep 2026', maxAed: 300, channel: 'both',
+    img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&h=300&q=75&auto=format&fit=crop',
     description: 'Summer-ready — 12% cashback on swimwear and beach essentials at Beyond the Beach.',
-    step1: ['Shop at any Beyond the Beach stores & Online', 'Shop seamlessly both online and in-store.'],
-    terms: ['Maximum cashback of AED 300 per campaign', 'Full-price items only', 'Clearance excluded'],
+    step1: ['Shop Beyond the Beach in store or online', 'Both channels qualify for this offer.'],
+    terms: ['Cashback is capped at AED 300 for this offer', 'Full-price items only', 'Clearance excluded'],
     status: 'active',
   },
   {
-    id: 'sharafdg', brand: 'Sharaf DG', initial: 'S',
-    headline: 'Get 10% Cashback on electronics',
-    validTill: '31 Aug 2026', maxAed: 500, channel: 'both',
-    img: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=900&q=80&auto=format&fit=crop',
+    brandColor: '#F7941D', id: 'sharafdg', brand: 'Sharaf DG', initial: 'S',
+    pct: '10%', on: 'electronics',
+    validTill: '31 Jul 2026', maxAed: 500, channel: 'both',
+    img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=900&h=300&q=75&auto=format&fit=crop',
     description: 'Upgrade your tech — 10% cashback on electronics at Sharaf DG, online and in-store.',
-    step1: ['Shop at any Sharaf DG stores & Online', 'Shop seamlessly both online and in-store.'],
-    terms: ['Maximum cashback of AED 500 per campaign', 'Minimum spend of AED 200 per transaction', 'Gift cards excluded'],
-    status: 'active',
+    step1: ['Shop Sharaf DG in store or online', 'Both channels qualify for this offer.'],
+    terms: ['Cashback is capped at AED 500 for this offer', 'Minimum spend of AED 200 per transaction', 'Gift cards excluded'],
+    // reachable ended state — and it closes the loop by reporting what it paid
+    status: 'ended', endedOn: '31 Jul 2026', earnedAed: '62.50',
   },
 ];
 
-const PULSE_ACTIVITY = { year: 2026, total: '1,240.76', paidOut: '985.50', pending: '255.26' };
+/* Merge in campaigns created in the merchant portal (shared via localStorage),
+   so a campaign made in the merchant demo — and approved in the bank demo —
+   also shows up here in the customer's live offers, closing the loop. Real
+   created campaigns replace the Jumbo seed placeholder above. */
+(function () {
+  const BRAND_COLOR = { 'Jumbo':'#003478','Expedia':'#FFC94B','Eyewa':'#3FA0A0','Noon':'#F9E900','Rayna Tours':'#9E2B25','Reebok':'#101820','Beyond the Beach':'#2E8B7A','Sharaf DG':'#F7941D' };
+  const KIT_COLOR = { electronics:'#3852B4', audio:'#3852B4', travel:'#2E8B7A', mobility:'#2E8B7A', tours:'#9E2B25', luggage:'#5C6B66', dining:'#FF7444', beauty:'#C74E93', fragrance:'#C74E93', pharmacy:'#469A93', wellness:'#F49BAB', homeware:'#C4A484', laundry:'#5A9CB5', property:'#0A634D', grocery:'#E76F2E', footwear:'#101820', denim:'#26315E', fashion:'#F26076', luxury:'#1A1A1A', sportswear:'#101820', beachwear:'#2E8B7A', eyewear:'#3FA0A0', shopping:'#F26076' };
+  const KIT_NOUN = { electronics:'electronics', travel:'travel bookings', dining:'dining', beauty:'beauty', eyewear:'eyewear', fashion:'fashion', grocery:'groceries', footwear:'footwear', shopping:'purchases' };
+  const fmt = (v) => { const d = new Date(v); return isNaN(d) ? (v || '') : d.toLocaleDateString('en-US', { day:'numeric', month:'short', year:'numeric' }); };
+  function toOffer(rec) {
+    const noun = KIT_NOUN[rec.kit] || 'purchases';
+    return {
+      brandColor: BRAND_COLOR[rec.merchant] || KIT_COLOR[rec.kit] || '#0A634D',
+      id: rec.id, brand: rec.merchant, initial: (rec.merchant || 'L').charAt(0),
+      pct: rec.cashbackPct + '%', on: noun,
+      validTill: rec.util === 'exhaust' ? '31 Dec 2026' : (fmt(rec.end) || '31 Dec 2026'), maxAed: rec.capAED, channel: 'both',
+      description: rec.cashbackPct + '% cashback on ' + noun + ' at ' + rec.merchant + '.',
+      step1: ['Shop ' + rec.merchant + ' in store or online', 'Both channels qualify for this offer.'],
+      terms: ['Minimum spend of AED ' + rec.minSpendAED + ' per transaction', 'Cashback is capped at AED ' + rec.capAED + ' for this offer'],
+      status: 'active', isNew: true,
+    };
+  }
+  try {
+    const recs = JSON.parse(localStorage.getItem('LUNE_PULSE_CAMPAIGNS') || '[]');
+    if (recs.length) {
+      const seed = PULSE_OFFERS.findIndex(o => o.id === 'jumbo');
+      if (seed >= 0) PULSE_OFFERS.splice(seed, 1);
+      PULSE_OFFERS.forEach(o => { delete o.isNew; });
+      recs.slice().reverse().forEach(rec => PULSE_OFFERS.unshift(toOffer(rec)));
+    }
+  } catch (e) {}
+})();
+
+const PULSE_ACTIVITY = {
+  total: '1,240.76', paidOut: '985.50', pending: '255.26',
+  nextPaymentBy: '1 Sep 2026',
+};
 
 const PULSE_STEPS_23 = [
   ['Pay with your linked bank card', 'Use your eligible card at checkout'],
-  ['Cashback credited on next statement', 'Appears within 30 days of purchase date'],
+  ['Cashback arrives within 30 days', 'Paid straight to your account after the purchase settles'],
 ];
 
-const PULSE_SEED_ACTIVATIONS = ['ajmal', 'reebok'];
+const PULSE_SEED_ACTIVATIONS = ['expedia', 'rayna'];
 
 Object.assign(window, { PULSE_OFFERS, PULSE_ACTIVITY, PULSE_STEPS_23, PULSE_SEED_ACTIVATIONS });
 </script>
 
 <!-- pulse-components.jsx -->
 <script type="text/babel" data-presets="react">
-// Real brand logos via logo.dev, with the letter monogram as fallback.
-const PULSE_DOMAINS = {
-  'Expedia': 'expedia.com', 'Eyewa': 'eyewa.com', 'The Meal': 'themeal.ae',
-  'Ajmal Perfumes': 'ajmalperfume.com', 'Rayna Tours': 'raynatours.com', 'Reebok': 'reebok.com',
-  'Beyond the Beach': 'beyondthebeach.com', 'Sharaf DG': 'sharafdg.com',
+/* ============================================================
+   Bank theming maths.
+   A white-label SDK cannot assume the bank's brand hex is legible.
+   #10A37F carries white 14px text at only 3.20:1, and the orange
+   option is worse — so instead of trusting the raw hex we derive an
+   accessible variant from it and use that for anything bearing white
+   text. Same code path for every bank, no per-theme special cases.
+   ============================================================ */
+const PColor = {
+  hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    const n = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+    return [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16));
+  },
+  rgbToHex([r, g, b]) {
+    return '#' + [r, g, b].map((v) => Math.max(0, Math.min(255, Math.round(v)))
+      .toString(16).padStart(2, '0')).join('');
+  },
+  luminance(rgb) {
+    const [r, g, b] = rgb.map((v) => {
+      const s = v / 255;
+      return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  },
+  contrast(a, b) {
+    const l1 = this.luminance(this.hexToRgb(a));
+    const l2 = this.luminance(this.hexToRgb(b));
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  },
+  mixBlack(hex, amount) {
+    return this.rgbToHex(this.hexToRgb(hex).map((v) => v * (1 - amount)));
+  },
+  mixWhite(hex, amount) {
+    return this.rgbToHex(this.hexToRgb(hex).map((v) => v + (255 - v) * amount));
+  },
+  /* darken the brand hex just enough that white text clears `target` */
+  inkFor(hex, target = 4.5) {
+    for (let a = 0; a <= 0.9; a += 0.02) {
+      const c = this.mixBlack(hex, a);
+      if (this.contrast('#ffffff', c) >= target) return c;
+    }
+    return '#000000';
+  },
+  /* darken the brand hex until it clears `target` against an arbitrary bg */
+  inkOn(hex, bg, target = 4.5) {
+    for (let a = 0; a <= 0.95; a += 0.02) {
+      const c = this.mixBlack(hex, a);
+      if (this.contrast(c, bg) >= target) return c;
+    }
+    return '#000000';
+  },
+  /* pick whichever of white / near-black reads better on the hex */
+  onColor(hex) {
+    return this.contrast('#ffffff', hex) >= this.contrast('#070312', hex)
+      ? '#ffffff' : '#070312';
+  },
+  /* the one filled surface on the screen — deep enough for the figure,
+     the sub-line and the split labels all to pass at full opacity */
+  deepFor(hex) { return this.inkFor(hex, 9); },
 };
-function PBrandLogo({ offer }) {
+
+function pulseTheme(primary, secondary) {
+  const ink = PColor.inkFor(primary, 4.5);
+  const tint = PColor.mixWhite(primary, 0.9);
+  return {
+    '--p-primary': primary,
+    '--p-secondary': secondary,
+    '--p-primary-ink': ink,
+    '--p-primary-press': PColor.mixBlack(ink, 0.14),
+    '--p-primary-deep': PColor.deepFor(primary),
+    '--p-primary-tint': tint,
+    '--p-primary-on-tint': PColor.inkOn(primary, tint, 4.5),
+    '--p-primary-tint-2': PColor.mixWhite(primary, 0.8),
+    '--p-on-secondary': PColor.onColor(secondary),
+  };
+}
+
+// Real brand logos via logo.dev, with the letter monogram as fallback.
+const PULSE_LOGO_TOKEN = 'pk_PCfI5A2ISc2tZmQNIql7Ww';
+const PULSE_DOMAINS = {
+  // jumbo.ae returns the real navy JL monogram; jumbo.com resolves to a different mark.
+  'Jumbo': 'jumbo.ae',
+  'Expedia': 'expedia.com', 'Eyewa': 'eyewa.com', 'Noon': 'noon.com',
+  'Bath & Body Works': 'bathandbodyworks.com', 'Rayna Tours': 'raynatours.com', 'Reebok': 'reebok.com',
+  'Beyond the Beach': 'beyondthebeach.com', 'Sharaf DG': 'sharafdg.ae',
+};
+
+/* The merchant logo is the primary recognition cue in a cashback list,
+   so it gets a real lockup rather than a 24px monogram in a corner. */
+function PBrandLogo({ offer, size = 52 }) {
   const [failed, setFailed] = React.useState(false);
   const d = PULSE_DOMAINS[offer.brand];
-  if (d && !failed) {
-    return <img src={`https://img.logo.dev/${d}?token=pk_PCfI5A2ISc2tZmQNIql7Ww&size=64&format=png&retina=true`}
-                alt={offer.brand}
-                style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#fff', borderRadius: 'inherit' }}
-                onError={() => setFailed(true)} />;
-  }
-  return offer.initial;
+  return (
+    <span className="p-logo" style={{ width: size, height: size }}>
+      {d && !failed ? (
+        <img
+          src={`https://img.logo.dev/${d}?token=${PULSE_LOGO_TOKEN}&size=128&format=png&retina=true`}
+          alt={`${offer.brand} logo`}
+          onError={() => setFailed(true)}
+        />
+      ) : offer.initial}
+    </span>
+  );
 }
 
-function PBanner() {
+/* Campaign banner: decorative, so alt="" — the brand is already
+   announced by the logo and the heading. Skeleton while it loads and a
+   bank-tinted fallback if the merchant shipped no creative. */
+function PCampaignBanner({ offer, className = 'p-media', mode = 'banner', children }) {
+  const useImg = mode === 'banner' && !!offer.img;
+  const [state, setState] = React.useState(useImg ? 'loading' : 'fallback');
+  if (!useImg) {
+    return (
+      <div className={`${className} is-colour`} style={{ background: offer.brandColor }}>
+        {children}
+      </div>
+    );
+  }
   return (
-    <div className="p-banner" data-comment-anchor="activation-banner">
-      <div className="p-banner-icon">{PIcon.bell(19)}</div>
+    <div className={`${className} ${state === 'loading' ? 'is-loading' : ''} ${state === 'fallback' ? 'is-fallback' : ''}`}>
+      {offer.img && (
+        <img
+          src={offer.img} alt="" loading="lazy" decoding="async"
+          className={state === 'loaded' ? 'is-loaded' : ''}
+          onLoad={() => setState('loaded')}
+          onError={() => setState('fallback')}
+        />
+      )}
+      {children}
+    </div>
+  );
+}
+
+/* Replaces the "Don't miss out!" nag. It teaches the mechanic instead of
+   promising an "activate all" control that does not exist. */
+function PHowItWorks() {
+  return (
+    <div className="p-howto" data-comment-anchor="how-it-works">
+      <span className="p-howto-icon">{PIcon.info(20)}</span>
       <div>
-        <div className="p-banner-title">Don't miss out!</div>
-        <div className="p-banner-sub">Activate all offers to be eligible for cashback</div>
+        <p className="p-howto-t">Activate an offer before you shop</p>
+        <p className="p-howto-s">
+          One tap, no cost. Pay with your linked card and cashback arrives within 30 days.
+        </p>
       </div>
     </div>
   );
 }
 
-function PBrandChip({ offer }) {
+function PMeta({ offer }) {
   return (
-    <div className="p-chip">
-      <div className="p-chip-logo"><PBrandLogo offer={offer} /></div>
-      <span className="p-chip-name">{offer.brand}</span>
-    </div>
+    <p className="p-meta">
+      <span>Until {offer.validTill}</span>
+      <span className="p-meta-sep" aria-hidden="true">·</span>
+      <span>Up to AED {offer.maxAed} back</span>
+    </p>
   );
 }
 
-function PValidity({ offer, onImage }) {
-  return (
-    <div className={onImage ? 'p-validity-onimage' : 'p-validity'}>
-      <span>Valid till <strong>{offer.validTill}</strong></span>
-      <span aria-hidden="true">|</span>
-      <span>Max <strong>AED {offer.maxAed}</strong></span>
-    </div>
-  );
-}
-
-function PActivateButton({ state, justActivated, feedback, onActivate }) {
+/* Activated is a status row, not a disabled button: different shape from
+   the ended state, readable without relying on hue, and never `disabled`
+   (so it stays reachable and announceable). */
+function POfferAction({ offer, state, justActivated, feedback, onActivate, onDetails }) {
   if (state === 'ended') {
-    return <button className="p-btn p-btn-disabled" disabled>Offer Ended</button>;
+    return (
+      <div className="p-cta-row" style={{ alignItems: 'center' }}>
+        <div className="p-ended-note" style={{ flex: 1 }}>
+          <p className="p-ended-when">Ended {offer.endedOn}</p>
+          {offer.earnedAed && (
+            <p className="p-ended-earned">You earned AED {offer.earnedAed}</p>
+          )}
+        </div>
+        <button className="p-btn p-btn-secondary" style={{ flex: '0 0 auto' }} onClick={onDetails}>
+          View details
+        </button>
+      </div>
+    );
   }
   if (state === 'activated') {
-    const fbClass = justActivated && feedback !== 'instant'
-      ? (feedback === 'morph' ? 'fb-morph' : 'fb-pulse') : '';
+    const fbClass = justActivated && feedback === 'morph' ? 'fb-morph' : '';
     return (
-      <button className={`p-btn p-btn-activated ${fbClass}`} disabled>
-        {PIcon.check(15)} Cashback Activated
-      </button>
+      <div className="p-cta-row">
+        <p className={`p-status ${fbClass}`} role="status">
+          <span className="p-status-icon">{PIcon.check(18)}</span>
+          Activated
+        </p>
+        <button className="p-btn p-btn-secondary" style={{ flex: '0 0 auto' }} onClick={onDetails}>
+          View details
+        </button>
+      </div>
     );
   }
   return (
-    <button className="p-btn p-btn-primary" onClick={onActivate}>
-      Activate Cashback
-    </button>
+    <div className="p-cta-row">
+      <button className="p-btn p-btn-secondary" onClick={onDetails}>View details</button>
+      <button className="p-btn p-btn-primary" onClick={onActivate}>Activate</button>
+    </div>
   );
 }
 
-function POfferCard({ offer, layout, state, justActivated, feedback, onActivate, onDetails }) {
+function POfferCard({ offer, showBanner, state, justActivated, feedback, onActivate, onDetails }) {
   const ended = state === 'ended';
-  const ctaRow = (
-    <div className="p-cta-row">
-      <button className="p-btn p-btn-secondary" onClick={onDetails}>View Details</button>
-      <PActivateButton state={state} justActivated={justActivated} feedback={feedback} onActivate={onActivate} />
-    </div>
-  );
-
-  const newBadge = offer.isNew ? <span className="p-new-badge">Just added</span> : null;
-
-  if (layout === 'split') {
-    return (
-      <article className={`p-card layout-split ${ended ? 'is-ended' : ''}`}>
-        <div className="p-split-top">
-          <div className="p-hero">{newBadge}<img src={offer.img} alt={offer.brand} loading="lazy" /></div>
-          <div className="p-split-info">
-            <div className="p-split-brandline">
-              <div className="p-chip-logo"><PBrandLogo offer={offer} /></div>
-              <span className="p-split-brand">{offer.brand}</span>
-            </div>
-            <h3 className="p-split-headline">{offer.headline}</h3>
-            <PValidity offer={offer} />
-          </div>
-        </div>
-        <div className="p-card-foot">{ctaRow}</div>
-      </article>
-    );
-  }
-
-  if (layout === 'immersive') {
-    return (
-      <article className={`p-card layout-immersive ${ended ? 'is-ended' : ''}`}>
-        <div className="p-hero">
-          {newBadge}
-          <img src={offer.img} alt={offer.brand} loading="lazy" />
-          <div className="p-hero-scrim"></div>
-          <PBrandChip offer={offer} />
-          <h3 className="p-headline">{offer.headline}</h3>
-          <PValidity offer={offer} onImage />
-        </div>
-        <div className="p-card-foot">{ctaRow}</div>
-      </article>
-    );
-  }
-
   return (
-    <article className={`p-card layout-classic ${ended ? 'is-ended' : ''}`}>
-      <div className="p-hero">
-        {newBadge}
-        <img src={offer.img} alt={offer.brand} loading="lazy" />
-        <div className="p-hero-scrim"></div>
-        <PBrandChip offer={offer} />
-        <h3 className="p-headline">{offer.headline}</h3>
-      </div>
+    <article className={`p-card ${ended ? 'is-ended' : ''}`}>
+      <button
+        className="p-card-open"
+        onClick={onDetails}
+        aria-label={`${offer.brand}: ${offer.pct} cashback on ${offer.on}. View details`}
+      >
+        <PCampaignBanner offer={offer} mode={showBanner ? 'banner' : 'colour'}>
+          {offer.isNew && <span className="p-badge">Just added</span>}
+        </PCampaignBanner>
+        <div className="p-card-head">
+          <PBrandLogo offer={offer} size={52} />
+          <span className="p-brand">{offer.brand}</span>
+        </div>
+        <div className="p-card-copy">
+          <h3 className="p-value">{offer.pct} cashback</h3>
+          <p className="p-value-sub">on {offer.on}</p>
+          <PMeta offer={offer} />
+        </div>
+      </button>
       <div className="p-card-foot">
-        <PValidity offer={offer} />
-        {ctaRow}
+        <POfferAction
+          offer={offer} state={state} justActivated={justActivated}
+          feedback={feedback} onActivate={onActivate} onDetails={onDetails}
+        />
       </div>
     </article>
   );
 }
 
-function PEmptyState() {
+function PEmptyState({ onRefresh }) {
   return (
     <div className="p-empty" data-comment-anchor="empty-state">
-      <div className="p-empty-icon">{PIcon.tag(30)}</div>
-      <h3 className="p-empty-h">No offers available right now</h3>
-      <p className="p-empty-b">Check back soon — new cashback offers will appear here when they're available.</p>
+      <div className="p-empty-icon">{PIcon.tag(28)}</div>
+      <h2 className="p-empty-h">No offers right now</h2>
+      <p className="p-empty-b">
+        New cashback offers are added every month. We'll notify you as soon as one lands.
+      </p>
+      <button className="p-btn p-btn-secondary" onClick={onRefresh}>Check again</button>
     </div>
   );
 }
 
-function PActivitySummary({ compact }) {
+/* The one coloured surface. Bank primary, flat (no gradient), one currency
+   convention, full-opacity type — and Pending is a real row with a date and
+   a destination, because a number about someone's money needs evidence. */
+function PEarnings({ empty }) {
   const a = PULSE_ACTIVITY;
+  const total = empty ? '0.00' : a.total;
+  const paid = empty ? '0.00' : a.paidOut;
+  const pending = empty ? '0.00' : a.pending;
   return (
-    <section className={`p-summary ${compact ? 'is-compact' : ''}`} data-comment-anchor="activity-summary">
-      <div className="p-summary-label">You've earned</div>
-      <div className="p-summary-amount">{a.total}<small>AED</small></div>
-      <div className="p-summary-sub">across all merchants in last 12 months</div>
-      <div className="p-summary-stats">
-        <div className="p-summary-stat">
-          <div className="p-summary-stat-amt">AED {a.paidOut}</div>
-          <div className="p-summary-stat-lbl">Paid out</div>
-        </div>
-        <div className="p-summary-stat">
-          <div className="p-summary-stat-amt">AED {a.pending}</div>
-          <div className="p-summary-stat-lbl">Pending</div>
-        </div>
+    <section className="p-earn" data-comment-anchor="earnings">
+      <p className="p-earn-amount">AED {total}</p>
+      <p className="p-earn-sub">Earned in the last 12 months</p>
+      <div className="p-earn-split">
+        <p className="p-earn-line">
+          <span className="p-earn-dot" aria-hidden="true"></span>
+          <span className="p-earn-amt">AED {paid}</span>
+          <span className="p-earn-lbl">paid out</span>
+        </p>
+        {/* Not tappable: per-transaction history is unvalidated and will live in
+            its own tab later. The expected-payment date is the one piece of
+            reassurance that does not need a new surface. */}
+        <p className="p-earn-line is-pending">
+          <span className="p-earn-dot" aria-hidden="true"></span>
+          <span>
+            <span className="p-earn-amt">AED {pending}</span>{' '}
+            <span className="p-earn-lbl">pending</span>
+            {!empty && <span className="p-earn-when">Next payment by {a.nextPaymentBy}</span>}
+          </span>
+        </p>
       </div>
     </section>
   );
 }
 
 Object.assign(window, {
-  PBanner, PBrandChip, PValidity, PActivateButton, POfferCard, PEmptyState, PActivitySummary,
+  PColor, pulseTheme, PBrandLogo, PCampaignBanner, PHowItWorks, PMeta,
+  POfferAction, POfferCard, PEmptyState, PEarnings,
 });
 </script>
 
 <!-- pulse-sheet.jsx -->
 <script type="text/babel" data-presets="react">
-function PDetailSheet({ offer, state, justActivated, feedback, onActivate, onClose }) {
-  const [open, setOpen] = React.useState(false);
+/* Reads the motion token instead of hardcoding 320ms, so the unmount can
+   never drift out of sync with the CSS transition. */
+function pSlowDur() {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return 0;
+  const v = getComputedStyle(document.documentElement).getPropertyValue('--dur-slow');
+  return parseFloat(v) || 320;
+}
+
+const P_FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+/* Shared sheet shell: a real dialog. role/aria-modal, focus moved in on
+   open and returned to the trigger on close, Escape to dismiss, Tab
+   trapped inside, and drag-to-dismiss on a 44px grab area. */
+function PSheet({ labelledBy, onClose, footer, children, anchor }) {
+  const [closing, setClosing] = React.useState(false);
   const [dragY, setDragY] = React.useState(0);
   const dragRef = React.useRef(null);
-  const sheetRef = React.useRef(null);
+  const panelRef = React.useRef(null);
+  const returnRef = React.useRef(null);
 
   React.useEffect(() => {
-    const t = requestAnimationFrame(() => setOpen(true));
-    return () => cancelAnimationFrame(t);
+    returnRef.current = document.activeElement;
+    const first = panelRef.current && panelRef.current.querySelector(P_FOCUSABLE);
+    (first || panelRef.current).focus({ preventScroll: true });
+    return () => {
+      if (returnRef.current && returnRef.current.focus) {
+        returnRef.current.focus({ preventScroll: true });
+      }
+    };
   }, []);
 
-  const dismiss = () => {
-    setOpen(false);
-    setTimeout(onClose, 320);
+  const dismiss = React.useCallback(() => {
+    setClosing(true);
+    setTimeout(onClose, pSlowDur());
+  }, [onClose]);
+
+  const onKeyDown = (e) => {
+    if (e.key === 'Escape') { e.stopPropagation(); dismiss(); return; }
+    if (e.key !== 'Tab') return;
+    const nodes = [...panelRef.current.querySelectorAll(P_FOCUSABLE)]
+      .filter((n) => n.offsetParent !== null);
+    if (!nodes.length) return;
+    const first = nodes[0], last = nodes[nodes.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   };
 
   const onPointerDown = (e) => {
@@ -1323,90 +1631,109 @@ function PDetailSheet({ offer, state, justActivated, feedback, onActivate, onClo
     if (dy > 110) dismiss();
   };
 
+  return (
+    <React.Fragment>
+      <div className={`p-sheet-backdrop ${closing ? 'is-closing' : ''}`} onClick={dismiss}></div>
+      <div
+        ref={panelRef}
+        role="dialog" aria-modal="true" aria-labelledby={labelledBy} tabIndex={-1}
+        className={`p-sheet ${closing ? 'is-closing' : ''} ${dragY > 0 ? 'is-dragging' : ''}`}
+        style={dragY > 0 ? { transform: `translateY(${dragY}px)` } : undefined}
+        onKeyDown={onKeyDown}
+        data-comment-anchor={anchor}
+      >
+        <div
+          className="p-sheet-grab"
+          onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}
+        >
+          <div className="p-sheet-handle"></div>
+          <button className="p-sheet-close" onClick={dismiss} aria-label="Close">
+            {PIcon.close(16)}
+          </button>
+        </div>
+        <div className="p-sheet-scroll">{children}</div>
+        {footer && <div className="p-sheet-cta">{footer}</div>}
+      </div>
+    </React.Fragment>
+  );
+}
+
+function PDetailSheet({ offer, state, justActivated, feedback, showBanner, onActivate, onClose }) {
   if (!offer) return null;
   const steps = [
     { icon: PIcon.store(19), t: offer.step1[0], s: offer.step1[1] },
     { icon: PIcon.card(19), t: PULSE_STEPS_23[0][0], s: PULSE_STEPS_23[0][1] },
     { icon: PIcon.statement(19), t: PULSE_STEPS_23[1][0], s: PULSE_STEPS_23[1][1] },
   ];
+  const footer = state === 'ended'
+    ? <p className="p-ended-when">This offer ended on {offer.endedOn}</p>
+    : state === 'activated'
+      ? (
+        <p className={`p-status ${justActivated && feedback === 'morph' ? 'fb-morph' : ''}`} role="status">
+          <span className="p-status-icon">{PIcon.check(18)}</span>
+          Activated — shop any time before {offer.validTill}
+        </p>
+      )
+      : <button className="p-btn p-btn-primary" onClick={onActivate}>Activate cashback</button>;
 
   return (
-    <React.Fragment>
-      <div className={`p-sheet-backdrop ${open ? 'is-open' : ''}`} onClick={dismiss}></div>
-      <div
-        ref={sheetRef}
-        className={`p-sheet ${open ? 'is-open' : ''} ${dragY > 0 ? 'is-dragging' : ''}`}
-        style={dragY > 0 ? { transform: `translateY(${dragY}px)` } : undefined}
-        data-comment-anchor="offer-detail-sheet"
-      >
-        <div
-          className="p-sheet-handle-zone"
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-        >
-          <div className="p-sheet-handle"></div>
-        </div>
-        <div className="p-sheet-scroll">
-          <div className="p-sheet-hero">
-            <img src={offer.img} alt={offer.brand} />
-            <div className="p-hero-scrim"></div>
-            <PBrandChip offer={offer} />
-            <button className="p-sheet-close" onClick={dismiss} aria-label="Close">{PIcon.close(14)}</button>
-            <h3 className="p-headline" style={{ bottom: 34 }}>{offer.headline}</h3>
-            <PValidity offer={offer} onImage />
-          </div>
-          <div className="p-sheet-body">
-            <section>
-              <h4 className="p-sheet-h">Offer Description</h4>
-              <p className="p-sheet-p">{offer.description}</p>
-            </section>
-            <section>
-              <h4 className="p-sheet-h">How to get cashback</h4>
-              <div className="p-steps">
-                {steps.map((st, i) => (
-                  <div className="p-step" key={i}>
-                    <div className="p-step-rail">
-                      <div className="p-step-icon">{st.icon}</div>
-                      {i < steps.length - 1 && <div className="p-step-line"></div>}
-                    </div>
-                    <div className="p-step-text">
-                      <div className="p-step-t">{st.t}</div>
-                      <div className="p-step-s">{st.s}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-            <section>
-              <h4 className="p-sheet-h">Terms &amp; Conditions</h4>
-              <ul className="p-terms">
-                {offer.terms.map((t, i) => <li key={i}>{t}</li>)}
-              </ul>
-            </section>
-          </div>
-        </div>
-        <div className="p-sheet-cta">
-          <PActivateButton
-            state={state}
-            justActivated={justActivated}
-            feedback={feedback}
-            onActivate={onActivate}
-          />
-        </div>
+    <PSheet labelledBy="p-sheet-offer-title" onClose={onClose} footer={footer} anchor="offer-detail-sheet">
+      <PCampaignBanner offer={offer} className="p-sheet-media" mode={showBanner ? 'banner' : 'colour'} />
+      <div className="p-sheet-head">
+        <PBrandLogo offer={offer} size={52} />
+        <span className="p-brand">{offer.brand}</span>
       </div>
-    </React.Fragment>
+      <div className="p-sheet-title">
+        <h2 className="p-sheet-value" id="p-sheet-offer-title">{offer.pct} cashback</h2>
+        <p className="p-sheet-value-sub">on {offer.on}</p>
+        <PMeta offer={offer} />
+      </div>
+      <div className="p-sheet-body">
+        <section>
+          <p className="p-sheet-p">{offer.description}</p>
+        </section>
+        <section>
+          <h3 className="p-sheet-h">How to get your cashback</h3>
+          <div className="p-steps">
+            {steps.map((st, i) => (
+              <div className="p-step" key={i}>
+                <div className="p-step-rail">
+                  <div className="p-step-icon">{st.icon}</div>
+                  {i < steps.length - 1 && <div className="p-step-line"></div>}
+                </div>
+                <div className="p-step-text">
+                  <div className="p-step-t">{st.t}</div>
+                  <div className="p-step-s">{st.s}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section>
+          <h3 className="p-sheet-h">Terms &amp; conditions</h3>
+          <ul className="p-terms">
+            {offer.terms.map((t, i) => <li key={i}>{t}</li>)}
+          </ul>
+        </section>
+      </div>
+    </PSheet>
   );
 }
-Object.assign(window, { PDetailSheet });
+
+Object.assign(window, { PSheet, PDetailSheet });
 </script>
 
 <!-- pulse-app.jsx — app shell, state, tweaks -->
 <script type="text/babel" data-presets="react">
 const PULSE_TWEAK_DEFAULTS = {
-  bankAccent: '#10A37F',
+  // NEONS (first implementation partner) — values taken from their published
+  // tokens: --neons-primary-500 / --neons-primary-100 (neons.sa)
+  bankPrimary: '#0199B8',
+  bankSecondary: '#69CCE2',
   cornerRadius: 'soft',
-  cardLayout: 'classic',
+  // campaign assets are curated by Lune admin, not merchant-supplied, so a
+  // banner is safe to default on. Off falls back to the merchant brand colour.
+  showBanner: true,
   activationFeedback: 'morph',
   showEmpty: false,
 };
@@ -1417,7 +1744,8 @@ const PULSE_RADII = {
   round: { card: '24px', btn: '999px' },
 };
 
-const PULSE_STORE_KEY = 'pulse-activations-v1';
+// v2: the seeded set changed, so v1 activations must not carry over
+const PULSE_STORE_KEY = 'pulse-activations-v2';
 
 function loadActivations() {
   try {
@@ -1432,10 +1760,18 @@ function PulseApp() {
   const [activations, setActivations] = React.useState(loadActivations);
   const [justActivated, setJustActivated] = React.useState({});
   const [sheetOfferId, setSheetOfferId] = React.useState(null);
+  const [scrolled, setScrolled] = React.useState(false);
 
   React.useEffect(() => {
     try { localStorage.setItem(PULSE_STORE_KEY, JSON.stringify(activations)); } catch (e) {}
   }, [activations]);
+
+  // the morph class must not outlive its animation
+  React.useEffect(() => {
+    if (!Object.keys(justActivated).length) return;
+    const id = setTimeout(() => setJustActivated({}), 900);
+    return () => clearTimeout(id);
+  }, [justActivated]);
 
   const offerState = (offer) => {
     if (offer.status === 'ended') return 'ended';
@@ -1454,14 +1790,15 @@ function PulseApp() {
   };
 
   const radii = PULSE_RADII[t.cornerRadius] || PULSE_RADII.soft;
-  const active = PULSE_OFFERS.filter((o) => o.status === 'active')
+  const live = PULSE_OFFERS.filter((o) => o.status === 'active')
     .slice().sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
   const ended = PULSE_OFFERS.filter((o) => o.status === 'ended');
   const sheetOffer = PULSE_OFFERS.find((o) => o.id === sheetOfferId) || null;
+  const activeCount = live.filter((o) => offerState(o) === 'activated').length;
 
   const cardProps = (offer) => ({
     offer,
-    layout: t.cardLayout,
+    showBanner: t.showBanner,
     state: offerState(offer),
     justActivated: !!justActivated[offer.id],
     feedback: t.activationFeedback,
@@ -1469,29 +1806,46 @@ function PulseApp() {
     onDetails: () => setSheetOfferId(offer.id),
   });
 
+  const themeVars = pulseTheme(t.bankPrimary, t.bankSecondary);
+
   return (
     <div className="p-stage">
       <IOSDevice width={402} height={874}>
         <div
-          className="p-screen"
-          style={{ '--p-accent': t.bankAccent, '--p-r-card': radii.card, '--p-r-btn': radii.btn }}
+          className={`p-screen ${sheetOffer ? 'has-sheet' : ''}`}
+          style={{ ...themeVars, '--p-r-card': radii.card, '--p-r-btn': radii.btn }}
           data-screen-label="Cashback"
         >
-          <header className="p-nav">
-            <button className="p-nav-back" aria-label="Back to demo home" title="Back to demo home" onClick={() => { window.location.href = 'index.html'; }}>{PIcon.back(18)}</button>
+          <header className={`p-nav ${scrolled ? 'is-scrolled' : ''}`}>
+            <button
+              className="p-nav-back" aria-label="Back"
+              onClick={() => {
+                // Return to wherever this was opened from: the pitch deck section
+                // that linked here, or the demo hub when opened directly.
+                const from = new URLSearchParams(window.location.search).get('from');
+                const ok = { leak: 1, targeting: 1, relevance: 1, live: 1 };
+                window.location.href = (from && ok[from]) ? `deck.html#${from}` : 'index.html';
+              }}
+            >{PIcon.back(20)}</button>
             <h1 className="p-title">Cashback</h1>
           </header>
-          <div className="p-body">
-            <PActivitySummary compact />
+          <div className="p-body" onScroll={(e) => setScrolled(e.currentTarget.scrollTop > 4)}>
+            <PEarnings empty={t.showEmpty} />
             {t.showEmpty ? (
-              <PEmptyState />
+              <PEmptyState onRefresh={() => setTweak('showEmpty', false)} />
             ) : (
               <React.Fragment>
-                <PBanner />
-                {active.map((o) => <POfferCard key={o.id} {...cardProps(o)} />)}
+                <PHowItWorks />
+                <h2 className="p-section-h">
+                  Your offers{' '}
+                  <span className="p-section-count">
+                    {activeCount} of {live.length} activated
+                  </span>
+                </h2>
+                {live.map((o) => <POfferCard key={o.id} {...cardProps(o)} />)}
                 {ended.length > 0 && (
                   <React.Fragment>
-                    <div className="p-ended-divider">Ended offers</div>
+                    <h2 className="p-section-h">Ended</h2>
                     {ended.map((o) => <POfferCard key={o.id} {...cardProps(o)} />)}
                   </React.Fragment>
                 )}
@@ -1502,6 +1856,7 @@ function PulseApp() {
           {sheetOffer && (
             <PDetailSheet
               offer={sheetOffer}
+              showBanner={t.showBanner}
               state={offerState(sheetOffer)}
               justActivated={!!justActivated[sheetOffer.id]}
               feedback={t.activationFeedback}
@@ -1515,10 +1870,16 @@ function PulseApp() {
       <TweaksPanel>
         <TweakSection label="Bank theming" />
         <TweakColor
-          label="Accent colour"
-          value={t.bankAccent}
-          options={['#10A37F', '#1E4FA3', '#9B1B30', '#C2561F']}
-          onChange={(v) => setTweak('bankAccent', v)}
+          label="Primary"
+          value={t.bankPrimary}
+          options={['#0199B8', '#003945', '#10A37F', '#1E4FA3']}
+          onChange={(v) => setTweak('bankPrimary', v)}
+        />
+        <TweakColor
+          label="Secondary"
+          value={t.bankSecondary}
+          options={['#69CCE2', '#37BDB2', '#003945', '#99F2AC']}
+          onChange={(v) => setTweak('bankSecondary', v)}
         />
         <TweakRadio
           label="Corner radius"
@@ -1527,16 +1888,15 @@ function PulseApp() {
           onChange={(v) => setTweak('cornerRadius', v)}
         />
         <TweakSection label="Offer card" />
-        <TweakRadio
-          label="Layout"
-          value={t.cardLayout}
-          options={['classic', 'immersive', 'split']}
-          onChange={(v) => setTweak('cardLayout', v)}
+        <TweakToggle
+          label="Campaign banner"
+          value={t.showBanner}
+          onChange={(v) => setTweak('showBanner', v)}
         />
         <TweakRadio
           label="Activation feedback"
           value={t.activationFeedback}
-          options={['instant', 'morph', 'pulse']}
+          options={['instant', 'morph']}
           onChange={(v) => setTweak('activationFeedback', v)}
         />
         <TweakSection label="States" />
@@ -1548,6 +1908,41 @@ function PulseApp() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<PulseApp />);
+</script>
+
+<!-- Return to the Pulse pitch. Rendered only when the visitor arrived from deck.html
+     via ?from=<section>, so the standalone demos behave exactly as before. -->
+<style>
+.deck-return{
+  position:fixed; right:18px; bottom:18px; z-index:99999;
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  font-size:13px; font-weight:700; text-decoration:none; line-height:1;
+  white-space:nowrap; width:auto; max-width:none; box-sizing:border-box;
+  color:#fff; background:#002E2A;
+  padding:12px 17px; border-radius:999px;
+  box-shadow:0 6px 20px -6px rgba(7,3,18,.34);
+  transition:background .18s, transform .18s;
+}
+.deck-return:hover{background:#0A634D; transform:translateY(-1px)}
+.deck-return svg{transition:transform .18s}
+.deck-return:hover svg{transform:translateX(-2px)}
+@media print{.deck-return{display:none}}
+</style>
+<script>
+(function(){
+  try{
+    var allowed={leak:1,targeting:1,relevance:1,live:1};
+    var from=new URLSearchParams(window.location.search).get('from');
+    if(!from||!allowed[from])return;
+    var a=document.createElement('a');
+    a.className='deck-return';
+    a.href='deck.html#'+from;
+    a.setAttribute('aria-label','Back to the Pulse pitch');
+    a.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to the pitch';
+    document.body.appendChild(a);
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
