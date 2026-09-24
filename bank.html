@@ -935,7 +935,7 @@ window.__resources = {
       cap: 750,
       refundWindow: 14,
       conditions: [],
-      subTabs: ['Overview', 'Enrichment', 'Cardholder Preview'],
+      subTabs: ['Overview', 'Cardholder Preview'],
       brand: brandFill(_id),
       mono: initials(o.merchant || 'L'),
       logo: logoFor(o.merchant || ''),
@@ -2174,20 +2174,11 @@ Object.assign(window, {
             <Icon name="users" size={26} style={{ color: 'var(--brand)' }} />
             <div>
               <div className="aud-num tnum">{fmtNum(num)} <small>eligible cardholders</small></div>
-              <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 2 }}>{cardSummary || 'matched on the targeting conditions below'}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 2 }}>{cardSummary || 'eligible for this offer'}</div>
             </div>
             <div className="aud-bars">
               {bars.map((h, i) => <i key={i} className={h >= 0.8 ? 'on' : ''} style={{ height: (h * 44) + 'px' }} />)}
             </div>
-          </div>
-          <div className="cond-list">
-            {c.conditions.map((cond, i) => (
-              <div key={i} className="cond">
-                <Icon name="target" size={17} />
-                <span>{cond}</span>
-                <span className="ro"><Icon name="lock" size={12} />read-only</span>
-              </div>
-            ))}
           </div>
           {children}
         </div>
@@ -2540,14 +2531,6 @@ Object.assign(window, {
 
           {sub === 'Cardholder Preview' ? (
             <CardholderPreview c={c} />
-          ) : sub === 'Enrichment' ? (
-            <div className="block">
-              <Audience c={c} />
-              <div className="note info" style={{ maxWidth: 560 }}>
-                <Icon name="info" size={17} />
-                <span>Targeting conditions are computed by Lune Enrichment from this bank’s transaction history. They are read-only on the bank side.</span>
-              </div>
-            </div>
           ) : (
             <>
               <Banner c={c} />
