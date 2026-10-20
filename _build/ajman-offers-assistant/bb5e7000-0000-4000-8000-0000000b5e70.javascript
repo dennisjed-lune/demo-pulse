@@ -201,7 +201,7 @@
   function openSetup() {
     if (document.querySelector(".lsu")) return;
     var st = saved || {};
-    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", color2: st.color2 || "", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
+    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", color2: st.color2 || "", unit: st.unit || "cashback", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
     var wrap = el("div", { class: "lsu", role: "dialog", "aria-modal": "true", "aria-label": "Demo setup" });
     wrap.innerHTML = '<div class="lsu-card">\
 <div class="lsu-top"><span class="lsu-dot"></span>Lune · Pulse demo setup</div>\
@@ -218,6 +218,7 @@
 <p class="lsu-msg lsu-regnote" style="margin:-4px 0 14px"></p>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-lang">Language</label><select class="lsu-in" id="lsu-lang"></select></div>\
 <div><label class="lsu-lbl" for="lsu-cur">Currency</label><select class="lsu-in" id="lsu-cur"></select></div></div>\
+<div style="margin:0 0 14px"><span class="lsu-lbl">Rewards shown as</span><div class="lsu-seg lsu-unit"></div></div>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-font">Font</label><select class="lsu-in" id="lsu-font"></select></div>\
 <div><label class="lsu-lbl" for="lsu-far">Arabic font</label><select class="lsu-in" id="lsu-far"></select></div></div>\
 <p class="lsu-msg lsu-fontnote" style="margin:-4px 0 14px"></p>\
@@ -250,6 +251,7 @@
       $(".lsu-name").style.fontFamily = '"' + (S.font || "Source Sans 3") + '", sans-serif';
       $(".lsu-fontnote").textContent = S.fontSite ? (/licensed/.test(S.fontSite) ? "Their website uses " + S.fontSite.replace(" (licensed)", "") + ", a licensed font. Closest free match: " + S.font + "." : "Same font as their website: " + S.fontSite + ".") : "Pick the font closest to the bank's website.";
       $(".lsu-go").disabled = !S.en.trim() || S.busy;
+      $(".lsu-unit").innerHTML = [["cashback", "Cashback"], ["points", "Points"]].map(function (x) { return '<button type="button" data-u="' + x[0] + '" class="' + (S.unit === x[0] ? "on" : "") + '">' + x[1] + "</button>"; }).join("");
       $(".lsu-reg").innerHTML = REGION_OPTS.map(function (r) { return '<button type="button" data-r="' + r[0] + '" class="' + (S.region === r[0] ? "on" : "") + '">' + r[1] + "</button>"; }).join("");
       [].forEach.call(wrap.querySelectorAll(".lsu-chip"), function (c) { c.style.display = c.getAttribute("data-region") === S.region ? "" : "none"; });
       var city = (window.LUNE_REGIONS && window.LUNE_REGIONS[S.region] || {}).city;
@@ -284,6 +286,7 @@
     var col2 = $("#lsu-col2"); col2.oninput = function () { S.color2 = col2.value; render(); };
     cur.onchange = function () { if (cur.value) S.cur = cur.value; };
     [["#lsu-cust", "customer"], ["#lsu-rw", "rewards"], ["#lsu-db", "debit"], ["#lsu-cr", "credit"]].forEach(function (f) { var i = $(f[0]); i.value = S[f[1]]; i.oninput = function () { S[f[1]] = i.value; }; });
+    $(".lsu-unit").onclick = function (e) { var x = e.target.getAttribute && e.target.getAttribute("data-u"); if (x) { S.unit = x; render(); } };
     $(".lsu-reg").onclick = function (e) { var r = e.target.getAttribute && e.target.getAttribute("data-r"); if (r && r !== S.region) { S.region = r; S.cur = REGION_DEF[r].cur; S.lang = REGION_DEF[r].lang; render(); } };
     var ls = $("#lsu-lang"); LANGS.forEach(function (l) { ls.appendChild(el("option", { value: l[0] }, l[1])); }); ls.onchange = function () { S.lang = ls.value; };
     var fs = $("#lsu-font"); FONT_LIST.forEach(function (f) { fs.appendChild(el("option", { value: f }, f === "Source Sans 3" ? "Source Sans 3 (default)" : f)); }); fs.onchange = function () { S.font = fs.value; S.fontSite = ""; render(); };
@@ -293,7 +296,7 @@
       var go = $(".lsu-go"); go.disabled = true; go.textContent = "Getting the " + S.cur + " rate…";
       var done = false, finish = function (fx) {
         if (done) return; done = true;
-        var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", color2: S.color2, lang: S.lang, cur: S.cur, fx: fx || (window.FX_RATES || {})[S.cur] || null, region: S.region, font: S.font, fontAr: S.fontAr, fontSite: S.fontSite, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
+        var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", color2: S.color2, lang: S.lang, unit: S.unit, cur: S.cur, fx: fx || (window.FX_RATES || {})[S.cur] || null, region: S.region, font: S.font, fontAr: S.fontAr, fontSite: S.fontSite, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
         try { sessionStorage.setItem(KEY + "-go", "1"); } catch (e) {}
         try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { alert("This browser blocked saving the setup. Try a normal (non-private) window."); return; }
         location.reload();

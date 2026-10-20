@@ -339,3 +339,12 @@ R('''<img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" alt="Ask 
 # notification: round icon, bank logo fills it (runs after data-bankmark was added to the img)
 R('<div style="width: 30px; height: 30px; border-radius: 9px; background: #FFFFFF; border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; flex: none; overflow: hidden;"><img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" alt="" style="width: 78%; height: 78%; display: block;">',
   '<div style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; flex: none; overflow: hidden;"><img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" data-fill="1" alt="" style="width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 50%;">')
+
+# points vs cashback: the in-demo toggle (window.DEMO_UNIT) wins, then the setup choice (BANK.unit), then the prop
+t = t.replace('(s.unit || this.props.rewardCurrency || "cashback")', '(window.DEMO_UNIT || s.unit || (window.BANK && window.BANK.unit) || this.props.rewardCurrency || "cashback")')
+t = t.replace('(this.state.unit || this.props.rewardCurrency || "cashback")', '(window.DEMO_UNIT || this.state.unit || (window.BANK && window.BANK.unit) || this.props.rewardCurrency || "cashback")')
+# points mode: bonuses in points, banner label with pending in points
+R('return fill(U.bonusV || "{v} bonus", { v: money(parseFloat(m[1])) });', 'return fill(U.bonusV || "{v} bonus", { v: window.__ptsMode ? ptsOf(parseFloat(m[1])) : money(parseFloat(m[1])) });')
+R('      heroLabel: pts ? T.pointsWord + " " + T.cashbackEarnedMonth : fill(T.fxHeroLabel, { p: fmt(38, pts) }),', '      heroLabel: fill(pts ? T.fxHeroLabelPts : T.fxHeroLabel, { p: fmt(38, pts) }),')
+_rv = t.index('  renderVals() {')
+t = t[:_rv] + t[_rv:].replace('    LANG = lang;', '    LANG = lang; window.__ptsMode = pts;', 1)

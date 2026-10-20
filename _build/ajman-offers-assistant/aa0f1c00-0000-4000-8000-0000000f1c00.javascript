@@ -121,6 +121,8 @@ window.UI_FIX.ar.fxUserLine = "رقم المستخدم 2048-1193";
 (function () { var A = {"en": "Profile", "ar": "حسابي", "fr": "Profil", "es": "Perfil", "pt": "Perfil", "de": "Profil", "it": "Profilo", "hi": "प्रोफ़ाइल", "ur": "پروفائل", "zh": "我的", "ru": "Профиль"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxProfile = A[L]; }); })();
 
 (function () { var A = {"en": "Punch cards", "ar": "بطاقات الأختام", "fr": "Cartes de fidélité", "es": "Tarjetas de sellos", "pt": "Cartões de selos", "de": "Stempelkarten", "it": "Carte a timbri", "hi": "पंच कार्ड", "ur": "پنچ کارڈز", "zh": "集章卡", "ru": "Карты со штампами"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxPunch = A[L]; }); })();
+
+(function () { var A = {"en": "points earned in August · {p} pending", "ar": "نقاط مكتسبة في أغسطس · {p} قيد المعالجة", "fr": "points gagnés en août · {p} en attente", "es": "puntos ganados en agosto · {p} pendientes", "pt": "pontos ganhos em agosto · {p} pendentes", "de": "Punkte im August · {p} ausstehend", "it": "punti guadagnati ad agosto · {p} in attesa", "hi": "अगस्त में कमाए पॉइंट · {p} बाकी", "ur": "اگست میں کمائے گئے پوائنٹس · {p} زیرِ عمل", "zh": "八月所得积分 · {p} 待确认", "ru": "баллы за август · {p} в обработке"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxHeroLabelPts = A[L]; }); })();
 var CARD_WORDS = { en: ["debit", "credit"], ar: ["الخصم", "الائتمان"], fr: ["carte de débit", "carte de crédit"], es: ["tarjeta de débito", "tarjeta de crédito"],
   pt: ["cartão de débito", "cartão de crédito"], de: ["Debitkarte", "Kreditkarte"], it: ["carta di debito", "carta di credito"], hi: ["डेबिट कार्ड", "क्रेडिट कार्ड"],
   ur: ["ڈیبٹ کارڈ", "کریڈٹ کارڈ"], zh: ["借记卡", "信用卡"], ru: ["дебетовая", "кредитная"] };
@@ -170,14 +172,24 @@ window.UI_FIX.ar.fxRewardsName = "مكافآت مصرف عجمان";
   var main = null, tries = 0;
   function mount() {
     main = (window.BANK && window.BANK.lang) || document.documentElement.lang || "ar";
-    if (main === "en") return;
+    var unitMain = (window.BANK && window.BANK.unit) || "cashback";
     var st = document.createElement("style");
-    st.textContent = ".lsw{position:fixed;top:16px;right:16px;z-index:19000;display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);font-family:'Plus Jakarta Sans',-apple-system,sans-serif}.lsw button{border:0;background:transparent;padding:6px 12px;min-height:36px;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:rgba(7,3,18,.6);cursor:pointer}.lsw button.on{background:#070312;color:#fff}@media (max-width:500px){.lsw{top:4px;right:50%;transform:translateX(50%);padding:2px}.lsw button{padding:4px 12px;font-size:11.5px;min-height:32px}}";
+    st.textContent = ".lsx{position:fixed;top:16px;right:16px;z-index:19000;display:flex;gap:8px;font-family:'Plus Jakarta Sans',-apple-system,sans-serif}.lsw{display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08)}.lsw button{border:0;background:transparent;padding:6px 12px;min-height:36px;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:rgba(7,3,18,.6);cursor:pointer}.lsw button.on{background:#070312;color:#fff}@media (max-width:500px){.lsx{top:4px;right:8px;gap:4px}.lsw{padding:2px}.lsw button{padding:4px 9px;font-size:11.5px;min-height:32px}}";
     document.head.appendChild(st);
+    var box = document.createElement("div"); box.className = "lsx";
     var w = document.createElement("div"); w.className = "lsw"; w.setAttribute("role", "group"); w.setAttribute("aria-label", "Demo language");
-    function draw() { var cur = window.DEMO_LANG || main; w.innerHTML = [main, "en"].map(function (l) { return '<button type="button" data-l="' + l + '" class="' + (cur === l ? "on" : "") + '" lang="' + l + '">' + NAMES[l] + "</button>"; }).join(""); }
+    var u = document.createElement("div"); u.className = "lsw"; u.setAttribute("role", "group"); u.setAttribute("aria-label", "Rewards shown as");
+    function draw() {
+      var cur = window.DEMO_LANG || main;
+      w.innerHTML = [main, "en"].map(function (l) { return '<button type="button" data-l="' + l + '" class="' + (cur === l ? "on" : "") + '" lang="' + l + '">' + NAMES[l] + "</button>"; }).join("");
+      var cu = window.DEMO_UNIT || unitMain;
+      u.innerHTML = [["cashback", "Cashback"], ["points", "Points"]].map(function (x) { return '<button type="button" data-u="' + x[0] + '" class="' + (cu === x[0] ? "on" : "") + '">' + x[1] + "</button>"; }).join("");
+    }
     w.onclick = function (e) { var l = e.target.getAttribute && e.target.getAttribute("data-l"); if (!l) return; window.DEMO_LANG = l === main ? null : l; draw(); if (window.__oaRender) window.__oaRender(); };
-    draw(); document.body.appendChild(w);
+    u.onclick = function (e) { var x = e.target.getAttribute && e.target.getAttribute("data-u"); if (!x) return; window.DEMO_UNIT = x === unitMain ? null : x; draw(); if (window.__oaRender) window.__oaRender(); };
+    if (main !== "en") box.appendChild(w);
+    box.appendChild(u);
+    draw(); document.body.appendChild(box);
   }
   (function wait() { if (document.body && document.documentElement.lang && document.querySelector("[data-theme]")) mount(); else if (tries++ < 200) setTimeout(wait, 50); })();
 })();
