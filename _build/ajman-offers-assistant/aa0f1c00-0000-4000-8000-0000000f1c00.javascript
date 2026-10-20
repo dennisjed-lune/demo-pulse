@@ -119,6 +119,8 @@ window.UI_FIX.ar.fxUserLine = "رقم المستخدم 2048-1193";
 (function () { var A = {"en": "Almost there", "ar": "اقتربتِ من المكافأة", "fr": "Presque", "es": "Casi lo tienes", "pt": "Quase lá", "de": "Fast geschafft", "it": "Ci sei quasi", "hi": "बस थोड़ा और", "ur": "بس تھوڑا اور", "zh": "就差一点", "ru": "Почти готово"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxAlmost = A[L]; }); })();
 
 (function () { var A = {"en": "Profile", "ar": "حسابي", "fr": "Profil", "es": "Perfil", "pt": "Perfil", "de": "Profil", "it": "Profilo", "hi": "प्रोफ़ाइल", "ur": "پروفائل", "zh": "我的", "ru": "Профиль"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxProfile = A[L]; }); })();
+
+(function () { var A = {"en": "Punch cards", "ar": "بطاقات الأختام", "fr": "Cartes de fidélité", "es": "Tarjetas de sellos", "pt": "Cartões de selos", "de": "Stempelkarten", "it": "Carte a timbri", "hi": "पंच कार्ड", "ur": "پنچ کارڈز", "zh": "集章卡", "ru": "Карты со штампами"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxPunch = A[L]; }); })();
 var CARD_WORDS = { en: ["debit", "credit"], ar: ["الخصم", "الائتمان"], fr: ["carte de débit", "carte de crédit"], es: ["tarjeta de débito", "tarjeta de crédito"],
   pt: ["cartão de débito", "cartão de crédito"], de: ["Debitkarte", "Kreditkarte"], it: ["carta di debito", "carta di credito"], hi: ["डेबिट कार्ड", "क्रेडिट कार्ड"],
   ur: ["ڈیبٹ کارڈ", "کریڈٹ کارڈ"], zh: ["借记卡", "信用卡"], ru: ["дебетовая", "кредитная"] };

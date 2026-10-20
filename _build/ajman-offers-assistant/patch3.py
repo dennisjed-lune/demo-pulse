@@ -308,3 +308,25 @@ R('    if (window.REGION_APPLY && !OFFERS.__region) {', '''    if (!OFFERS.__vox
     if (window.REGION_APPLY && !OFFERS.__region) {''')
 R('{ id: "x3", brand: "VOX Cinemas", logo: "vox", offer: "vox", date: "28 Jul", aed: 160, rate: 15, online: false, days: 9 },',
   '{ id: "x3", brand: "KidZania", logo: "kidzania", offer: "kidzania", date: "28 Jul", aed: 160, rate: 12, online: false, days: 9 },')
+
+# Browse: a "Punch cards" tile listing every offer with a punch card (started ones first, closest to done)
+R('    } else if (s.cat === "Online") {', '''    } else if (s.cat === "Punch") {
+      const PK = ["stamps", "visits", "streak", "challenge"];
+      const hits = OFFERS.filter(o => o.game && PK.indexOf(o.game.kind) >= 0 && !o.city);
+      const left = o => { const g = progressOf(o, s.active); return isActive(o.id) && g.done > 0 ? g.target - g.done : 99; };
+      hits.sort((a, b) => left(a) - left(b) || a.rank - b.rank);
+      const punchOf = o => { const g = progressOf(o, s.active), live = isActive(o.id), n = live ? g.target - g.done : g.target;
+        const unit = (u => LANG === "en" && n === 1 ? u.replace(/ies$/, "y").replace(/s$/, "") : u)((T.units && T.units[g.unit]) || g.unit);
+        return { showPunch: true, punchDots: Array.from({ length: g.target }, (_, i) => ({ key: "pp" + i, bg: live && i < g.done ? "var(--secondary)" : "var(--s-100)" })),
+          punchText: live ? fill(T.moreFor, { n, unit, reward: rewardL(g.reward) }) : fill(T.activateStart, { n, unit, reward: rewardL(g.reward) }) }; };
+      groups = [{ key: "punch", title: T.fxPunch, note: fill(T.catAll, { n: hits.length }), items: hits.map(o => Object.assign(decorate(o), punchOf(o))) }];
+    } else if (s.cat === "Online") {''')
+R('const TILE_T = { "Nearby": T.nearby,', 'const TILE_T = { "Punch": T.fxPunch || "Punch cards", "Nearby": T.nearby,')
+R('})).concat([{ key: "Online", label: T.online || "Online",', '''})).concat([{ key: "Punch", label: T.fxPunch || "Punch cards", icon: ((window.__resources && window.__resources["icon_savings"]) || "assets/icons/savings.svg"), count: fill(T.nOffers || "{n} offers", { n: OFFERS.filter(o => o.game && ["stamps", "visits", "streak", "challenge"].indexOf(o.game.kind) >= 0 && !o.city).length }), onPick: () => this.setState({ cat: "Punch", query: "" }) }, { key: "Online", label: T.online || "Online",''')
+R('<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</span>', '''<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</span>
+                        <sc-if value="{{ o.showPunch }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 5px; margin-top: 5px;">
+                            <div style="display: flex; gap: 4px;"><sc-for list="{{ o.punchDots }}" as="pp" hint-placeholder-count="5"><span style="width: 18px; height: 6px; border-radius: 999px; background: {{ pp.bg }};"></span></sc-for></div>
+                            <span style="font-size: 11.5px; line-height: 1.35; color: var(--secondary-text); text-wrap: pretty;">{{ o.punchText }}</span>
+                          </div>
+                        </sc-if>''')
