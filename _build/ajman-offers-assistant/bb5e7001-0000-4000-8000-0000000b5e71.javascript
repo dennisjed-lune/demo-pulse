@@ -5,7 +5,7 @@ window.LUNE_REGIONS = {
   eu: {
     label: "Europe", city: "Amsterdam", cur: "EUR", lang: "en",
     text: {
-      "Waitrose": "Lidl", "Shake Shack": "Five Guys", "Dubai Mall": "Kalverstraat", "Mall of the Emirates": "Zuidas",
+      "Waitrose": "Lidl", "Shake Shack": "Five Guys", "Dubai Mall": "Kalverstraat", "Mall of the Emirates": "Zuidoost",
       "noon Food": "Zalando Lounge", "noon.com": "zalando.com", "noon": "Zalando", "Justlife": "Helpling", "Careem": "Uber",
       "Deliveroo Plus": "Just Eat+", "Deliveroo": "Just Eat", "spinneys.com": "aldi.nl", "Spinneys": "Aldi", "Carrefour": "Albert Heijn",
       "VOX Cinemas": "Pathé", "VOX": "Pathé", "Etihad Guest Miles": "Flying Blue Miles", "Etihad Guest": "Flying Blue", "etihad.com": "klm.com", "Etihad": "KLM",
@@ -28,9 +28,9 @@ window.LUNE_REGIONS = {
       careem: { brand: "Uber" },
       namshi: { brand: "Just Eat", brandColor: "#FF8000" },
       spinneys: { brand: "Aldi", brandColor: "#00005F", place: "All Amsterdam branches" },
-      carrefour: { brand: "Albert Heijn", brandColor: "#00A0E2", place: "Zuidas, Amsterdam Zuid", place2: "Zuidas", qualifies: ["In-store spend of AED 400 or more", "Zuidas branch only"] },
-      vox: { brand: "Pathé", brandColor: "#FFC20E", place: "Tuschinski, Reguliersbreestraat", place2: "Tuschinski", qualifies: ["Standard seats, booked at the counter or in the Pathé app", "Pathé Tuschinski only"] },
-      shakeshack: { brand: "Five Guys", brandColor: "#D51E3A", place: "Leidseplein, Amsterdam", place2: "Leidseplein", qualifies: ["Dine-in, takeaway and Five Guys app orders", "Leidseplein branch only"] },
+      carrefour: { brand: "Albert Heijn", brandColor: "#00A0E2", place: "Amsterdamse Poort, Zuidoost", place2: "Zuidoost" },
+      vox: { brand: "Pathé", brandColor: "#FFC20E", place: "Pathé Arena, ArenA Boulevard", place2: "Zuidoost" },
+      shakeshack: { brand: "Five Guys", brandColor: "#D51E3A", place: "Kalverstraat, Amsterdam Centrum", place2: "Kalverstraat" },
       emirates: { brand: "KLM", brandColor: "#00A1DE" },
       wizz: { brand: "Wizz Air" },
       kidzania: { brand: "LEGO Store", brandColor: "#E3000B", place: "Kalverstraat, Amsterdam Centrum", place2: "Kalverstraat", deal: "12% back on toys", valueNote: "back on toys and sets, up to AED 80 a visit", qualifies: ["Toys and sets bought in store", "Paid with your Ajman Bank card ···· 4417"], excludes: ["Gift cards", "Events and workshops"], game: { kind: "stamps", done: 0, target: 3, unit: "visits", reward: "18% back", note: "Three visits this term gets you 18% back on toys." } },
@@ -116,7 +116,8 @@ window.LUNE_REGIONS = {
     if (!init()) return;
     D.OFFERS.forEach(function (o) {
       var ov = R.offers[o.id];
-      deep(o);
+      // brand and places are shown raw; the rest goes through BR (which applies REGION_TEXT) after translation
+      ["brand", "place", "place2", "city"].forEach(function (k) { if (o[k]) o[k] = T(o[k]); });
       if (o.logo && R.logos[o.logo]) o.logo = R.logos[o.logo];
       if (ov) { Object.keys(ov).forEach(function (k) { o[k] = ov[k]; }); if (/^ld:/.test(o.logo || "")) o.logoBg = "#FFFFFF"; }
     });

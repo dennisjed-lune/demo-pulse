@@ -44,7 +44,7 @@ R('.replace(/Люн|露恩|लून/g, "Ajman Bank");',
   '.replace(/Люн|露恩|लून/g, "Ajman Bank").replace(/Ajman Bank|مصرف عجمان/g, m => window.BANK ? (m === "Ajman Bank" ? window.BANK.en : (window.BANK.ar || window.BANK.en)) : m);')
 R('      const m = { key: "l" + id, isLune: true, hasText: true, text, dir: rtl ? "rtl" : "ltr" };',
   '      const m = { key: "l" + id, isLune: true, hasText: true, text: BR(text), dir: rtl ? "rtl" : "ltr" };')
-t = t.replace('langCode(this.props.language)', '((window.BANK && window.BANK.lang) || langCode(this.props.language))')
+t = t.replace('langCode(this.props.language)', '(window.DEMO_LANG || (window.BANK && window.BANK.lang) || langCode(this.props.language))')
 R('CUR = s.currency || this.props.currency || "AED";', 'CUR = s.currency || (window.BANK && window.BANK.cur) || this.props.currency || "AED";')
 if SALES:
     R('<script src="aa0f1c00-0000-4000-8000-0000000f1c00"></script>',
@@ -73,3 +73,9 @@ R('Object.keys(window.UI_FIX || {}).forEach(k => { if (UI[k]) Object.assign(UI[k
   'Object.keys(window.UI_FIX || {}).forEach(k => { if (UI[k]) Object.assign(UI[k], window.UI_FIX[k]); }); if (window.UI_PERSONALIZE) window.UI_PERSONALIZE(UI);')
 R('text: (pack && pack.prompt) || T.voicePrompt || "What are you after? Tell me a shop, a category, or where you\'re headed \\u2014 or pick one of these.",',
   'text: (window.BANK && window.BANK.customer ? (lang === "ar" ? "أهلاً " : "Hi ") + window.BANK.customer + ". " : "") + ((pack && pack.prompt) || T.voicePrompt || "What are you after? Tell me a shop, a category, or where you\'re headed \\u2014 or pick one of these."),')
+
+R('const curify = s => (s || "").replace(', 'const curify = s => (s || "").replace(/(\\d[\\d,.\\u202f\\u00a0 ]*\\d|\\d)\\s?AED\\b/g, (m, n) => money(parseFloat(n.replace(/[\\s\\u202f\\u00a0,]/g, "")))).replace(')
+# raw deal strings (rail subtitle, stays, nearby) also get the regional names
+R('railSub: words(o.deal.replace(', 'railSub: words(BR(o.deal).replace(')
+R('return { key: id, brand: o.brand, place: o.place2, deal: o.deal, value: o.value,', 'return { key: id, brand: o.brand, place: o.place2, deal: BR(o.deal), value: o.value,')
+R('return { key: id, brand: o.brand, deal: words(o.deal, pts),', 'return { key: id, brand: o.brand, deal: words(BR(o.deal), pts),')
