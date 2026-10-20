@@ -26,6 +26,22 @@
   ];
   PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
   var REGION_OPTS = [["me", "UAE"], ["ksa", "Saudi Arabia"], ["eu", "Europe"], ["asia", "Asia"]];
+  var REGION_NAME = { me: ["Dubai", "UAE"], ksa: ["Riyadh", "Saudi"], eu: ["Amsterdam", "European"], asia: ["Singapore", "Asian"] };
+  // where the bank operates / is headquartered: known bank, then website ending, then words in the name
+  function detectRegion(name, domain) {
+    var n = (name || "").trim().toLowerCase(), d = (domain || "").toLowerCase();
+    var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === n || (d && x.domain === d); })[0];
+    if (p) return p.region;
+    if (/\.ae$/.test(d)) return "me";
+    if (/\.sa$/.test(d)) return "ksa";
+    if (/\.(sg|hk|my|in|id|ph|th|vn|jp|kr|cn|tw|au|nz|lk|pk|bd)$/.test(d)) return "asia";
+    if (/\.(nl|de|fr|es|it|be|at|ie|pt|lu|fi|gr|dk|se|no|pl|cz|ch|eu|uk|co\.uk|is|ee|lv|lt|sk|si|hr|ro|bg|hu|mt|cy)$/.test(d)) return "eu";
+    if (/saudi|riyad|al ?rajhi|albilad|alinma|\bsnb\b|jazira|samba|ncb/.test(n)) return "ksa";
+    if (/emirates|dubai|abu dhabi|sharjah|ajman|rak\b|fujairah|mashreq|\badib\b|\bfab\b|\bcbd\b|uae/.test(n)) return "me";
+    if (/singapore|hong kong|malaysia|india|indonesia|philippines|thai|vietnam|japan|korea|asia|dbs|ocbc|uob|hsbc asia/.test(n)) return "asia";
+    if (/europe|deutsche|bnp|societe|ing\b|abn|rabobank|santander|unicredit|intesa|commerzbank|bunq|revolut|n26|monzo|starling|barclays|lloyds|natwest|hsbc uk/.test(n)) return "eu";
+    return "me";
+  }
   var REGION_DEF = { me: { cur: "AED", lang: "ar" }, ksa: { cur: "SAR", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" } };
   var LANGS = [["ar", "العربية"], ["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"], ["de", "Deutsch"], ["it", "Italiano"], ["hi", "हिन्दी"], ["ur", "اردو"], ["zh", "中文"], ["ru", "Русский"]];
   var FONT_LIST = ["Source Sans 3", "Inter", "Plus Jakarta Sans", "Open Sans", "DM Sans", "Montserrat", "Cabin", "Rubik", "Poppins", "Space Grotesk", "Nunito Sans", "Roboto", "Manrope", "Noto Sans"];
@@ -137,7 +153,7 @@
     var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === name.trim().toLowerCase(); })[0];
     if (p) return [p.domain];
     var slug = name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
-    return [slug + ".com", slug + ".ae", slug + "bank.com", slug + ".com.sa", slug + ".co.uk"];
+    return [slug + ".com", slug + ".ae", slug + "bank.com", slug + ".com.sa", slug + ".sa", slug + ".com.sg", slug + ".co.uk", slug + ".nl", slug + ".de"];
   }
 
   // ---------- boot: apply saved bank before the app renders ----------
@@ -202,12 +218,12 @@
     if (document.querySelector(".lsu")) return;
     var st = saved || {};
     var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", color2: st.color2 || "", unit: st.unit || "cashback", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
+    function setRegion(r, picked) { if (!r) return; S.region = r; if (picked) S.regionPicked = true; if (!S.curTouched) S.cur = REGION_DEF[r].cur; if (!S.langTouched) S.lang = REGION_DEF[r].lang; }
     var wrap = el("div", { class: "lsu", role: "dialog", "aria-modal": "true", "aria-label": "Demo setup" });
     wrap.innerHTML = '<div class="lsu-card">\
 <div class="lsu-top"><span class="lsu-dot"></span>Lune · Pulse demo setup</div>\
 <h1>Which bank are you pitching?</h1>\
 <p class="lsu-sub">The offers assistant takes on this bank\'s name, logo and colour. Only you see this screen.</p>\
-<span class="lsu-lbl">Region</span><div class="lsu-seg lsu-reg" style="margin-bottom:14px"></div>\
 <span class="lsu-lbl">Quick pick</span><div class="lsu-chips"></div>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-en">Bank name</label><input class="lsu-in" id="lsu-en" placeholder="e.g. Emirates NBD" autocomplete="off"></div>\
 <div><label class="lsu-lbl" for="lsu-ar">Arabic name (optional)</label><input class="lsu-in" id="lsu-ar" dir="rtl" placeholder="الاسم بالعربية" autocomplete="off"></div></div>\
@@ -215,7 +231,7 @@
 <div class="lsu-brand"><div class="lsu-logo"></div><div class="lsu-meta"><b class="lsu-name">No bank yet</b><span class="lsu-msg"></span>\
 <div class="lsu-col"><input type="color" id="lsu-col" aria-label="Primary colour, for buttons" title="Primary: buttons"><input type="color" id="lsu-col2" aria-label="Secondary colour, for cards and progress" title="Secondary: cards and progress"><span class="lsu-hex"></span></div></div>\
 <div class="lsu-prev"><span class="lsu-pill">Activate</span></div></div>\
-<p class="lsu-msg lsu-regnote" style="margin:-4px 0 14px"></p>\
+<p class="lsu-msg lsu-regnote" style="margin:-4px 0 14px"></p><select class="lsu-in lsu-regpick" aria-label="Country for merchants" style="display:none;margin:-6px 0 14px"></select>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-lang">Language</label><select class="lsu-in" id="lsu-lang"></select></div>\
 <div><label class="lsu-lbl" for="lsu-cur">Currency</label><select class="lsu-in" id="lsu-cur"></select></div></div>\
 <div style="margin:0 0 14px"><span class="lsu-lbl">Rewards shown as</span><div class="lsu-seg lsu-unit"></div></div>\
@@ -252,17 +268,16 @@
       $(".lsu-fontnote").textContent = S.fontSite ? (/licensed/.test(S.fontSite) ? "Their website uses " + S.fontSite.replace(" (licensed)", "") + ", a licensed font. Closest free match: " + S.font + "." : "Same font as their website: " + S.fontSite + ".") : "Pick the font closest to the bank's website.";
       $(".lsu-go").disabled = !S.en.trim() || S.busy;
       $(".lsu-unit").innerHTML = [["cashback", "Cashback"], ["points", "Points"]].map(function (x) { return '<button type="button" data-u="' + x[0] + '" class="' + (S.unit === x[0] ? "on" : "") + '">' + x[1] + "</button>"; }).join("");
-      $(".lsu-reg").innerHTML = REGION_OPTS.map(function (r) { return '<button type="button" data-r="' + r[0] + '" class="' + (S.region === r[0] ? "on" : "") + '">' + r[1] + "</button>"; }).join("");
-      [].forEach.call(wrap.querySelectorAll(".lsu-chip"), function (c) { c.style.display = c.getAttribute("data-region") === S.region ? "" : "none"; });
-      var city = (window.LUNE_REGIONS && window.LUNE_REGIONS[S.region] || {}).city;
-      $(".lsu-regnote").textContent = "Offers from " + city + " merchants, in " + S.cur + ". Airlines shown are ones based there.";
+      var rn = REGION_NAME[S.region] || REGION_NAME.me;
+      $(".lsu-regnote").innerHTML = S.en.trim() ? esc(rn[0]) + " merchants and " + esc(rn[1]) + " airlines, based on where " + esc(S.en.trim()) + " operates. <a href=\"#\" class=\"lsu-regchange\" style=\"color:#0A634D;font-weight:600\">Change</a>" : "Merchants and airlines follow the bank's country.";
+      $(".lsu-regpick").value = S.region;
     }
     function lookup(domains, keepColor) {
       S.busy = true; S.msg = ""; render();
       var tryNext = function (i) {
         if (i >= domains.length) { S.busy = false; S.logo = ""; S.domain = ""; S.color = ""; S.logoFor = S.en.trim().toLowerCase(); S.msg = "No logo found. Type the bank's website below."; render(); return; }
         fetchLogo(domains[i]).then(function (data) {
-          S.domain = domains[i]; S.logo = data; S.logoFor = S.en.trim().toLowerCase();
+          S.domain = domains[i]; S.logo = data; S.logoFor = S.en.trim().toLowerCase(); if (!S.regionPicked) setRegion(detectRegion(S.en, S.domain));
           dominantColor.second = null; return (keepColor ? Promise.resolve(S.color) : dominantColor(data)).then(function (c) { S.color = c; if (!keepColor) S.color2 = dominantColor.second || ""; S.busy = false; S.msg = "Logo from " + domains[i]; render(); });
         }).catch(function () { tryNext(i + 1); });
       };
@@ -270,25 +285,27 @@
     }
     PRESETS.forEach(function (p) {
       var b = el("button", { type: "button", class: "lsu-chip", "data-region": p.region }, '<img alt="" src="' + logoUrl(p.domain) + '">' + esc(p.en));
-      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.region = p.region; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; S.lang = (p.region === "me" || p.region === "ksa") ? (S.lang === "en" ? "en" : "ar") : "en"; lookup([p.domain], !!p.color); };
+      b.onclick = function () { S.regionPicked = false; S.en = p.en; S.ar = p.ar; setRegion(p.region); if (!S.curTouched) S.cur = p.cur; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; lookup([p.domain], !!p.color); };
       $(".lsu-chips").appendChild(b);
     });
     en.oninput = function () { S.en = en.value; render(); };
     en.onchange = function () {
-      var name = S.en.trim(); if (!name || name.toLowerCase() === S.logoFor) return;
+      var name = S.en.trim(); if (!name || name.toLowerCase() === S.logoFor) return; S.regionPicked = false;
       var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === name.toLowerCase(); })[0];
-      S.ar = p ? p.ar : ""; S.color = p && p.color ? p.color : ""; S.font = p ? p.font : ""; S.fontAr = p ? p.fontAr : ""; S.fontSite = p ? p.fontSite : ""; if (p) { S.cur = p.cur; S.region = p.region; }
+      S.ar = p ? p.ar : ""; S.color = p && p.color ? p.color : ""; S.font = p ? p.font : ""; S.fontAr = p ? p.fontAr : ""; S.fontSite = p ? p.fontSite : ""; setRegion(p ? p.region : detectRegion(name, ""));
       lookup(guessDomains(name), !!(p && p.color));
     };
     ar.oninput = function () { S.ar = ar.value; };
-    dom.onchange = function () { S.domain = dom.value.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, ""); if (S.domain) lookup([S.domain]); };
+    dom.onchange = function () { S.domain = dom.value.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, ""); if (S.domain) { if (!S.regionPicked) setRegion(detectRegion(S.en, S.domain)); lookup([S.domain]); } };
     col.oninput = function () { S.color = col.value; render(); };
     var col2 = $("#lsu-col2"); col2.oninput = function () { S.color2 = col2.value; render(); };
-    cur.onchange = function () { if (cur.value) S.cur = cur.value; };
+    cur.onchange = function () { if (cur.value) { S.cur = cur.value; S.curTouched = true; } };
     [["#lsu-cust", "customer"], ["#lsu-rw", "rewards"], ["#lsu-db", "debit"], ["#lsu-cr", "credit"]].forEach(function (f) { var i = $(f[0]); i.value = S[f[1]]; i.oninput = function () { S[f[1]] = i.value; }; });
     $(".lsu-unit").onclick = function (e) { var x = e.target.getAttribute && e.target.getAttribute("data-u"); if (x) { S.unit = x; render(); } };
-    $(".lsu-reg").onclick = function (e) { var r = e.target.getAttribute && e.target.getAttribute("data-r"); if (r && r !== S.region) { S.region = r; S.cur = REGION_DEF[r].cur; S.lang = REGION_DEF[r].lang; render(); } };
-    var ls = $("#lsu-lang"); LANGS.forEach(function (l) { ls.appendChild(el("option", { value: l[0] }, l[1])); }); ls.onchange = function () { S.lang = ls.value; };
+    var rp = $(".lsu-regpick"); REGION_OPTS.forEach(function (r) { rp.appendChild(el("option", { value: r[0] }, r[1])); });
+    rp.onchange = function () { setRegion(rp.value, true); render(); };
+    wrap.addEventListener("click", function (e) { if (e.target && e.target.classList && e.target.classList.contains("lsu-regchange")) { e.preventDefault(); rp.style.display = rp.style.display === "none" ? "" : "none"; } });
+    var ls = $("#lsu-lang"); LANGS.forEach(function (l) { ls.appendChild(el("option", { value: l[0] }, l[1])); }); ls.onchange = function () { S.lang = ls.value; S.langTouched = true; };
     var fs = $("#lsu-font"); FONT_LIST.forEach(function (f) { fs.appendChild(el("option", { value: f }, f === "Source Sans 3" ? "Source Sans 3 (default)" : f)); }); fs.onchange = function () { S.font = fs.value; S.fontSite = ""; render(); };
     var fa = $("#lsu-far"); FONT_AR.forEach(function (f) { fa.appendChild(el("option", { value: f }, f === "IBM Plex Sans Arabic" ? "IBM Plex Sans Arabic (default)" : f)); }); fa.onchange = function () { S.fontAr = fa.value; render(); };
     $(".lsu-go").onclick = function () {
