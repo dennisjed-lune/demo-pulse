@@ -415,3 +415,10 @@ t = t[:_ys] + '''<div style="display: flex; flex-direction: column; gap: 10px; f
             </div>
 
             ''' + t[_ys:]
+
+# tier progress on the banner: line in the banner's text colour over a faint track of it, readable on any bank colour
+t = re.sub(r'(<div style="height: [56]px; border-radius: 999px; overflow: hidden; )background: rgba\(255,255,255,\.22\);(">\s*<div style="width: \{\{ tierPct \}\}; height: 100%; border-radius: 999px; )background: \{\{ tierCardBg \}\};',
+           r'\1background: color-mix(in srgb, var(--banner-ink) 22%, transparent);\2background: var(--banner-ink);', t)
+# banner's outline button follows the banner text colour too
+R('border: 1px solid rgba(255,255,255,.55); background: rgba(255,255,255,.12); color: #FFFFFF; text-align: center; font-size: 13px; font-weight: 500; white-space: nowrap;" style-hover="background: rgba(255,255,255,.2);">{{ t.statementBtn }}',
+  'border: 1px solid color-mix(in srgb, var(--banner-ink) 55%, transparent); background: color-mix(in srgb, var(--banner-ink) 8%, transparent); color: var(--banner-ink); text-align: center; font-size: 13px; font-weight: 500; white-space: nowrap;" style-hover="background: color-mix(in srgb, var(--banner-ink) 16%, transparent);">{{ t.statementBtn }}')
