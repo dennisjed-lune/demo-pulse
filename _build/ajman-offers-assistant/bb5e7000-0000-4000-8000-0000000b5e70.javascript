@@ -14,8 +14,8 @@
     { en: "CBD", font: "Inter", fontAr: "Cairo", fontSite: "Inter + Cairo", ar: "بنك دبي التجاري", domain: "cbd.ae", cur: "AED" },
     { en: "Emirates Islamic", font: "Plus Jakarta Sans", fontAr: "Noto Naskh Arabic", fontSite: "Plus Jakarta Sans + Noto Naskh Arabic", ar: "الإمارات الإسلامي", domain: "emiratesislamic.ae", cur: "AED" },
     { en: "Wio", font: "Space Grotesk", fontAr: "", fontSite: "wioGrotesk (licensed)", ar: "ويو", domain: "wio.io", cur: "AED" },
-    { en: "Al Rajhi Bank", font: "Poppins", fontAr: "Rubik", fontSite: "Poppins + Rubik", ar: "مصرف الراجحي", domain: "alrajhibank.com.sa", cur: "SAR" },
-    { en: "SNB", font: "Inter", fontAr: "Noto Kufi Arabic", fontSite: "SNB Font (licensed)", ar: "البنك الأهلي السعودي", domain: "alahli.com", cur: "SAR" },
+    { en: "Al Rajhi Bank", font: "Poppins", fontAr: "Rubik", fontSite: "Poppins + Rubik", ar: "مصرف الراجحي", domain: "alrajhibank.com.sa", cur: "SAR", region: "ksa" },
+    { en: "SNB", font: "Inter", fontAr: "Noto Kufi Arabic", fontSite: "SNB Font (licensed)", ar: "البنك الأهلي السعودي", domain: "alahli.com", cur: "SAR", region: "ksa" },
     { en: "ING", font: "Nunito Sans", fontAr: "", fontSite: "ING Me (licensed)", domain: "ing.com", cur: "EUR", region: "eu" },
     { en: "ABN AMRO", font: "Roboto", fontAr: "", fontSite: "ABN AMRO Sans (licensed)", domain: "abnamro.nl", cur: "EUR", region: "eu" },
     { en: "bunq", font: "DM Sans", fontAr: "", fontSite: "DM Sans", domain: "bunq.com", cur: "EUR", region: "eu" },
@@ -25,8 +25,8 @@
     { en: "UOB", font: "Noto Sans", fontAr: "", fontSite: "Noto Sans", domain: "uob.com.sg", cur: "SGD", region: "asia" }
   ];
   PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
-  var REGION_OPTS = [["me", "Middle East"], ["eu", "Europe"], ["asia", "Asia"]];
-  var REGION_DEF = { me: { cur: "AED", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" } };
+  var REGION_OPTS = [["me", "UAE"], ["ksa", "Saudi Arabia"], ["eu", "Europe"], ["asia", "Asia"]];
+  var REGION_DEF = { me: { cur: "AED", lang: "ar" }, ksa: { cur: "SAR", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" } };
   var LANGS = [["ar", "العربية"], ["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"], ["de", "Deutsch"], ["it", "Italiano"], ["hi", "हिन्दी"], ["ur", "اردو"], ["zh", "中文"], ["ru", "Русский"]];
   var FONT_LIST = ["Source Sans 3", "Inter", "Plus Jakarta Sans", "Open Sans", "DM Sans", "Montserrat", "Cabin", "Rubik", "Poppins", "Space Grotesk", "Nunito Sans", "Roboto", "Manrope", "Noto Sans"];
   var FONT_AR = ["IBM Plex Sans Arabic", "Tajawal", "Cairo", "Noto Kufi Arabic", "Noto Naskh Arabic", "Vazirmatn", "Rubik"];
@@ -255,7 +255,7 @@
       $(".lsu-reg").innerHTML = REGION_OPTS.map(function (r) { return '<button type="button" data-r="' + r[0] + '" class="' + (S.region === r[0] ? "on" : "") + '">' + r[1] + "</button>"; }).join("");
       [].forEach.call(wrap.querySelectorAll(".lsu-chip"), function (c) { c.style.display = c.getAttribute("data-region") === S.region ? "" : "none"; });
       var city = (window.LUNE_REGIONS && window.LUNE_REGIONS[S.region] || {}).city;
-      $(".lsu-regnote").textContent = S.region === "me" ? "Offers from UAE merchants." : "Offers from " + city + " merchants, in " + S.cur + ".";
+      $(".lsu-regnote").textContent = "Offers from " + city + " merchants, in " + S.cur + ". Airlines shown are ones based there.";
     }
     function lookup(domains, keepColor) {
       S.busy = true; S.msg = ""; render();
@@ -270,7 +270,7 @@
     }
     PRESETS.forEach(function (p) {
       var b = el("button", { type: "button", class: "lsu-chip", "data-region": p.region }, '<img alt="" src="' + logoUrl(p.domain) + '">' + esc(p.en));
-      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.region = p.region; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; S.lang = p.region === "me" ? (S.lang === "en" ? "en" : "ar") : "en"; lookup([p.domain], !!p.color); };
+      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.region = p.region; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; S.lang = (p.region === "me" || p.region === "ksa") ? (S.lang === "en" ? "en" : "ar") : "en"; lookup([p.domain], !!p.color); };
       $(".lsu-chips").appendChild(b);
     });
     en.oninput = function () { S.en = en.value; render(); };

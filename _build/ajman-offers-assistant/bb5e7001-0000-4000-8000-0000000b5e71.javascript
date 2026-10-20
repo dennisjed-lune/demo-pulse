@@ -1,7 +1,42 @@
 // Regional offer catalogs for the sales setup. Offer ids stay the same (every flow keys on them);
 // only brand, logo, place and local copy change. "ld:<domain>" logos load from logo.dev.
 window.LUNE_REGIONS = {
-  me: { label: "Middle East", city: "Dubai", cur: "AED" },
+  me: { label: "UAE", city: "Dubai", cur: "AED" },
+  ksa: {
+    label: "Saudi Arabia", city: "Riyadh", cur: "SAR", lang: "ar",
+    text: {
+      "Waitrose": "Panda", "Dubai Mall": "Riyadh Park", "Mall of the Emirates": "Al Nakheel Mall", "Dubai": "Riyadh", "Abu Dhabi": "Jeddah",
+      "spinneys.com": "tamimimarkets.com", "Spinneys": "Tamimi Markets", "Carrefour": "Danube", "VOX Cinemas": "Muvi Cinemas", "VOX": "Muvi",
+      "Shake Shack": "Al Baik", "Deliveroo Plus": "HungerStation Pro", "Deliveroo": "HungerStation", "Etihad Guest Miles": "AlFursan miles", "Etihad Guest": "AlFursan",
+      "etihad.com": "saudia.com", "Etihad": "Saudia", "KidZania": "Toys\"R\"Us", "Yas Waterworld": "Riyadh Season", "Coca-Cola Arena": "webook",
+      "Atlantis The Palm": "Red Sea Global", "Atlantis": "Red Sea Global", "Aquaventure": "the reef", "Ritz-Carlton": "Fairmont", "Ras Al Khaimah": "AlUla",
+      "Palm Jumeirah": "the Red Sea", "Yas Island": "Boulevard City", "Al Quoz": "Al Olaya", "City Walk": "Boulevard", "Financial Centre": "King Abdullah Road",
+      "Grand Atrium": "Riyadh Park", "Al Barsha": "Al Nakheel", "GOLD, THEATRE by Rhodes and IMAX": "Muvi Suites and IMAX", "Wizz Air Abu Dhabi": "flynas", "Booking.com": "Almosafer",
+      "وايتروز": "بنده", "دبي مول": "الرياض بارك", "مول الإمارات": "النخيل مول", "دبي": "الرياض", "كارفور": "الدانوب", "فوكس": "موڤي",
+      "شيك شاك": "البيك", "ديليفرو": "هنقرستيشن", "الاتحاد للطيران": "الخطوط السعودية", "أتلانتس": "البحر الأحمر الدولية"
+    },
+    logos: { waitrose: "ld:panda.com.sa", spinneys: "ld:tamimimarkets.com", carrefour: "ld:danube.sa", vox: "ld:muvicinemas.com", shakeshack: "ld:albaik.com",
+      deliveroo: "ld:hungerstation.com", talabat: "ld:hungerstation.com", etihad: "ld:saudiairlines.com", kidzania: "ld:toysrus.com.sa", yas: "ld:riyadhseason.com",
+      cocacolaarena: "ld:webook.com", atlantis: "ld:redseaglobal.com", ritzrak: "ld:fairmont.com", booking: "ld:almosafer.com", wizz: "ld:flynas.com" },
+    offers: {
+      waitrose: { brand: "Panda", brandColor: "#E03A2F", place: "Riyadh Park, Riyadh", place2: "Riyadh Park" },
+      spinneys: { brand: "Tamimi Markets", brandColor: "#E3242B", place: "All Riyadh branches" },
+      carrefour: { brand: "Danube", brandColor: "#0E6B3A", place: "Al Nakheel Mall, Riyadh", place2: "Al Nakheel Mall" },
+      vox: { brand: "Muvi Cinemas", brandColor: "#7A2B8C", place: "Riyadh Park, Riyadh", place2: "Riyadh Park" },
+      shakeshack: { brand: "Al Baik", brandColor: "#D8232A", place: "Olaya Street, Riyadh", place2: "Olaya" },
+      namshi: { brand: "HungerStation", brandColor: "#FFD200" },
+      emirates: { brand: "Saudia", brandColor: "#FFFFFF", fitContain: true },
+      wizz: { brand: "flynas" },
+      booking: { brand: "Almosafer", brandColor: "#0B3B4F" },
+      kidzania: { brand: "Toys\"R\"Us", brandColor: "#0066CC", place: "Riyadh Park, Riyadh", place2: "Riyadh Park", deal: "12% back on toys", valueNote: "back on toys and sets, up to AED 80 a visit", qualifies: ["Toys and sets bought in store", "Paid with your Ajman Bank card ···· 4417"], excludes: ["Gift cards", "Events and workshops"], game: { kind: "stamps", done: 0, target: 3, unit: "visits", reward: "18% back", note: "Three visits this term gets you 18% back on toys." } },
+      yas: { brand: "Riyadh Season", brandColor: "#111111", place2: "Boulevard City, Riyadh", why: "A night out for four, ten minutes away" },
+      cocacolaarena: { brand: "webook", brandColor: "#7B4DFF", place2: "Riyadh" },
+      atlantis: { brand: "Red Sea Global", brandColor: "#8A6A3B", place2: "The Red Sea", why: "Reef and island stays on the Red Sea coast" },
+      ritzrak: { brand: "Fairmont", brandColor: "#1C1C1C", place2: "Fairmont Riyadh", why: "A weekend staycation in town" },
+      olioli: { hide: true }, wbworld: { hide: true }
+    },
+    partners: {}, gifts: { talabat: { name: "HungerStation", logo: "ld:hungerstation.com" } }
+  },
   eu: {
     label: "Europe", city: "Amsterdam", cur: "EUR", lang: "en",
     text: {
@@ -110,6 +145,7 @@ window.LUNE_REGIONS = {
   function deep(o) { if (Array.isArray(o)) return o.map(deep); if (o && typeof o === "object") { Object.keys(o).forEach(function (k) { if (k !== "id" && k !== "logo" && k !== "key") o[k] = deep(o[k]); }); return o; } return T(o); }
   window.REGION_APPLY = function (D) {
     if (!init()) return;
+    for (var hi = D.OFFERS.length - 1; hi >= 0; hi--) { var hv = R.offers[D.OFFERS[hi].id]; if (hv && hv.hide) D.OFFERS.splice(hi, 1); }
     D.OFFERS.forEach(function (o) {
       var ov = R.offers[o.id];
       // brand and places are shown raw; the rest goes through BR (which applies REGION_TEXT) after translation

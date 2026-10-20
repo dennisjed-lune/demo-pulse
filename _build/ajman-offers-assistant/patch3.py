@@ -468,3 +468,20 @@ t = t[:_L0] + _air + t[_L1:_cardEnd] + '''
                 </div>''' + t[_cardEnd:]
 _hd = t.index('{{ t.airlines }}</span>\n                  <span style="flex: none; font-size: 11.5px; color: var(--text-tertiary);">{{ t.ptMile }}</span>')
 t = t[:_hd] + '{{ t.fxAirlines }}' + t[_hd + len('{{ t.airlines }}'):]
+
+# airlines by country (home market only); hotels everywhere
+t = t.replace('{ id: "etihad", kind: "air",', '{ id: "etihad", kind: "air", regions: ["me"],')
+for _id, _rg in [("saudia", '["ksa"]'), ("flynas", '["ksa"]'), ("qatar", '["qa"]'), ("airarabia", '["me"]'), ("cathay", '["asia"]'), ("turkish", '["eu"]'), ("lufthansa", '["eu"]'), ("flyingblue", '["eu"]'), ("indigo", '["asia"]')]:
+    t = t.replace('{ id: "%s", kind: "air",' % _id, '{ id: "%s", kind: "air", regions: %s,' % (_id, _rg))
+R('      partners: PARTNERS.slice().sort(', '      partners: PARTNERS.filter(p => !p.regions || p.regions.indexOf((window.BANK && window.BANK.region) || "me") >= 0).sort(')
+# VOX slot: removed only for the UAE (it is Pathé / Shaw / Muvi elsewhere)
+R('const reg = window.BANK && window.BANK.region; if (reg !== "eu" && reg !== "asia") {', 'const reg = window.BANK && window.BANK.region; if (!reg || reg === "me") {')
+# partner rates per 1 unit of the chosen currency (was per AED, e.g. "1.02 SAR = 50 miles")
+t = t.replace('"\\u2068" + money(1) + " = " + nf(Math.round(PTS * p.rate * 100) / 100) + " " + unitL + "\\u2069"', '"\\u2068" + money(1 / fxOf()[0]) + " = " + nf(Math.round(PTS * p.rate / fxOf()[0] * 100) / 100) + " " + unitL + "\\u2069"')
+t = t.replace('"\\u2068" + money(1) + " = " + nf(Math.round(PTS * xfP.rate * 100) / 100) + " " + xfP.unit + "\\u2069"', '"\\u2068" + money(1 / fxOf()[0]) + " = " + nf(Math.round(PTS * xfP.rate / fxOf()[0] * 100) / 100) + " " + xfP.unit + "\\u2069"')
+# one linked airline per region
+R('linked: ["etihad", "accor"]', 'linked: ["etihad", "saudia", "flyingblue", "cathay", "accor"]')
+# tall logos can opt out of full-bleed on offer cards
+t = t.replace('(FULL_BLEED_LOGOS.indexOf(o.logo) >= 0 || /^ld:/.test(o.logo || "")) ?', '(!o.fitContain && (FULL_BLEED_LOGOS.indexOf(o.logo) >= 0 || /^ld:/.test(o.logo || ""))) ?')
+t = t.replace('nf(Math.round(PTS * p.rate / fxOf()[0] * 100) / 100)', 'nf((v => v >= 10 ? Math.round(v) : Math.round(v * 100) / 100)(PTS * p.rate / fxOf()[0]))')
+t = t.replace('nf(Math.round(PTS * xfP.rate / fxOf()[0] * 100) / 100)', 'nf((v => v >= 10 ? Math.round(v) : Math.round(v * 100) / 100)(PTS * xfP.rate / fxOf()[0]))')
