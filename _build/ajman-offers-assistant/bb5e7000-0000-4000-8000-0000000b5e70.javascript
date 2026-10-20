@@ -15,10 +15,20 @@
     { en: "Emirates Islamic", ar: "الإمارات الإسلامي", domain: "emiratesislamic.ae", cur: "AED" },
     { en: "Wio", ar: "ويو", domain: "wio.io", cur: "AED" },
     { en: "Al Rajhi Bank", ar: "مصرف الراجحي", domain: "alrajhibank.com.sa", cur: "SAR" },
-    { en: "SNB", ar: "البنك الأهلي السعودي", domain: "alahli.com", cur: "SAR" }
+    { en: "SNB", ar: "البنك الأهلي السعودي", domain: "alahli.com", cur: "SAR" },
+    { en: "ING", domain: "ing.com", cur: "EUR", region: "eu" },
+    { en: "ABN AMRO", domain: "abnamro.nl", cur: "EUR", region: "eu" },
+    { en: "bunq", domain: "bunq.com", cur: "EUR", region: "eu" },
+    { en: "Revolut", domain: "revolut.com", cur: "EUR", region: "eu" },
+    { en: "DBS", domain: "dbs.com.sg", cur: "SGD", region: "asia" },
+    { en: "OCBC", domain: "ocbc.com", cur: "SGD", region: "asia" },
+    { en: "UOB", domain: "uob.com.sg", cur: "SGD", region: "asia" }
   ];
+  PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
+  var REGION_OPTS = [["me", "Middle East"], ["eu", "Europe"], ["asia", "Asia"]];
+  var REGION_DEF = { me: { cur: "AED", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" } };
   var LANGS = [["ar", "العربية"], ["en", "English"]];
-  var CURS = ["AED", "SAR", "BHD", "USD", "EUR", "GBP"];
+  var CURS = ["AED", "SAR", "BHD", "EUR", "GBP", "SGD", "USD"];
 
   // ---------- colour maths (sRGB <-> OKLCH) ----------
   function hexToRgb(h) { h = h.replace("#", ""); if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join(""); return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
@@ -149,6 +159,11 @@
 .lsu-seg{display:flex;padding:3px;background:#EEF2F1;border-radius:12px}\
 .lsu-seg button{flex:1;padding:8px;border:0;border-radius:9px;background:transparent;font:inherit;font-size:13px;font-weight:500;color:rgba(7,3,18,.68);cursor:pointer}\
 .lsu-seg button.on{background:#fff;color:#070312;box-shadow:0 1px 3px rgba(0,0,0,.08)}\
+.lsu-more{border:1px solid #E2E8E6;border-radius:16px;padding:12px 14px;margin:0 0 6px}\
+.lsu-more summary{cursor:pointer;font-size:13.5px;font-weight:600;list-style:none}\
+.lsu-more summary::-webkit-details-marker{display:none}\
+.lsu-more summary::before{content:'+ ';color:#0A634D}.lsu-more[open] summary::before{content:'− '}\
+.lsu-more summary span{font-weight:500;color:rgba(7,3,18,.55);margin-left:4px}\
 .lsu-go{width:100%;margin-top:8px;padding:14px;border:0;border-radius:999px;background:#10A37F;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}\
 .lsu-go:hover{background:#0E9173}.lsu-go:disabled{background:#C9D3D0;cursor:default}\
 .lsu-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:rgba(7,3,18,.6)}\
@@ -165,12 +180,13 @@
   function openSetup() {
     if (document.querySelector(".lsu")) return;
     var st = saved || {};
-    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", busy: false, msg: "" };
+    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
     var wrap = el("div", { class: "lsu", role: "dialog", "aria-modal": "true", "aria-label": "Demo setup" });
     wrap.innerHTML = '<div class="lsu-card">\
 <div class="lsu-top"><span class="lsu-dot"></span>Lune · Pulse demo setup</div>\
 <h1>Which bank are you pitching?</h1>\
 <p class="lsu-sub">The offers assistant takes on this bank\'s name, logo and colour. Only you see this screen.</p>\
+<span class="lsu-lbl">Region</span><div class="lsu-seg lsu-reg" style="margin-bottom:14px"></div>\
 <span class="lsu-lbl">Quick pick</span><div class="lsu-chips"></div>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-en">Bank name</label><input class="lsu-in" id="lsu-en" placeholder="e.g. Emirates NBD" autocomplete="off"></div>\
 <div><label class="lsu-lbl" for="lsu-ar">Arabic name (optional)</label><input class="lsu-in" id="lsu-ar" dir="rtl" placeholder="الاسم بالعربية" autocomplete="off"></div></div>\
@@ -178,8 +194,15 @@
 <div class="lsu-brand"><div class="lsu-logo"></div><div class="lsu-meta"><b class="lsu-name">No bank yet</b><span class="lsu-msg"></span>\
 <div class="lsu-col"><input type="color" id="lsu-col" aria-label="Brand colour"><span class="lsu-hex"></span></div></div>\
 <div class="lsu-prev"><span class="lsu-pill">Activate</span></div></div>\
+<p class="lsu-msg lsu-regnote" style="margin:-4px 0 14px"></p>\
 <div class="lsu-row"><div><span class="lsu-lbl">Language</span><div class="lsu-seg lsu-lang"></div></div>\
 <div><label class="lsu-lbl" for="lsu-cur">Currency</label><select class="lsu-in" id="lsu-cur"></select></div></div>\
+<details class="lsu-more"' + ((st.customer || st.rewards || st.debit || st.credit) ? " open" : "") + '><summary>Make it theirs <span>optional</span></summary>\
+<div class="lsu-row" style="margin-top:12px"><div><label class="lsu-lbl" for="lsu-cust">Customer first name</label><input class="lsu-in" id="lsu-cust" placeholder="e.g. Sara" autocomplete="off"></div>\
+<div><label class="lsu-lbl" for="lsu-rw">Rewards programme name</label><input class="lsu-in" id="lsu-rw" placeholder="e.g. Plus Rewards" autocomplete="off"></div></div>\
+<div class="lsu-row"><div><label class="lsu-lbl" for="lsu-db">Debit card name</label><input class="lsu-in" id="lsu-db" placeholder="e.g. Infinite Debit" autocomplete="off"></div>\
+<div><label class="lsu-lbl" for="lsu-cr">Credit card name</label><input class="lsu-in" id="lsu-cr" placeholder="e.g. Platinum Credit" autocomplete="off"></div></div>\
+<p class="lsu-msg" style="margin:-4px 0 4px">The assistant greets the customer by name, and the bank\'s own programme and card names replace the generic ones.</p></details>\
 <button class="lsu-go" type="button">Start the demo</button>\
 <div class="lsu-foot"><span>Saved on this browser for next time.</span><button type="button" class="lsu-reset">Reset to Ajman Bank</button></div></div>';
     var $ = function (s) { return wrap.querySelector(s); };
@@ -198,6 +221,10 @@
       $(".lsu-pill").style.background = acc;
       $(".lsu-lang").innerHTML = LANGS.map(function (l) { return '<button type="button" data-l="' + l[0] + '" class="' + (S.lang === l[0] ? "on" : "") + '">' + l[1] + "</button>"; }).join("");
       $(".lsu-go").disabled = !S.en.trim() || S.busy;
+      $(".lsu-reg").innerHTML = REGION_OPTS.map(function (r) { return '<button type="button" data-r="' + r[0] + '" class="' + (S.region === r[0] ? "on" : "") + '">' + r[1] + "</button>"; }).join("");
+      [].forEach.call(wrap.querySelectorAll(".lsu-chip"), function (c) { c.style.display = c.getAttribute("data-region") === S.region ? "" : "none"; });
+      var city = (window.LUNE_REGIONS && window.LUNE_REGIONS[S.region] || {}).city;
+      $(".lsu-regnote").textContent = S.region === "me" ? "Offers from UAE merchants." : "Offers from " + city + " merchants, in " + S.cur + ".";
     }
     function lookup(domains, keepColor) {
       S.busy = true; S.msg = ""; render();
@@ -211,25 +238,27 @@
       tryNext(0);
     }
     PRESETS.forEach(function (p) {
-      var b = el("button", { type: "button", class: "lsu-chip" }, '<img alt="" src="' + logoUrl(p.domain) + '">' + esc(p.en));
-      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.color = p.color || ""; lookup([p.domain], !!p.color); };
+      var b = el("button", { type: "button", class: "lsu-chip", "data-region": p.region }, '<img alt="" src="' + logoUrl(p.domain) + '">' + esc(p.en));
+      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.region = p.region; S.color = p.color || ""; lookup([p.domain], !!p.color); };
       $(".lsu-chips").appendChild(b);
     });
     en.oninput = function () { S.en = en.value; render(); };
     en.onchange = function () {
       var name = S.en.trim(); if (!name || name.toLowerCase() === S.logoFor) return;
       var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === name.toLowerCase(); })[0];
-      S.ar = p ? p.ar : ""; S.color = p && p.color ? p.color : ""; if (p) S.cur = p.cur;
+      S.ar = p ? p.ar : ""; S.color = p && p.color ? p.color : ""; if (p) { S.cur = p.cur; S.region = p.region; }
       lookup(guessDomains(name), !!(p && p.color));
     };
     ar.oninput = function () { S.ar = ar.value; };
     dom.onchange = function () { S.domain = dom.value.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, ""); if (S.domain) lookup([S.domain]); };
     col.oninput = function () { S.color = col.value; render(); };
     cur.onchange = function () { S.cur = cur.value; };
+    [["#lsu-cust", "customer"], ["#lsu-rw", "rewards"], ["#lsu-db", "debit"], ["#lsu-cr", "credit"]].forEach(function (f) { var i = $(f[0]); i.value = S[f[1]]; i.oninput = function () { S[f[1]] = i.value; }; });
+    $(".lsu-reg").onclick = function (e) { var r = e.target.getAttribute && e.target.getAttribute("data-r"); if (r && r !== S.region) { S.region = r; S.cur = REGION_DEF[r].cur; S.lang = REGION_DEF[r].lang; render(); } };
     $(".lsu-lang").onclick = function (e) { var l = e.target.getAttribute && e.target.getAttribute("data-l"); if (l) { S.lang = l; render(); } };
     $(".lsu-go").onclick = function () {
       if (!S.en.trim()) return;
-      var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", lang: S.lang, cur: S.cur };
+      var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", lang: S.lang, cur: S.cur, region: S.region, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
       try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { alert("This browser blocked saving the setup. Try a normal (non-private) window."); return; }
       location.reload();
     };

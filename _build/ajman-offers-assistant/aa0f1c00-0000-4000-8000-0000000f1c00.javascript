@@ -83,6 +83,30 @@ window.UI_FIX = {
 window.UI_FIX.en.watching = "Your offers and cashback";
 window.UI_FIX.en.fxBankName = "Ajman Bank";
 window.UI_FIX.en.fxRewardsName = "Ajman Bank Rewards";
+window.UI_FIX.en.fxUserLine = "User ID 2048-1193";
+window.UI_FIX.ar.fxUserLine = "رقم المستخدم 2048-1193";
+// optional details from the sales setup: customer name, rewards programme, card product names
+window.UI_PERSONALIZE = function (UI) {
+  var B = window.BANK; if (!B) return;
+  Object.keys(UI).forEach(function (L) {
+    var T = UI[L]; if (!T || typeof T !== "object") return;
+    var ar = L === "ar";
+    if (B.customer) {
+      var n = B.customer;
+      ["o1", "openerPlain"].forEach(function (k) { if (typeof T[k] === "string") T[k] = ar ? T[k].replace(/^صباح الخير\./, "صباح الخير يا " + n + ".") : T[k].replace(/^Morning\./, "Morning, " + n + "."); });
+      T.fxUserLine = n + " · 2048-1193";
+    }
+    if (B.rewards) T.fxRewardsName = B.rewards;
+    Object.keys(T).forEach(function (k) {
+      var v = T[k]; if (typeof v !== "string") return;
+      if (B.debit) v = v.replace(/\bdebit ···· 4417/gi, B.debit + " ···· 4417").replace(/بطاقة الخصم المنتهية بـ 4417/g, "بطاقة " + B.debit + " المنتهية بـ 4417").replace(/بطاقة الخصم 4417/g, B.debit + " 4417");
+      if (B.credit) v = v.replace(/\bcredit ···· 9102/gi, B.credit + " ···· 9102").replace(/الائتمانية المنتهية بـ 9102/g, "بطاقة " + B.credit + " المنتهية بـ 9102").replace(/والائتمانية 9102/g, "و" + B.credit + " 9102");
+      T[k] = v;
+    });
+    if (B.debit) T.card1 = B.debit;
+    if (B.credit) T.card2 = B.credit;
+  });
+};
 window.UI_FIX.ar.fxRewardsName = "مكافآت مصرف عجمان";
 if (window.BANK) {
   window.UI_FIX.en.fxBankName = window.BANK.en; window.UI_FIX.ar.fxBankName = window.BANK.ar || window.BANK.en;
