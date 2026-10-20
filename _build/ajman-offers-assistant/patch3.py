@@ -348,3 +348,70 @@ R('return fill(U.bonusV || "{v} bonus", { v: money(parseFloat(m[1])) });', 'retu
 R('      heroLabel: pts ? T.pointsWord + " " + T.cashbackEarnedMonth : fill(T.fxHeroLabel, { p: fmt(38, pts) }),', '      heroLabel: fill(pts ? T.fxHeroLabelPts : T.fxHeroLabel, { p: fmt(38, pts) }),')
 _rv = t.index('  renderVals() {')
 t = t[:_rv] + t[_rv:].replace('    LANG = lang;', '    LANG = lang; window.__ptsMode = pts;', 1)
+
+# points: 100 points per 1 unit of the SELECTED currency (was 100 per AED in every currency)
+R('const ptsOf = n => nf(Math.round(n * PTS)) + " " + (U4().pts || "pts");', 'const ptsOf = n => nf(Math.round(n * fxOf()[0] * PTS)) + " " + (U4().pts || "pts");')
+R('const rateOf = pct => { const f = fxOf(); return Math.round(pct / 100 * PTS / f[0]); };', 'const rateOf = pct => Math.round(pct / 100 * PTS * 10) / 10;')
+R('const gcAed = s.gcCustom ? (pts ? gcCustomNum / PTS : gcCustomNum / (fxOf())[0]) : s.gcDenom;', 'const gcAed = s.gcCustom ? (pts ? gcCustomNum / PTS / (fxOf())[0] : gcCustomNum / (fxOf())[0]) : s.gcDenom;')
+# partner rates in points mode: 1 pt is now 1/100 of the local unit; miles per AED stay the same
+t = t.replace('fill(T.ptEquals || "1 pt = {r} {u}", { r: p.rate, u: unitL })', 'fill(T.ptEquals || "1 pt = {r} {u}", { r: nf(Math.round(p.rate / fxOf()[0] * 100) / 100), u: unitL })')
+t = t.replace('fill(T.ptEquals || "1 pt = {r} {u}", { r: xfP.rate,', 'fill(T.ptEquals || "1 pt = {r} {u}", { r: nf(Math.round(xfP.rate / fxOf()[0] * 100) / 100),')
+R('rateLine: (pts ? fill(T.pointsEq, { v: money(1) }) + " · " : "") + T.neverExpire,', 'rateLine: (pts ? fill(T.pointsEq, { v: money(1 / fxOf()[0]) }) + " · " : "") + T.neverExpire,')
+
+# tiers: Black is shown as Diamond; Profile explains how to move up
+R('    const tier = TIERS[tierName] || TIERS.Gold;', '    const tier = TIERS[tierName] || TIERS.Gold;\n    const TL = n => n === "Black" ? (T.fxDiamond || "Diamond") : n;')
+for a, b in [('tier: tier.next }', 'tier: TL(tier.next) }'), ('tier: tier.next,', 'tier: TL(tier.next),'), ('tier: tierName }', 'tier: TL(tierName) }'),
+             ('      tierName: tierName,', '      tierName: TL(tierName),'), ('return { key: name, name, need:', 'return { key: name, name: TL(name), need:')]:
+    t = t.replace(a, b)
+_tp0 = t.index('const TIER_PALETTE = {'); _tb = t.index('      Black:', _tp0); _te = t.index('\n    };', _tb)
+_bl = t[_tb:_te]
+for a, b in [('badgeBg: "#1C1F23", badgeFg: "var(--brand-tint)"', 'badgeBg: "#DCEFF8", badgeFg: "#163447"'),
+             ('badgeBg: "#1C1F23", badgeFg: "var(--s-100)"', 'badgeBg: "#DCEFF8", badgeFg: "#163447"'),
+             ('cardBg: "linear-gradient(135deg, #2A2E33 0%, #15181C 50%, #0A0C0F 100%)", cardFg: "#F4F6F3"', 'cardBg: "linear-gradient(135deg, #F4FBFF 0%, #CDE7F5 50%, #9FC8E0 100%)", cardFg: "#123044"')]:
+    _bl = _bl.replace(a, b)
+t = t[:_tb] + _bl + t[_te:]
+R('      tierPerk: perkFor(tierName, T, pts),', '''      tierPerk: perkFor(tierName, T, pts),
+      tierRule: T.fxTierRule,
+      tierLadder: ["Silver", "Gold", "Platinum", "Black"].map((name, i, arr) => {
+        const need = TIER_NEED[name], cur = name === tierName, isNext = name === tier.next, reached = need <= tier.earned && !cur;
+        const metal = { Silver: "#C3CAD2", Gold: "#C9A227", Platinum: "#A9BDBC", Black: "#9FC8E0" }[name];
+        return { key: "tl" + name, name: TL(name), initial: TL(name).charAt(0), metal,
+          need: need ? fill(T.fxTierNeed, { v: fmt(need, pts) }) : T.fxTierStart, perk: perkFor(name, T, pts) || TIERS[name].perk,
+          isCurrent: cur, isNext, isReached: reached, isLater: !cur && !isNext && !reached,
+          status: cur ? T.fxYouHere : isNext ? fill(T.fxToGo, { v: fmt(tier.at - tier.earned, pts) }) : reached ? "\\u2713" : "",
+          pct: tierPct + "%", rowBg: cur ? "var(--p-50)" : "transparent", sep: i < arr.length - 1 ? "1px solid var(--border-subtle)" : "none" };
+      }),''')
+# ladder labels follow the banner text colour (white was unreadable on bright banners)
+R('<span style="font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: #FFFFFF; opacity: {{ ts.opacity }};">{{ ts.name }}</span>',
+  '<span style="font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--banner-ink); opacity: {{ ts.opacity }};">{{ ts.name }}</span>')
+# "How to move up" in Profile, right under the balance card (before Your cards)
+_r0 = t.index('<!-- ============ REWARDS ============ -->')
+_yc = t.index('{{ t.yourCards }}', _r0); _ys = t.rindex('<div style="display: flex; flex-direction: column; gap: 10px; flex: none;">', _r0, _yc)
+t = t[:_ys] + '''<div style="display: flex; flex-direction: column; gap: 10px; flex: none;">
+              <div style="display: flex; flex-direction: column; gap: 3px;">
+                <span style="font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--text-secondary);">{{ t.fxTierHow }}</span>
+                <span style="font-size: 12px; line-height: 1.45; color: var(--text-tertiary); text-wrap: pretty;">{{ tierRule }}</span>
+              </div>
+              <div style="display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-card);">
+                <sc-for list="{{ tierLadder }}" as="tl" hint-placeholder-count="4">
+                  <div style="display: flex; flex-direction: column; gap: 8px; padding: 13px 15px; border-bottom: {{ tl.sep }}; background: {{ tl.rowBg }};">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div style="width: 30px; height: 30px; border-radius: 50%; flex: none; background: {{ tl.metal }}; color: #1D1D1F; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700;">{{ tl.initial }}</div>
+                      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                        <span style="font-size: 13.5px; font-weight: 600; color: var(--text-primary);">{{ tl.name }}</span>
+                        <span style="font-size: 12px; color: var(--text-secondary); text-wrap: pretty;">{{ tl.need }}</span>
+                        <span style="font-size: 12px; color: var(--text-tertiary); text-wrap: pretty;">{{ tl.perk }}</span>
+                      </div>
+                      <sc-if value="{{ tl.isCurrent }}" hint-placeholder-val="{{ false }}"><span style="flex: none; padding: 4px 9px; border-radius: 999px; background: var(--accent); color: #FFFFFF; font-size: 11.5px; font-weight: 600; white-space: nowrap;">{{ tl.status }}</span></sc-if>
+                      <sc-if value="{{ tl.isNext }}" hint-placeholder-val="{{ false }}"><span style="flex: none; font-size: 12px; font-weight: 600; color: var(--secondary-text); white-space: nowrap;">{{ tl.status }}</span></sc-if>
+                      <sc-if value="{{ tl.isReached }}" hint-placeholder-val="{{ false }}"><span style="flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--s-100); color: var(--secondary-text); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">{{ tl.status }}</span></sc-if>
+                    </div>
+                    <sc-if value="{{ tl.isNext }}" hint-placeholder-val="{{ false }}">
+                      <div style="height: 6px; border-radius: 999px; overflow: hidden; background: var(--s-100); margin-left: 42px;"><div style="width: {{ tl.pct }}; height: 100%; border-radius: 999px; background: var(--secondary);"></div></div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            ''' + t[_ys:]
