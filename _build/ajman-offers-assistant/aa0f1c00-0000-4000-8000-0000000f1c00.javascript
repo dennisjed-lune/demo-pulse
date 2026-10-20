@@ -243,9 +243,41 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
           if (b2.maxx >= 0 && b2.n > 20) b1 = b2; else b1 = pass(cs[0], false, 0, 0, W - 1, H - 1);
         }
         var minx = b1.minx, miny = b1.miny, maxx = b1.maxx, maxy = b1.maxy;
+        // logo = mark + words? split at empty columns (side by side) or rows (stacked) and keep the squarest piece: the mark
+        var on = function (i, j) { return p[(j * W + i) * 4 + 3] > 60; };
+        function pieces(horizontal) {
+          var a0 = horizontal ? minx : miny, a1 = horizontal ? maxx : maxy, b0 = horizontal ? miny : minx, b1x = horizontal ? maxy : maxx;
+          var gapMin = Math.max(3, Math.round((a1 - a0) * 0.02)), segs = [], start = -1, gap = 0;
+          for (var u = a0; u <= a1 + 1; u++) {
+            var any = false;
+            if (u <= a1) for (var v = b0; v <= b1x; v++) { if (horizontal ? on(u, v) : on(v, u)) { any = true; break; } }
+            if (any) { if (start < 0) start = u; gap = 0; }
+            else if (start >= 0) { gap++; if (gap >= gapMin || u > a1) { segs.push([start, u - gap]); start = -1; gap = 0; } }
+          }
+          return segs.map(function (sg) {
+            var lo = 1e9, hi = -1;
+            for (var u = sg[0]; u <= sg[1]; u++) for (var v = b0; v <= b1x; v++) if (horizontal ? on(u, v) : on(v, u)) { if (v < lo) lo = v; if (v > hi) hi = v; }
+            return horizontal ? { minx: sg[0], maxx: sg[1], miny: lo, maxy: hi } : { miny: sg[0], maxy: sg[1], minx: lo, maxx: hi };
+          });
+        }
+        var bw = maxx - minx + 1, bh = maxy - miny + 1;
+        if (bw > bh * 1.5 || bh > bw * 1.5) {
+          var ps = pieces(bw > bh);
+          if (ps.length > 1) {
+            var best = null, bestScore = -1;
+            ps.forEach(function (q) { var qw = q.maxx - q.minx + 1, qh = q.maxy - q.miny + 1; var sc = Math.min(qw, qh) / Math.max(qw, qh) * Math.sqrt(qw * qh); if (sc > bestScore) { bestScore = sc; best = q; } });
+            if (best && (best.maxx - best.minx + 1) * (best.maxy - best.miny + 1) > bw * bh * 0.04) { minx = best.minx; maxx = best.maxx; miny = best.miny; maxy = best.maxy; }
+          }
+        }
         x.putImageData(d, 0, 0);
         var w = maxx - minx + 1, h = maxy - miny + 1, S = Math.max(w, h), o = document.createElement("canvas"); o.width = o.height = S;
         o.getContext("2d").drawImage(c, minx, miny, w, h, (S - w) / 2, (S - h) / 2, w, h);
+        // the coloured mark on white, squared with a little padding, for the round logo spots
+        try {
+          var P = Math.round(S * 1.3), m = document.createElement("canvas"); m.width = m.height = P;
+          var mx = m.getContext("2d"); mx.fillStyle = "#FFFFFF"; mx.fillRect(0, 0, P, P); mx.drawImage(img, minx, miny, w, h, (P - w) / 2, (P - h) / 2, w, h);
+          window.__oaMark = m.toDataURL("image/png");
+        } catch (e) {}
         cb(o.toDataURL("image/png"));
       } catch (e) { cb(null); }
     };
@@ -254,7 +286,7 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
   }
   function bank(root) {
     if (!window.BANK || !root.querySelectorAll) return;
-    root.querySelectorAll("img[data-bankmark]").forEach(function (img) { if (window.BANK.logo && img.getAttribute("src") !== window.BANK.logo) { img.setAttribute("src", window.BANK.logo); img.style.objectFit = img.hasAttribute("data-fill") ? "cover" : "contain"; } });
+    root.querySelectorAll("img[data-bankmark]").forEach(function (img) { var want = img.hasAttribute("data-fill") && window.__oaMark ? window.__oaMark : window.BANK.logo; if (want && img.getAttribute("src") !== want) { img.setAttribute("src", want); img.style.objectFit = img.hasAttribute("data-fill") ? "cover" : "contain"; } });
     if (window.__oaWM) root.querySelectorAll("img[data-bankwater]").forEach(function (img) { if (img.getAttribute("src") !== window.__oaWM) img.setAttribute("src", window.__oaWM); img.style.display = ""; });
     else { root.querySelectorAll("img[data-bankwater]").forEach(function (img) { img.style.display = "none"; }); if (window.BANK.logo && !window.__oaWMBusy) { window.__oaWMBusy = true; makeWatermark(window.BANK.logo, function (url) { if (url) { window.__oaWM = url; bank(document); } }); } }
   }
