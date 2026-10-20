@@ -115,6 +115,8 @@ window.UI_FIX.ar.fxUserLine = "رقم المستخدم 2048-1193";
   Object.keys(MT).forEach(function (L) { M[L] = M[L] || {}; M[L][FAQ] = MT[L][0]; M[L][TWO] = MT[L][1]; });
 })();
 
+
+(function () { var A = {"en": "Almost there", "ar": "اقتربتِ من المكافأة", "fr": "Presque", "es": "Casi lo tienes", "pt": "Quase lá", "de": "Fast geschafft", "it": "Ci sei quasi", "hi": "बस थोड़ा और", "ur": "بس تھوڑا اور", "zh": "就差一点", "ru": "Почти готово"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxAlmost = A[L]; }); })();
 var CARD_WORDS = { en: ["debit", "credit"], ar: ["الخصم", "الائتمان"], fr: ["carte de débit", "carte de crédit"], es: ["tarjeta de débito", "tarjeta de crédito"],
   pt: ["cartão de débito", "cartão de crédito"], de: ["Debitkarte", "Kreditkarte"], it: ["carta di debito", "carta di credito"], hi: ["डेबिट कार्ड", "क्रेडिट कार्ड"],
   ur: ["ڈیبٹ کارڈ", "کریڈٹ کارڈ"], zh: ["借记卡", "信用卡"], ru: ["дебетовая", "кредитная"] };
@@ -122,6 +124,7 @@ var CARD_WORDS = { en: ["debit", "credit"], ar: ["الخصم", "الائتمان
 // Bank details (sales setup) + card-name tokens; runs once, after every string pack has merged.
 window.UI_PERSONALIZE = function (UI) {
   var B = window.BANK || {};
+  if (window.LUNE_PALETTE) window.LUNE_PALETTE();
   // the bundle renamed "Lune" to "Ajman Bank" in English source strings but not in the translation keys; add the renamed keys
   var M = window.MERCHANT_L10N || {};
   Object.keys(M).forEach(function (L) { var d = M[L]; Object.keys(d).forEach(function (k) { if (k.indexOf("Lune") >= 0) { var k2 = k.replace(/Lune/g, "Ajman Bank"); if (!(k2 in d)) d[k2] = d[k]; } }); });
@@ -165,7 +168,7 @@ window.UI_FIX.ar.fxRewardsName = "مكافآت مصرف عجمان";
     main = (window.BANK && window.BANK.lang) || document.documentElement.lang || "ar";
     if (main === "en") return;
     var st = document.createElement("style");
-    st.textContent = ".lsw{position:fixed;top:16px;right:16px;z-index:19000;display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);font-family:'Plus Jakarta Sans',-apple-system,sans-serif}.lsw button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:rgba(7,3,18,.6);cursor:pointer}.lsw button.on{background:#070312;color:#fff}@media (max-width:500px){.lsw{top:4px;right:50%;transform:translateX(50%);padding:2px}.lsw button{padding:4px 12px;font-size:11.5px}}";
+    st.textContent = ".lsw{position:fixed;top:16px;right:16px;z-index:19000;display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);font-family:'Plus Jakarta Sans',-apple-system,sans-serif}.lsw button{border:0;background:transparent;padding:6px 12px;min-height:36px;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:rgba(7,3,18,.6);cursor:pointer}.lsw button.on{background:#070312;color:#fff}@media (max-width:500px){.lsw{top:4px;right:50%;transform:translateX(50%);padding:2px}.lsw button{padding:4px 12px;font-size:11.5px;min-height:32px}}";
     document.head.appendChild(st);
     var w = document.createElement("div"); w.className = "lsw"; w.setAttribute("role", "group"); w.setAttribute("aria-label", "Demo language");
     function draw() { var cur = window.DEMO_LANG || main; w.innerHTML = [main, "en"].map(function (l) { return '<button type="button" data-l="' + l + '" class="' + (cur === l ? "on" : "") + '" lang="' + l + '">' + NAMES[l] + "</button>"; }).join(""); }
@@ -209,6 +212,71 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
   function start() { tag(document); mo.observe(document.body, { childList: true, subtree: true }); }
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
   var st = document.createElement("style");
-  st.textContent = "[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}";
+  st.textContent = "[role=button]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}[role=button]{transition:transform .12s ease,filter .12s ease}[role=button]:active{transform:scale(.98);filter:brightness(.96)}";
   (document.head || document.documentElement).appendChild(st);
 })();
+
+// ---- Palette: one source for every colour. Primary = actions, secondary = status/display, greys tinted by the bank.
+(function () {
+  function h2r(h) { h = h.replace("#", ""); if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join(""); return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+  function r2h(c) { return "#" + c.map(function (v) { v = Math.max(0, Math.min(255, Math.round(v))); return (v < 16 ? "0" : "") + v.toString(16); }).join("").toUpperCase(); }
+  function lin(v) { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }
+  function delin(v) { v = v <= 0.0031308 ? 12.92 * v : 1.055 * Math.pow(Math.max(v, 0), 1 / 2.4) - 0.055; return v * 255; }
+  function ok(hex) { var c = h2r(hex).map(lin);
+    var l = Math.cbrt(0.4122214708 * c[0] + 0.5363325363 * c[1] + 0.0514459929 * c[2]), m = Math.cbrt(0.2119034982 * c[0] + 0.6806995451 * c[1] + 0.1073969566 * c[2]), s = Math.cbrt(0.0883024619 * c[0] + 0.2817188376 * c[1] + 0.6299787005 * c[2]);
+    var L = 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, a = 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s, b = 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s;
+    return [L, Math.sqrt(a * a + b * b), Math.atan2(b, a)]; }
+  function hx(L, C, H) { L = Math.max(0, Math.min(1, L)); var a = C * Math.cos(H), b = C * Math.sin(H);
+    // reduce chroma until the colour fits in sRGB
+    for (var i = 0; i < 30; i++) {
+      var aa = C * Math.cos(H), bb = C * Math.sin(H);
+      var l = Math.pow(L + 0.3963377774 * aa + 0.2158037573 * bb, 3), m = Math.pow(L - 0.1055613458 * aa - 0.0638541728 * bb, 3), s = Math.pow(L - 0.0894841775 * aa - 1.2914855480 * bb, 3);
+      var r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s, g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s, b2 = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+      if (r >= -0.001 && r <= 1.001 && g >= -0.001 && g <= 1.001 && b2 >= -0.001 && b2 <= 1.001) return r2h([r, g, b2].map(delin));
+      C *= 0.9;
+    }
+    return r2h([L, L, L].map(function (v) { return delin(Math.pow(v, 3)); })); }
+  function lum(hex) { var c = h2r(hex).map(lin); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; }
+  function cr(a, b) { var x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  // darken (keeping hue) until white text on it passes AA with a margin
+  function usable(hex) { var o = ok(hex), L = o[0], C = Math.min(o[1], 0.25), H = o[2];
+    if (o[1] < 0.03 && L > 0.6) return "#1D1D1F";
+    var out = hx(L, C, H), i = 0; while (cr(out, "#FFFFFF") < 4.7 && i++ < 80) { L -= 0.01; out = hx(L, C, H); } return out; }
+  // lightest grey on this hue that still reads at AA on the given background
+  function textOn(bg, H, C, startL) { var L = startL, out = hx(L, C, H), i = 0; while (cr(out, bg) < 4.6 && i++ < 80) { L -= 0.01; out = hx(L, C, H); } return out; }
+
+  window.LUNE_PALETTE = function () {
+    var B = window.BANK || {};
+    var P = usable(B.color || "#B9500F"), po = ok(P);
+    var S = B.color2 ? usable(B.color2) : (B.en ? usable(po[0] > 0.45 ? hx(Math.min(po[0] - 0.14, 0.4), po[1] * 0.9, po[2]) : hx(Math.min(po[0] + 0.16, 0.55), po[1] * 0.95, po[2])) : "#7A1F2B"), so = ok(S);
+    var H = po[2], nC = Math.min(po[1] * 0.06, 0.008), tC = Math.min(po[1] * 0.08, 0.012);
+    var canvas = hx(0.985, nC, H), muted = hx(0.962, nC, H);
+    var v = {
+      "--bg-canvas": canvas, "--surface-card": "#FFFFFF", "--bg-raised": "#FFFFFF", "--surface-muted": muted,
+      "--border-subtle": hx(0.925, nC, H), "--border-default": hx(0.885, nC, H), "--border-strong": hx(0.80, nC, H),
+      "--text-primary": hx(0.22, tC, H), "--text-secondary": textOn(muted, H, tC, 0.42), "--text-tertiary": textOn(muted, H, tC, 0.56),
+      "--accent": P, "--lune-emerald": P, "--border-emerald": P, "--text-link": P, "--accent-text": textOn(hx(0.972, Math.min(po[1], 0.035), H), H, po[1], po[0]),
+      "--accent-hover": hx(po[0] - 0.06, po[1], H), "--accent-press": hx(po[0] - 0.11, po[1], H),
+      "--p-50": hx(0.972, Math.min(po[1], 0.035), H), "--p-100": hx(0.94, Math.min(po[1], 0.06), H), "--p-200": hx(0.89, Math.min(po[1], 0.085), H),
+      "--p-300": hx(0.80, Math.min(po[1], 0.12), H), "--p-400": hx(0.70, po[1], H), "--p-900": hx(0.28, po[1], H),
+      "--secondary": S, "--secondary-text": S, "--s-50": hx(0.972, Math.min(so[1], 0.035), so[2]), "--s-100": hx(0.93, Math.min(so[1], 0.06), so[2]),
+      "--s-400": hx(so[0] + 0.08, so[1], so[2]), "--s-700": hx(so[0] - 0.07, so[1], so[2]), "--s-800": hx(so[0] - 0.13, so[1], so[2]), "--s-900": hx(so[0] - 0.2, so[1], so[2]),
+      "--s-rgb": h2r(S).join(","), "--brand-rgb": h2r(P).join(","),
+      "--urgent": "#B42318", "--pending": "#92400E", "--pending-bg": "#FEF3C7"
+    };
+    // the old see-through tints become solid shades (same look on any background)
+    v["--surface-emerald"] = v["--p-50"]; v["--primary-10"] = v["--p-50"]; v["--primary-20"] = v["--p-100"]; v["--primary-30"] = v["--p-200"];
+    v["--primary-40"] = v["--p-300"]; v["--primary-50"] = v["--p-400"]; v["--primary-60"] = v["--p-400"]; v["--lune-mint"] = v["--p-100"];
+    v["--brand-light"] = v["--s-400"]; v["--brand-dark"] = v["--s-700"]; v["--brand-darker"] = v["--s-800"]; v["--brand-darkest"] = v["--s-900"];
+    v["--brand-tint"] = v["--s-100"]; v["--brand-mint"] = v["--s-50"];
+    var css = "html:root:root, html body [data-theme], html body [data-theme=\"light\"] {" + Object.keys(v).map(function (k) { return k + ":" + v[k]; }).join(";") + "}";
+    var st = document.getElementById("oa-palette") || document.createElement("style");
+    st.id = "oa-palette"; st.textContent = css; (document.head || document.documentElement).appendChild(st);
+    window.LUNE_PALETTE_VARS = v;
+    return v;
+  };
+  window.LUNE_PALETTE();
+})();
+
+// AED -> currency, snapshot from open.er-api.com (Tue, 20 Oct 2026 00:02:32 +0000); setup stores a live rate for the chosen currency
+window.FX_RATES = {"AED":1.0,"AFN":17.6685,"ALL":22.1032,"AMD":98.5456,"ANG":0.487406,"AOA":255.647,"ARS":414.798,"AUD":0.390067,"AWG":0.487406,"AZN":0.462621,"BAM":0.474761,"BBD":0.544588,"BDT":33.6605,"BGN":0.474761,"BHD":0.102383,"BIF":817.119,"BMD":0.272294,"BND":0.348479,"BOB":3.17932,"BRL":1.37501,"BSD":0.272294,"BTN":25.8831,"BWP":3.80165,"BYN":0.812568,"BZD":0.544588,"CAD":0.383922,"CDF":630.319,"CHF":0.225017,"CLF":0.00677,"CLP":267.587,"CNH":1.81943,"CNY":1.82264,"COP":864.362,"CRC":123.68,"CUP":6.53506,"CVE":26.7659,"CZK":5.90838,"DJF":48.3924,"DKK":1.81429,"DOP":16.7324,"DZD":36.601,"EGP":14.6785,"ERN":4.08441,"ETB":44.0594,"EUR":0.242742,"FJD":0.615105,"FKP":0.204516,"FOK":1.81386,"GBP":0.204517,"GEL":0.707067,"GGP":0.204516,"GHS":3.1845,"GIP":0.204516,"GMD":20.3145,"GNF":2404.13,"GTQ":2.08073,"GYD":56.9746,"HKD":2.13698,"HNL":7.30848,"HRK":1.82894,"HTG":35.6313,"HUF":88.0892,"IDR":4915.83,"ILS":0.845241,"IMP":0.204516,"INR":25.8833,"IQD":413.132,"IRR":470304.0,"ISK":33.0695,"JEP":0.204516,"JMD":43.2878,"JOD":0.193057,"JPY":43.1427,"KES":35.3353,"KGS":23.8196,"KHR":1103.69,"KID":0.390067,"KMF":119.421,"KRW":362.339,"KWD":0.084521,"KYD":0.226912,"KZT":123.124,"LAK":6087.32,"LBP":24370.3,"LKR":90.1672,"LRD":46.4608,"LSL":4.47308,"LYD":1.74871,"MAD":2.66519,"MDL":4.87664,"MGA":1246.24,"MKD":14.9969,"MMK":570.756,"MNT":978.188,"MOP":2.20109,"MRU":10.9589,"MUR":12.8601,"MVR":4.20342,"MWK":474.311,"MXN":5.02295,"MYR":1.11163,"MZN":17.3659,"NAD":4.47308,"NGN":362.919,"NIO":10.0188,"NOK":2.56494,"NPR":41.413,"NZD":0.48067,"OMR":0.104696,"PAB":0.272294,"PEN":0.937266,"PGK":1.23459,"PHP":17.1652,"PKR":75.3431,"PLN":1.06112,"PYG":1564.67,"QAR":0.99115,"RON":1.29215,"RSD":28.5088,"RUB":22.5427,"RWF":402.883,"SAR":1.0211,"SBD":2.1887,"SCR":3.96805,"SDG":123.632,"SEK":2.69979,"SGD":0.348479,"SHP":0.204516,"SLE":6.63252,"SLL":6632.52,"SOS":155.601,"SRD":10.3237,"SSP":1566.13,"STN":5.94717,"SYP":33.1153,"SZL":4.47308,"THB":9.1413,"TJS":2.51443,"TMT":0.95304,"TND":0.816723,"TOP":0.650034,"TRY":13.5007,"TTD":1.84275,"TVD":0.390067,"TWD":8.84687,"TZS":718.878,"UAH":12.2495,"UGX":1097.27,"USD":0.272294,"UYU":10.966,"UZS":3301.09,"VES":240.13,"VND":7038.95,"VUV":32.5308,"WST":0.747124,"XAF":159.228,"XCD":0.735194,"XCG":0.487406,"XDR":0.201177,"XOF":159.228,"XPF":28.9668,"YER":64.2552,"ZAR":4.47308,"ZMW":5.47599,"ZWG":7.25007,"ZWL":7.25007};

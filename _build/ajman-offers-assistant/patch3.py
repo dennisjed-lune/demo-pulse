@@ -163,3 +163,97 @@ R('  .thread::-webkit-scrollbar,', '''  @media (max-width: 500px) {
 # impeccable: tab bar without the hairline + wide-shadow combination
 R('border-radius: 28px; background: var(--bg-raised); border: 1px solid var(--border-default); box-shadow: 0 14px 34px rgba(0,46,42,.18), 0 2px 6px rgba(0,46,42,.08);',
   'border-radius: 28px; background: var(--bg-raised); box-shadow: 0 6px 20px rgba(7,3,18,.10), 0 1px 3px rgba(7,3,18,.08);')
+
+# ================= colours + stamps + currencies round =================
+# currencies: every ISO currency (rates from window.FX_RATES / the live rate saved at setup), Intl formatting for the ones without a hand-set symbol
+R('GBP: [0.215, "\\u00A3"], SGD: [0.35, "S$"] };', '''GBP: [0.215, "\\u00A3"], SGD: [0.35, "S$"] };
+const fxOf = () => { if (!FX[CUR] || (window.BANK && window.BANK.cur === CUR && window.BANK.fx && !FX[CUR].__live)) { const B = window.BANK; const r = (B && B.cur === CUR && B.fx) || (window.FX_RATES || {})[CUR]; if (r) { FX[CUR] = [r, FX[CUR] ? FX[CUR][1] : null]; if (B && B.cur === CUR && B.fx) FX[CUR].__live = true; } } return FX[CUR] ? FX[CUR] : FX.AED; };
+const intlCur = v => { try { const loc = NUM_LOCALE[LANG] || "en-US"; const d = new Intl.NumberFormat("en", { style: "currency", currency: CUR }).resolvedOptions().maximumFractionDigits; const fd = Math.abs(v) >= 10 ? 0 : Math.min(d, 2); const p = Math.pow(10, fd); const r = Math.round(v * p) / p; return new Intl.NumberFormat(loc, { style: "currency", currency: CUR, minimumFractionDigits: Number.isInteger(r) ? 0 : fd, maximumFractionDigits: fd }).format(r); } catch (e) { return nf(Math.round(v)) + " " + CUR; } };
+const intlSym = () => { try { return new Intl.NumberFormat(NUM_LOCALE[LANG] || "en-US", { style: "currency", currency: CUR }).formatToParts(1).filter(x => x.type === "currency")[0].value; } catch (e) { return CUR; } };''')
+t = t.replace('FX[CUR] || FX.AED', 'fxOf()')
+R('if (LANG === "ar" && AR_SYM[CUR]) return num', 'if (!f[1]) return intlCur(v); if (LANG === "ar" && AR_SYM[CUR]) return num')
+R('const curSym = () => (fxOf())[1].trim();', 'const curSym = () => ((fxOf())[1] || intlSym()).trim();')
+
+# secondary colour = status/display: hero cards, progress fills, stamp/streak dots, step numbers, bullets
+_tp0 = t.index('const TIER_PALETTE = {'); _tp1 = t.index('};', _tp0)
+_tp = t[_tp0:_tp1]
+for a, b in [("var(--accent)", "var(--secondary)"), ("rgba(var(--brand-rgb),", "rgba(var(--s-rgb),")]:
+    _tp = _tp.replace(a, b)
+_tp = _tp.replace('heroBtnFg: "var(--secondary)"', 'heroBtnFg: "var(--accent-text)"')
+t = t[:_tp0] + _tp + t[_tp1:]
+t = t.replace('flex: none; background: var(--accent); color', 'flex: none; background: var(--secondary); color')
+t = t.replace('linear-gradient(90deg, var(--lune-sea), var(--accent))', 'linear-gradient(90deg, var(--s-400), var(--secondary))')
+t = t.replace('height: 100%; border-radius: 999px; background: var(--accent);"></div>', 'height: 100%; border-radius: 999px; background: var(--secondary);"></div>')
+t = t.replace('border-radius: 5px 5px 2px 2px; background: var(--accent);', 'border-radius: 5px 5px 2px 2px; background: var(--secondary);')
+t = t.replace('width: 20px; height: 20px; border-radius: 50%; background: var(--accent); color', 'width: 20px; height: 20px; border-radius: 50%; background: var(--secondary); color')
+t = t.replace('width: 5px; height: 5px; margin-top: 6px; border-radius: 50%; background: var(--accent);', 'width: 5px; height: 5px; margin-top: 6px; border-radius: 50%; background: var(--secondary);')
+_g0 = t.index('      // streak'); _g1 = t.index('      // redeem', _g0)
+t = t[:_g0] + t[_g0:_g1].replace('"var(--accent)"', '"var(--secondary)"') + t[_g1:]
+_d0 = t.index('      // per-merchant progress on detail'); _d1 = t.index('    };\n  }\n}', _d0)
+t = t[:_d0] + t[_d0:_d1].replace('"var(--accent)"', '"var(--secondary)"') + t[_d1:]
+R('reportSteps: [1, 2, 3].map(i => ({ key: "st" + i, bg: i <= s.reportStep ? "var(--accent)"', 'reportSteps: [1, 2, 3].map(i => ({ key: "st" + i, bg: i <= s.reportStep ? "var(--secondary)"')
+# text in the bank colour uses the AA-checked text shade
+_b0, _b1 = t.index('</helmet>'), t.index('</x-dc>')
+t = t[:_b0] + re.sub(r'(?<![-\w])color: var\(--accent\)', 'color: var(--accent-text)', t[_b0:_b1]) + t[_b1:]
+
+# stamps on the offer card (activated offers with a stamp/visit/streak/challenge card)
+R('      onActivate: e => { e.stopPropagation(); this.tap(o.id); }\n    });', '''      onActivate: e => { e.stopPropagation(); this.tap(o.id); },
+      ...(() => { const ok = o.game && ["stamps", "visits", "streak", "challenge"].indexOf(o.game.kind) >= 0 && isActive(o.id); const g = ok ? progressOf(o, s.active) : null; const on = !!(g && g.done > 0 && g.done < g.target);
+        return { hasStamp: on, stampDots: on ? Array.from({ length: g.target }, (_, i) => ({ key: "sd" + i, bg: i < g.done ? "var(--secondary)" : "var(--s-100)" })) : [],
+          stampText: on ? fill(T.moreFor, { n: g.target - g.done, unit: (u => LANG === "en" && g.target - g.done === 1 ? u.replace(/ies$/, "y").replace(/s$/, "") : u)((T.units && T.units[g.unit]) || g.unit), reward: rewardL(g.reward) }) : "", stampCount: on ? g.done + "/" + g.target : "", stampLeft: on ? g.target - g.done : 0 }; })()
+    });''')
+R('<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</span>', '''<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</span>
+                        <sc-if value="{{ o.hasStamp }}" hint-placeholder-val="{{ false }}">
+                          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 4px;">
+                            <div style="display: flex; gap: 3px; flex: none;"><sc-for list="{{ o.stampDots }}" as="sd2" hint-placeholder-count="5"><span style="width: 14px; height: 5px; border-radius: 999px; background: {{ sd2.bg }};"></span></sc-for></div>
+                            <span style="font-size: 11.5px; line-height: 1.35; color: var(--secondary-text); text-wrap: pretty;">{{ o.stampText }}</span>
+                          </div>
+                        </sc-if>''')
+# "Almost there" on home: at most two activated, started cards, closest to done first
+R('      activeLine: n === 1 ? T.oneOfferActive : fill(T.offersActive, { n }),', '''      activeLine: n === 1 ? T.oneOfferActive : fill(T.offersActive, { n }),
+      almost: OFFERS.filter(o => !o.city).map(decorate).filter(o => o.hasStamp).sort((a, b) => a.stampLeft - b.stampLeft).slice(0, 2).map(o => Object.assign({}, o, { almostLine: o.brand + " \\u00b7 " + o.stampText })),
+      hasAlmost: !q && !s.cat && OFFERS.some(o => !o.city && o.game && isActive(o.id) && (g => g.done > 0 && g.done < g.target)(progressOf(o, s.active)) && ["stamps", "visits", "streak", "challenge"].indexOf(o.game.kind) >= 0),''')
+_h = t.index('<!-- ============ OFFERS HOME ============ -->')
+_k = t.index('<div style="position: sticky; top: 0; z-index: 6; padding: 8px 20px 12px;', _h)
+_k = t.rindex('</sc-if>', _h, _k) + len('</sc-if>')
+t = t[:_k] + '''
+          <sc-if value="{{ hasAlmost }}" hint-placeholder-val="{{ false }}">
+            <div style="margin: 4px 20px 12px; display: flex; flex-direction: column; gap: 8px; flex: none;">
+              <span style="font-size: 13px; font-weight: 600; color: var(--text-primary);">{{ t.fxAlmost }}</span>
+              <sc-for list="{{ almost }}" as="al" hint-placeholder-count="2">
+                <div sc-camel-on-click="{{ al.onOpen }}" style="cursor: pointer; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 11px 14px; border-radius: 16px; background: var(--surface-card); border: 1px solid var(--border-subtle);" style-hover="border-color: var(--border-default);">
+                  <div style="width: 36px; height: 36px; border-radius: 11px; overflow: hidden; flex: none; background: {{ al.logoBg }};"><img src="{{ al.logoUrl }}" alt="" style="width: 100%; height: 100%; object-fit: {{ al.logoFit }};"></div>
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ al.almostLine }}</span>
+                    <div style="display: flex; gap: 4px;"><sc-for list="{{ al.stampDots }}" as="ad" hint-placeholder-count="5"><span style="flex: 1; max-width: 32px; height: 6px; border-radius: 999px; background: {{ ad.bg }};"></span></sc-for></div>
+                  </div>
+                  <span style="flex: none; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--secondary-text);">{{ al.stampCount }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>''' + t[_k:]
+R('["زيارة", "زيارتان", "زيارات", "زيارة", "زيارة واحدة"]];', '["زيارة", "زيارتان", "زيارات", "زيارة", "زيارة واحدة"], ["رحلة", "رحلتان", "رحلات", "رحلة", "رحلة واحدة"], ["وجبة", "وجبتان", "وجبات", "وجبة", "وجبة واحدة"], ["حجز", "حجزان", "حجوزات", "حجزاً", "حجز واحد"]];')
+R('<span style="font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ al.almostLine }}</span>', '<span style="font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--text-primary); text-wrap: pretty;">{{ al.almostLine }}</span>')
+# rewards: stamp cards as the same compact list as "Almost there", fullest first
+_p0 = t.index('<div class="chips" style="display: flex; gap: 10px; overflow-x: auto; margin: 0 -20px; padding: 0 20px 4px;">\n                <sc-for list="{{ punchCards }}"')
+_p1 = t.index('</sc-for>', t.index('{{ pc.line }}')) + len('</sc-for>')
+_p1 = t.index('</div>', _p1) + len('</div>')
+t = t[:_p0] + '''<div style="display: flex; flex-direction: column; gap: 8px;">
+                <sc-for list="{{ punchCards }}" as="pc" hint-placeholder-count="3">
+                  <div sc-camel-on-click="{{ pc.onOpen }}" style="cursor: pointer; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 11px 14px; border-radius: 16px; background: var(--surface-card); border: 1px solid var(--border-subtle);" style-hover="border-color: var(--border-default);">
+                    <div style="width: 36px; height: 36px; border-radius: 11px; overflow: hidden; flex: none; background: {{ pc.logoBg }};"><img src="{{ pc.logoUrl }}" alt="" style="width: 100%; height: 100%; object-fit: cover;"></div>
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                      <span style="font-size: 13px; font-weight: 500; line-height: 1.35; color: var(--text-primary); text-wrap: pretty;">{{ pc.brand }} · {{ pc.line }}</span>
+                      <div style="display: flex; gap: 4px;"><sc-for list="{{ pc.dots }}" as="pd" hint-placeholder-count="5"><span style="flex: 1; max-width: 32px; height: 6px; border-radius: 999px; background: {{ pd.bg }};"></span></sc-for></div>
+                    </div>
+                    <span style="flex: none; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--secondary-text);">{{ pc.count }}</span>
+                  </div>
+                </sc-for>
+              </div>''' + t[_p1:]
+R('''          bg: i < g.done ? "var(--secondary)" : "transparent",
+          border: i < g.done ? "var(--secondary)" : "var(--border-default)", fg: "#FFFFFF"''', '''          bg: i < g.done ? "var(--secondary)" : "var(--s-100)",
+          border: i < g.done ? "var(--secondary)" : "var(--s-100)", fg: "#FFFFFF"''')
+R('      }).sort((a, b) => b.score - a.score).slice(0, 3).map(({ o, g, live }) => ({', '      }).sort((a, b) => b.score - a.score || (a.g.target - a.g.done) - (b.g.target - b.g.done)).slice(0, 3).map(({ o, g, live }) => ({')
+# ux-laws detector: tier pill tap area, search label for screen readers
+R('sc-camel-on-click="{{ goRewards }}" style="cursor: pointer; flex: none; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px;', 'sc-camel-on-click="{{ goRewards }}" style="cursor: pointer; flex: none; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; min-height: 40px; box-sizing: border-box;')
+R('placeholder="{{ t.search }}"', 'placeholder="{{ t.search }}" aria-label="{{ t.search }}"')

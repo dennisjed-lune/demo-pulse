@@ -4,7 +4,7 @@
   var KEY = "lune-oa-bank-v1";
   var TOKEN = "pk_PCfI5A2ISc2tZmQNIql7Ww";
   var PRESETS = [
-    { en: "Ajman Bank", font: "Inter", fontAr: "", fontSite: "Inter", ar: "مصرف عجمان", domain: "ajmanbank.ae", color: "#B9500F", cur: "AED" },
+    { en: "Ajman Bank", font: "Inter", fontAr: "", fontSite: "Inter", ar: "مصرف عجمان", domain: "ajmanbank.ae", color: "#B9500F", color2: "#7A1F2B", cur: "AED" },
     { en: "Emirates NBD", font: "Plus Jakarta Sans", fontAr: "Tajawal", fontSite: "Plus Jakarta Sans + Tajawal", ar: "الإمارات دبي الوطني", domain: "emiratesnbd.com", color: "#0B2D4D", cur: "AED" },
     { en: "ADIB", font: "Open Sans", fontAr: "", fontSite: "Open Sans", ar: "مصرف أبوظبي الإسلامي", domain: "adib.ae", cur: "AED" },
     { en: "FAB", font: "DM Sans", fontAr: "", fontSite: "Circular / FS Matthew (licensed)", ar: "بنك أبوظبي الأول", domain: "bankfab.com", cur: "AED" },
@@ -38,7 +38,13 @@
     l.href = "https://fonts.googleapis.com/css2?" + fams.map(function (f) { return "family=" + f.replace(/ /g, "+") + ":wght@400;500;600;700"; }).join("&") + "&display=swap";
     (document.head || document.documentElement).appendChild(l);
   }
-  var CURS = ["AED", "SAR", "BHD", "EUR", "GBP", "SGD", "USD"];
+  var CURS_TOP = ["AED", "SAR", "BHD", "QAR", "KWD", "OMR", "EUR", "GBP", "USD", "SGD"];
+  function curList() {
+    var all = Object.keys(window.FX_RATES || {}).concat(CURS_TOP).filter(function (c, i, a) { return a.indexOf(c) === i; });
+    var name = function (c) { try { return new Intl.DisplayNames(["en"], { type: "currency" }).of(c); } catch (e) { return c; } };
+    var rest = all.filter(function (c) { return CURS_TOP.indexOf(c) < 0; }).sort(function (a, b) { return name(a).localeCompare(name(b)); });
+    return CURS_TOP.concat(rest).map(function (c) { return [c, c + " · " + name(c)]; });
+  }
 
   // ---------- colour maths (sRGB <-> OKLCH) ----------
   function hexToRgb(h) { h = h.replace("#", ""); if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join(""); return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
@@ -116,7 +122,9 @@
           var h = Math.round(Math.atan2(Math.sqrt(3) * (g - b), 2 * r - g - b) / Math.PI * 180 / 15);
           var k = bins[h] || (bins[h] = [0, 0, 0, 0, 0]); k[0] += r; k[1] += g; k[2] += b; k[3]++; k[4] += s;
         }
-        var best = null; Object.keys(bins).forEach(function (h) { if (!best || bins[h][4] > best[4]) best = bins[h]; });
+        var best = null, bestH = null; Object.keys(bins).forEach(function (h) { if (!best || bins[h][4] > best[4]) { best = bins[h]; bestH = +h; } });
+        var sec = null; Object.keys(bins).forEach(function (h) { var dh = Math.abs(+h - bestH); dh = Math.min(dh, 24 - dh); if (dh >= 3 && bins[h][3] > 12 && bins[h][4] > (best ? best[4] * 0.15 : 0) && (!sec || bins[h][4] > sec[4])) sec = bins[h]; });
+        dominantColor.second = sec ? rgbToHex([sec[0] / sec[3], sec[1] / sec[3], sec[2] / sec[3]]) : (dark[3] > 12 && best ? rgbToHex([dark[0] / dark[3], dark[1] / dark[3], dark[2] / dark[3]]) : null);
         if (best && best[3] > 12) return res(rgbToHex([best[0] / best[3], best[1] / best[3], best[2] / best[3]]));
         if (dark[3] > 12) return res(rgbToHex([dark[0] / dark[3], dark[1] / dark[3], dark[2] / dark[3]]));
         res("#1D1D1F");
@@ -138,6 +146,7 @@
   if (saved && saved.en) {
     window.BANK = saved;
     applyTheme(saved.color || "#B9500F", saved.font, saved.fontAr);
+    if (window.LUNE_PALETTE) window.LUNE_PALETTE();
     try { document.title = saved.en + " Offers Assistant"; } catch (e) {}
   }
 
@@ -192,7 +201,7 @@
   function openSetup() {
     if (document.querySelector(".lsu")) return;
     var st = saved || {};
-    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
+    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", color2: st.color2 || "", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
     var wrap = el("div", { class: "lsu", role: "dialog", "aria-modal": "true", "aria-label": "Demo setup" });
     wrap.innerHTML = '<div class="lsu-card">\
 <div class="lsu-top"><span class="lsu-dot"></span>Lune · Pulse demo setup</div>\
@@ -204,7 +213,7 @@
 <div><label class="lsu-lbl" for="lsu-ar">Arabic name (optional)</label><input class="lsu-in" id="lsu-ar" dir="rtl" placeholder="الاسم بالعربية" autocomplete="off"></div></div>\
 <label class="lsu-lbl" for="lsu-dom">Website (for the logo)</label><input class="lsu-in" id="lsu-dom" placeholder="bank.com" autocomplete="off">\
 <div class="lsu-brand"><div class="lsu-logo"></div><div class="lsu-meta"><b class="lsu-name">No bank yet</b><span class="lsu-msg"></span>\
-<div class="lsu-col"><input type="color" id="lsu-col" aria-label="Brand colour"><span class="lsu-hex"></span></div></div>\
+<div class="lsu-col"><input type="color" id="lsu-col" aria-label="Primary colour, for buttons" title="Primary: buttons"><input type="color" id="lsu-col2" aria-label="Secondary colour, for cards and progress" title="Secondary: cards and progress"><span class="lsu-hex"></span></div></div>\
 <div class="lsu-prev"><span class="lsu-pill">Activate</span></div></div>\
 <p class="lsu-msg lsu-regnote" style="margin:-4px 0 14px"></p>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-lang">Language</label><select class="lsu-in" id="lsu-lang"></select></div>\
@@ -222,7 +231,8 @@
 <div class="lsu-foot"><span>Saved on this browser for next time.</span><button type="button" class="lsu-reset">Reset to Ajman Bank</button></div></div>';
     var $ = function (s) { return wrap.querySelector(s); };
     var en = $("#lsu-en"), ar = $("#lsu-ar"), dom = $("#lsu-dom"), col = $("#lsu-col"), cur = $("#lsu-cur");
-    CURS.forEach(function (c) { var o = el("option", { value: c }, c); cur.appendChild(o); });
+    function fillCur() { var list = curList(); if (cur.options.length >= list.length) return; cur.innerHTML = ""; list.forEach(function (c) { cur.appendChild(el("option", { value: c[0] }, esc(c[1]))); }); cur.value = S.cur; }
+    fillCur(); var curTry = 0, curIv = setInterval(function () { fillCur(); if ((window.FX_RATES && cur.options.length > 20) || ++curTry > 40) clearInterval(curIv); }, 150);
     function render() {
       en.value !== S.en && (en.value = S.en); ar.value !== S.ar && (ar.value = S.ar); dom.value !== S.domain && (dom.value = S.domain);
       cur.value = S.cur;
@@ -231,7 +241,7 @@
       $(".lsu-name").textContent = S.en || "No bank yet";
       var m = $(".lsu-msg"); m.textContent = S.busy ? "Looking up the logo…" : S.msg; m.className = "lsu-msg" + (/^No |placeholder/i.test(S.msg) ? " warn" : "");
       var acc = S.color ? usableAccent(S.color) : "#C9D3D0";
-      col.value = S.color ? S.color : "#B9500F";
+      col.value = S.color ? S.color : "#B9500F"; $("#lsu-col2").value = S.color2 || "#7A1F2B";
       $(".lsu-hex").textContent = S.color ? (acc.toUpperCase() !== S.color.toUpperCase() ? S.color + " → " + acc + " (darkened for readable text)" : acc) : "Colour comes from the logo";
       $(".lsu-pill").style.background = acc;
       $("#lsu-lang").value = S.lang;
@@ -251,14 +261,14 @@
         if (i >= domains.length) { S.busy = false; S.logo = ""; S.domain = ""; S.color = ""; S.logoFor = S.en.trim().toLowerCase(); S.msg = "No logo found. Type the bank's website below."; render(); return; }
         fetchLogo(domains[i]).then(function (data) {
           S.domain = domains[i]; S.logo = data; S.logoFor = S.en.trim().toLowerCase();
-          return (keepColor ? Promise.resolve(S.color) : dominantColor(data)).then(function (c) { S.color = c; S.busy = false; S.msg = "Logo from " + domains[i]; render(); });
+          dominantColor.second = null; return (keepColor ? Promise.resolve(S.color) : dominantColor(data)).then(function (c) { S.color = c; if (!keepColor) S.color2 = dominantColor.second || ""; S.busy = false; S.msg = "Logo from " + domains[i]; render(); });
         }).catch(function () { tryNext(i + 1); });
       };
       tryNext(0);
     }
     PRESETS.forEach(function (p) {
       var b = el("button", { type: "button", class: "lsu-chip", "data-region": p.region }, '<img alt="" src="' + logoUrl(p.domain) + '">' + esc(p.en));
-      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.region = p.region; S.color = p.color || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; S.lang = p.region === "me" ? (S.lang === "en" ? "en" : "ar") : "en"; lookup([p.domain], !!p.color); };
+      b.onclick = function () { S.en = p.en; S.ar = p.ar; S.cur = p.cur; S.region = p.region; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; S.lang = p.region === "me" ? (S.lang === "en" ? "en" : "ar") : "en"; lookup([p.domain], !!p.color); };
       $(".lsu-chips").appendChild(b);
     });
     en.oninput = function () { S.en = en.value; render(); };
@@ -271,7 +281,8 @@
     ar.oninput = function () { S.ar = ar.value; };
     dom.onchange = function () { S.domain = dom.value.trim().replace(/^https?:\/\//, "").replace(/\/.*$/, ""); if (S.domain) lookup([S.domain]); };
     col.oninput = function () { S.color = col.value; render(); };
-    cur.onchange = function () { S.cur = cur.value; };
+    var col2 = $("#lsu-col2"); col2.oninput = function () { S.color2 = col2.value; render(); };
+    cur.onchange = function () { if (cur.value) S.cur = cur.value; };
     [["#lsu-cust", "customer"], ["#lsu-rw", "rewards"], ["#lsu-db", "debit"], ["#lsu-cr", "credit"]].forEach(function (f) { var i = $(f[0]); i.value = S[f[1]]; i.oninput = function () { S[f[1]] = i.value; }; });
     $(".lsu-reg").onclick = function (e) { var r = e.target.getAttribute && e.target.getAttribute("data-r"); if (r && r !== S.region) { S.region = r; S.cur = REGION_DEF[r].cur; S.lang = REGION_DEF[r].lang; render(); } };
     var ls = $("#lsu-lang"); LANGS.forEach(function (l) { ls.appendChild(el("option", { value: l[0] }, l[1])); }); ls.onchange = function () { S.lang = ls.value; };
@@ -279,9 +290,16 @@
     var fa = $("#lsu-far"); FONT_AR.forEach(function (f) { fa.appendChild(el("option", { value: f }, f === "IBM Plex Sans Arabic" ? "IBM Plex Sans Arabic (default)" : f)); }); fa.onchange = function () { S.fontAr = fa.value; render(); };
     $(".lsu-go").onclick = function () {
       if (!S.en.trim()) return;
-      var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", lang: S.lang, cur: S.cur, region: S.region, font: S.font, fontAr: S.fontAr, fontSite: S.fontSite, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
-      try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { alert("This browser blocked saving the setup. Try a normal (non-private) window."); return; }
-      location.reload();
+      var go = $(".lsu-go"); go.disabled = true; go.textContent = "Getting the " + S.cur + " rate…";
+      var done = false, finish = function (fx) {
+        if (done) return; done = true;
+        var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", color2: S.color2, lang: S.lang, cur: S.cur, fx: fx || (window.FX_RATES || {})[S.cur] || null, region: S.region, font: S.font, fontAr: S.fontAr, fontSite: S.fontSite, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
+        try { sessionStorage.setItem(KEY + "-go", "1"); } catch (e) {}
+        try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { alert("This browser blocked saving the setup. Try a normal (non-private) window."); return; }
+        location.reload();
+      };
+      setTimeout(function () { finish(null); }, 3000);
+      fetch("https://open.er-api.com/v6/latest/AED").then(function (r) { return r.json(); }).then(function (d) { finish(d && d.rates && d.rates[S.cur]); }).catch(function () { finish(null); });
     };
     $(".lsu-reset").onclick = function () { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); };
     wrap.addEventListener("keydown", function (e) { if (e.key === "Escape" && saved) wrap.remove(); });
@@ -292,7 +310,10 @@
 
   function mount() {
     var s = document.createElement("style"); s.textContent = CSS; document.head.appendChild(s);
+    // every new visit starts at setup (pre-filled with the last bank); a reload during the same pitch goes straight back in
+    var started = false; try { started = sessionStorage.getItem(KEY + "-go") === "1"; } catch (e) {}
     if (!saved) { openSetup(); return; }
+    if (!started) openSetup();
     var fab = el("button", { type: "button", class: "lsu-fab", title: "Change the bank for this demo" },
       (saved.logo ? '<img alt="">' : "") + "Demo setup · " + esc(saved.en));
     if (saved.logo) fab.querySelector("img").src = saved.logo;
