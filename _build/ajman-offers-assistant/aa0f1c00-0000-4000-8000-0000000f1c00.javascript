@@ -238,7 +238,7 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
   }
   function bank(root) {
     if (!window.BANK || !root.querySelectorAll) return;
-    root.querySelectorAll("img[data-bankmark]").forEach(function (img) { if (window.BANK.logo && img.getAttribute("src") !== window.BANK.logo) { img.setAttribute("src", window.BANK.logo); img.style.objectFit = "contain"; } });
+    root.querySelectorAll("img[data-bankmark]").forEach(function (img) { if (window.BANK.logo && img.getAttribute("src") !== window.BANK.logo) { img.setAttribute("src", window.BANK.logo); img.style.objectFit = img.hasAttribute("data-fill") ? "cover" : "contain"; } });
     if (window.__oaWM) root.querySelectorAll("img[data-bankwater]").forEach(function (img) { if (img.getAttribute("src") !== window.__oaWM) img.setAttribute("src", window.__oaWM); img.style.display = ""; });
     else { root.querySelectorAll("img[data-bankwater]").forEach(function (img) { img.style.display = "none"; }); if (window.BANK.logo && !window.__oaWMBusy) { window.__oaWMBusy = true; makeWatermark(window.BANK.logo, function (url) { if (url) { window.__oaWM = url; bank(document); } }); } }
   }
@@ -297,7 +297,9 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
 
   window.LUNE_PALETTE = function () {
     var B = window.BANK || {};
-    var P = usable(B.color || "#B9500F"), po = ok(P);
+    // banner = the bank's exact colour; buttons = a darker shade of it (and AA for white text)
+    var E = B.color || "#E8732A", eo = ok(E);
+    var P = usable(hx(Math.max(0.18, eo[0] - 0.08), Math.min(eo[1], 0.25), eo[2])), po = ok(P);
     var S = B.color2 ? usable(B.color2) : (B.en ? usable(po[0] > 0.45 ? hx(Math.min(po[0] - 0.14, 0.4), po[1] * 0.9, po[2]) : hx(Math.min(po[0] + 0.16, 0.55), po[1] * 0.95, po[2])) : "#7A1F2B"), so = ok(S);
     var H = po[2], nC = Math.min(po[1] * 0.06, 0.008), tC = Math.min(po[1] * 0.08, 0.012);
     var canvas = hx(0.985, nC, H), muted = hx(0.962, nC, H);
@@ -305,6 +307,7 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
       "--bg-canvas": canvas, "--surface-card": "#FFFFFF", "--bg-raised": "#FFFFFF", "--surface-muted": muted,
       "--border-subtle": hx(0.925, nC, H), "--border-default": hx(0.885, nC, H), "--border-strong": hx(0.80, nC, H),
       "--text-primary": hx(0.22, tC, H), "--text-secondary": textOn(muted, H, tC, 0.42), "--text-tertiary": textOn(muted, H, tC, 0.56),
+      "--banner": E, "--banner-ink": cr(E, "#FFFFFF") >= 4.5 ? "#FFFFFF" : hx(0.2, Math.min(eo[1], 0.04), eo[2]),
       "--accent": P, "--lune-emerald": P, "--border-emerald": P, "--text-link": P, "--accent-text": textOn(hx(0.972, Math.min(po[1], 0.035), H), H, po[1], po[0]),
       "--accent-hover": hx(po[0] - 0.06, po[1], H), "--accent-press": hx(po[0] - 0.11, po[1], H),
       "--p-50": hx(0.972, Math.min(po[1], 0.035), H), "--p-100": hx(0.94, Math.min(po[1], 0.06), H), "--p-200": hx(0.89, Math.min(po[1], 0.085), H),

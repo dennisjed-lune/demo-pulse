@@ -4,7 +4,7 @@
   var KEY = "lune-oa-bank-v1";
   var TOKEN = "pk_PCfI5A2ISc2tZmQNIql7Ww";
   var PRESETS = [
-    { en: "Ajman Bank", font: "Inter", fontAr: "", fontSite: "Inter", ar: "مصرف عجمان", domain: "ajmanbank.ae", color: "#B9500F", color2: "#7A1F2B", cur: "AED" },
+    { en: "Ajman Bank", font: "Inter", fontAr: "", fontSite: "Inter", ar: "مصرف عجمان", domain: "ajmanbank.ae", color: "#E8732A", color2: "#7A1F2B", cur: "AED" },
     { en: "Emirates NBD", font: "Plus Jakarta Sans", fontAr: "Tajawal", fontSite: "Plus Jakarta Sans + Tajawal", ar: "الإمارات دبي الوطني", domain: "emiratesnbd.com", color: "#0B2D4D", cur: "AED" },
     { en: "ADIB", font: "Open Sans", fontAr: "", fontSite: "Open Sans", ar: "مصرف أبوظبي الإسلامي", domain: "adib.ae", cur: "AED" },
     { en: "FAB", font: "DM Sans", fontAr: "", fontSite: "Circular / FS Matthew (licensed)", ar: "بنك أبوظبي الأول", domain: "bankfab.com", cur: "AED" },

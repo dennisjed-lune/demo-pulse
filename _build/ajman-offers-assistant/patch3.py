@@ -330,3 +330,9 @@ R('<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</sp
                             <span style="font-size: 11.5px; line-height: 1.35; color: var(--secondary-text); text-wrap: pretty;">{{ o.punchText }}</span>
                           </div>
                         </sc-if>''')
+
+# banner (hero cards) in the bank's exact colour, text colour chosen for contrast; buttons use a darker shade
+t = t.replace('flex: none; background: var(--secondary); color: #FFFFFF; box-shadow:', 'flex: none; background: var(--banner); color: var(--banner-ink); box-shadow:')
+# search-bar assistant button: the bank logo fills the circle
+R('''<img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" alt="Ask Ajman Bank" style="width: 78%; height: 78%; display: block;">''',
+  '''<img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" data-fill="1" alt="Ask Ajman Bank" style="width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 50%;">''')
