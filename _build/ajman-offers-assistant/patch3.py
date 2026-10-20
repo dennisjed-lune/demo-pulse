@@ -302,3 +302,9 @@ _hk = _rs.rindex('</div>\n        </div>\n      </sc-if>')
 _rs = _rs[:_hk] + _help + '          ' + _rs[_hk:]
 t = t[:_r0] + _rs + t[_r1:]
 R('      navTabs: [["offers", T.earn], ["redeem", T.redeem], ["rewards", T.rewards]].map(', '      navTabs: [["offers", T.earn], ["redeem", T.redeem], ["rewards", T.fxProfile || T.rewards]].map(')
+
+# drop VOX (bad logo: logo.dev serves the MAF group mark); Europe/Asia keep the slot as Pathé / Shaw Theatres
+R('    if (window.REGION_APPLY && !OFFERS.__region) {', '''    if (!OFFERS.__vox) { OFFERS.__vox = true; const reg = window.BANK && window.BANK.region; if (reg !== "eu" && reg !== "asia") { const vi = OFFERS.findIndex(o => o.id === "vox"); if (vi >= 0) OFFERS.splice(vi, 1); } }
+    if (window.REGION_APPLY && !OFFERS.__region) {''')
+R('{ id: "x3", brand: "VOX Cinemas", logo: "vox", offer: "vox", date: "28 Jul", aed: 160, rate: 15, online: false, days: 9 },',
+  '{ id: "x3", brand: "KidZania", logo: "kidzania", offer: "kidzania", date: "28 Jul", aed: 160, rate: 12, online: false, days: 9 },')
