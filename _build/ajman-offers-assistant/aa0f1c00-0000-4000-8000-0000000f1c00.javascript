@@ -117,6 +117,8 @@ window.UI_FIX.ar.fxUserLine = "رقم المستخدم 2048-1193";
 
 
 (function () { var A = {"en": "Almost there", "ar": "اقتربتِ من المكافأة", "fr": "Presque", "es": "Casi lo tienes", "pt": "Quase lá", "de": "Fast geschafft", "it": "Ci sei quasi", "hi": "बस थोड़ा और", "ur": "بس تھوڑا اور", "zh": "就差一点", "ru": "Почти готово"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxAlmost = A[L]; }); })();
+
+(function () { var A = {"en": "Profile", "ar": "حسابي", "fr": "Profil", "es": "Perfil", "pt": "Perfil", "de": "Profil", "it": "Profilo", "hi": "प्रोफ़ाइल", "ur": "پروفائل", "zh": "我的", "ru": "Профиль"}; Object.keys(A).forEach(function (L) { window.UI_FIX[L] = window.UI_FIX[L] || {}; window.UI_FIX[L].fxProfile = A[L]; }); })();
 var CARD_WORDS = { en: ["debit", "credit"], ar: ["الخصم", "الائتمان"], fr: ["carte de débit", "carte de crédit"], es: ["tarjeta de débito", "tarjeta de crédito"],
   pt: ["cartão de débito", "cartão de crédito"], de: ["Debitkarte", "Kreditkarte"], it: ["carta di debito", "carta di credito"], hi: ["डेबिट कार्ड", "क्रेडिट कार्ड"],
   ur: ["ڈیبٹ کارڈ", "کریڈٹ کارڈ"], zh: ["借记卡", "信用卡"], ru: ["дебетовая", "кредитная"] };
@@ -187,10 +189,56 @@ Object.assign(window.MERCHANT_L10N.ar = window.MERCHANT_L10N.ar || {}, {
 
 // Keyboard and screen-reader access for clickable divs in the prototype
 (function () {
+  // turn a logo (any background) into a white mark on transparent, cropped to the mark and centred in a square
+  function makeWatermark(src, cb) {
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var W = img.naturalWidth, H = img.naturalHeight, c = document.createElement("canvas"); c.width = W; c.height = H;
+        var x = c.getContext("2d"); x.drawImage(img, 0, 0);
+        var d = x.getImageData(0, 0, W, H), p = d.data;
+        var corner = function (i, j) { var k = (j * W + i) * 4; return [p[k], p[k + 1], p[k + 2], p[k + 3]]; };
+        var src0 = new Uint8ClampedArray(p);
+        var cs = [corner(1, 1), corner(W - 2, 1), corner(1, H - 2), corner(W - 2, H - 2)];
+        // pass: alpha = distance from a background colour (or the pixel's own alpha when the background is clear)
+        function pass(bg, clear, x0, y0, x1, y1) {
+          var box = { minx: W, miny: H, maxx: -1, maxy: -1, n: 0 };
+          for (var j = 0; j < H; j++) for (var i = 0; i < W; i++) {
+            var k = (j * W + i) * 4, a = 0;
+            if (i >= x0 && i <= x1 && j >= y0 && j <= y1) {
+              if (clear) a = src0[k + 3];
+              else { var dr = src0[k] - bg[0], dg = src0[k + 1] - bg[1], db = src0[k + 2] - bg[2]; a = Math.max(0, Math.min(255, (Math.sqrt(dr * dr + dg * dg + db * db) - 28) * 3)) * src0[k + 3] / 255; }
+            }
+            p[k] = p[k + 1] = p[k + 2] = 255; p[k + 3] = a;
+            if (a > 60) { box.n++; if (i < box.minx) box.minx = i; if (i > box.maxx) box.maxx = i; if (j < box.miny) box.miny = j; if (j > box.maxy) box.maxy = j; }
+          }
+          return box;
+        }
+        var b1 = pass(cs[0], cs.every(function (q) { return q[3] < 30; }), 0, 0, W - 1, H - 1);
+        if (b1.maxx < 0) return cb(null);
+        // the logo is a mark on a solid tile: use the tile colour as background, inside the tile only
+        var area = (b1.maxx - b1.minx + 1) * (b1.maxy - b1.miny + 1);
+        if (b1.n > area * 0.6) {
+          var inset = Math.max(2, Math.round((b1.maxx - b1.minx) * 0.06)), ty = Math.round((b1.miny + b1.maxy) / 2);
+          var tk = (ty * W + b1.minx + inset) * 4, tile = [src0[tk], src0[tk + 1], src0[tk + 2]];
+          var b2 = pass(tile, false, b1.minx + inset, b1.miny + inset, b1.maxx - inset, b1.maxy - inset);
+          if (b2.maxx >= 0 && b2.n > 20) b1 = b2; else b1 = pass(cs[0], false, 0, 0, W - 1, H - 1);
+        }
+        var minx = b1.minx, miny = b1.miny, maxx = b1.maxx, maxy = b1.maxy;
+        x.putImageData(d, 0, 0);
+        var w = maxx - minx + 1, h = maxy - miny + 1, S = Math.max(w, h), o = document.createElement("canvas"); o.width = o.height = S;
+        o.getContext("2d").drawImage(c, minx, miny, w, h, (S - w) / 2, (S - h) / 2, w, h);
+        cb(o.toDataURL("image/png"));
+      } catch (e) { cb(null); }
+    };
+    img.onerror = function () { cb(null); };
+    img.src = src;
+  }
   function bank(root) {
     if (!window.BANK || !root.querySelectorAll) return;
     root.querySelectorAll("img[data-bankmark]").forEach(function (img) { if (window.BANK.logo && img.getAttribute("src") !== window.BANK.logo) { img.setAttribute("src", window.BANK.logo); img.style.objectFit = "contain"; } });
-    root.querySelectorAll("img[data-bankwater]").forEach(function (img) { img.style.display = "none"; });
+    if (window.__oaWM) root.querySelectorAll("img[data-bankwater]").forEach(function (img) { if (img.getAttribute("src") !== window.__oaWM) img.setAttribute("src", window.__oaWM); img.style.display = ""; });
+    else { root.querySelectorAll("img[data-bankwater]").forEach(function (img) { img.style.display = "none"; }); if (window.BANK.logo && !window.__oaWMBusy) { window.__oaWMBusy = true; makeWatermark(window.BANK.logo, function (url) { if (url) { window.__oaWM = url; bank(document); } }); } }
   }
   function tag(root) {
     bank(root);

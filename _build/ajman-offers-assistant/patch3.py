@@ -202,13 +202,7 @@ R('      onActivate: e => { e.stopPropagation(); this.tap(o.id); }\n    });', ''
         return { hasStamp: on, stampDots: on ? Array.from({ length: g.target }, (_, i) => ({ key: "sd" + i, bg: i < g.done ? "var(--secondary)" : "var(--s-100)" })) : [],
           stampText: on ? fill(T.moreFor, { n: g.target - g.done, unit: (u => LANG === "en" && g.target - g.done === 1 ? u.replace(/ies$/, "y").replace(/s$/, "") : u)((T.units && T.units[g.unit]) || g.unit), reward: rewardL(g.reward) }) : "", stampCount: on ? g.done + "/" + g.target : "", stampLeft: on ? g.target - g.done : 0 }; })()
     });''')
-R('<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</span>', '''<span style="font-size: 12px; color: var(--text-secondary);">{{ o.deal }}</span>
-                        <sc-if value="{{ o.hasStamp }}" hint-placeholder-val="{{ false }}">
-                          <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 4px;">
-                            <div style="display: flex; gap: 3px; flex: none;"><sc-for list="{{ o.stampDots }}" as="sd2" hint-placeholder-count="5"><span style="width: 14px; height: 5px; border-radius: 999px; background: {{ sd2.bg }};"></span></sc-for></div>
-                            <span style="font-size: 11.5px; line-height: 1.35; color: var(--secondary-text); text-wrap: pretty;">{{ o.stampText }}</span>
-                          </div>
-                        </sc-if>''')
+# (dot row on offer cards removed: punch cards live in 'Almost there' and in the offer detail)
 # "Almost there" on home: at most two activated, started cards, closest to done first
 R('      activeLine: n === 1 ? T.oneOfferActive : fill(T.offersActive, { n }),', '''      activeLine: n === 1 ? T.oneOfferActive : fill(T.offersActive, { n }),
       almost: OFFERS.filter(o => !o.city).map(decorate).filter(o => o.hasStamp).sort((a, b) => a.stampLeft - b.stampLeft).slice(0, 2).map(o => Object.assign({}, o, { almostLine: o.brand + " \\u00b7 " + o.stampText })),
@@ -257,3 +251,54 @@ R('      }).sort((a, b) => b.score - a.score).slice(0, 3).map(({ o, g, live }) =
 # ux-laws detector: tier pill tap area, search label for screen readers
 R('sc-camel-on-click="{{ goRewards }}" style="cursor: pointer; flex: none; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px;', 'sc-camel-on-click="{{ goRewards }}" style="cursor: pointer; flex: none; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; min-height: 40px; box-sizing: border-box;')
 R('placeholder="{{ t.search }}"', 'placeholder="{{ t.search }}" aria-label="{{ t.search }}"')
+
+
+# ================= Profile tab + punch cards in one place + bank watermark =================
+# Rewards tab becomes Profile: title + tab label
+_r0 = t.index('<!-- ============ REWARDS ============ -->')
+_r1 = t.index('<!-- ============ REDEEM ============ -->')
+_rs = t[_r0:_r1]
+_rs = _rs.replace('letter-spacing: -.03em; color: var(--text-primary);">{{ t.rewards }}</span>', 'letter-spacing: -.03em; color: var(--text-primary);">{{ t.fxProfile }}</span>', 1)
+# punch card list leaves Profile (it lives in "Almost there" on Earn)
+_pi = _rs.index('{{ t.punch }}'); _ps = _rs.rindex('<div style="display: flex; flex-direction: column; gap: 11px; flex: none;">', 0, _pi)
+_pe = _rs.index('<sc-if value="{{ showExtras }}"', _rs.index('{{ punchCards }}')); _pe = _rs.rindex('</div>', 0, _pe) + 6
+_rs = _rs[:_ps] + '<sc-if value="{{ showExtras }}" hint-placeholder-val="{{ false }}">' + _rs[_ps:_pe] + '</sc-if>' + _rs[_pe:]
+# your cards, right under the balance card
+_cards = """<div style="display: flex; flex-direction: column; gap: 10px; flex: none;">
+              <span style="font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--text-secondary);">{{ t.yourCards }}</span>
+              <div style="display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-card);">
+                <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-bottom: {{ c.sep }};">
+                    <div style="width: 34px; height: 24px; border-radius: 5px; background: var(--secondary); display: flex; align-items: flex-end; padding: 3px 4px; flex: none;">
+                      <span style="font-size: 7px; font-weight: 500; color: #FFFFFF;">{{ c.last4 }}</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0;">
+                      <span style="font-size: 13px; font-weight: 500; color: var(--text-primary);">{{ c.name }} ···· {{ c.last4 }}</span>
+                      <span style="font-size: 11.5px; color: var(--text-secondary); text-wrap: pretty;">{{ c.meta }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            """
+_ci = _rs.index('<sc-if value="{{ showExtras }}" hint-placeholder-val="{{ false }}">')
+_rs = _rs[:_ci] + _cards + _rs[_ci:]
+# help at the end: report missing cashback + FAQs
+_help = """<div style="display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-card); flex: none;">
+              <div sc-camel-on-click="{{ goReport }}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 13px 15px; cursor: pointer;" style-hover="background: var(--surface-emerald);">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: var(--surface-muted); color: var(--text-secondary); font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex: none;">!</div>
+                <span style="flex: 1; font-size: 12.5px; font-weight: 500; color: var(--text-primary);">{{ t.report }}</span>
+                <span style="flex: none; font-size: 14px; color: var(--text-tertiary);">›</span>
+              </div>
+              <div sc-camel-on-click="{{ goFaq }}" style="display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 13px 15px; cursor: pointer; border-top: 1px solid var(--border-subtle);" style-hover="background: var(--surface-emerald);">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: var(--surface-muted); color: var(--text-secondary); font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex: none;">?</div>
+                <span style="flex: 1; font-size: 12.5px; font-weight: 500; color: var(--text-primary);">{{ t.faqs }}</span>
+                <span style="flex: none; font-size: 14px; color: var(--text-tertiary);">›</span>
+              </div>
+            </div>
+"""
+_hk = _rs.rindex('</div>\n        </div>\n      </sc-if>')
+_rs = _rs[:_hk] + _help + '          ' + _rs[_hk:]
+t = t[:_r0] + _rs + t[_r1:]
+R('      navTabs: [["offers", T.earn], ["redeem", T.redeem], ["rewards", T.rewards]].map(', '      navTabs: [["offers", T.earn], ["redeem", T.redeem], ["rewards", T.fxProfile || T.rewards]].map(')
