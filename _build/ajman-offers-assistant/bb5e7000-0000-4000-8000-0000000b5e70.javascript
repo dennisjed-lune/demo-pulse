@@ -183,7 +183,8 @@
 .lsu-fab{position:fixed;top:16px;left:16px;z-index:19000;display:flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border:1px solid rgba(0,0,0,.08);border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);font-family:'Plus Jakarta Sans',-apple-system,sans-serif;font-size:12px;font-weight:600;color:#070312;cursor:pointer;opacity:.55;transition:opacity .2s}\
 .lsu-fab:hover,.lsu-fab:focus-visible{opacity:1}\
 .lsu-fab img{width:22px;height:22px;border-radius:50%;object-fit:contain;background:#fff}\
-@media (max-width:480px){.lsu-row{grid-template-columns:1fr}.lsu-card{padding:22px 18px}}";
+@media (max-width:480px){.lsu-row{grid-template-columns:1fr}.lsu-card{padding:22px 18px}}\
+@media (max-width:500px){.lsu-fab{top:4px;left:8px;padding:3px 9px 3px 4px;font-size:0;gap:0;opacity:.7}.lsu-fab img{width:20px;height:20px}.lsu-fab::after{content:'Setup';font-size:11.5px;margin-left:5px}}";
 
   function el(tag, attrs, html) { var e = document.createElement(tag); Object.keys(attrs || {}).forEach(function (k) { if (k === "class") e.className = attrs[k]; else e.setAttribute(k, attrs[k]); }); if (html != null) e.innerHTML = html; return e; }
   function esc(s) { return String(s || "").replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }

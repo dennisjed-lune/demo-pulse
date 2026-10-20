@@ -152,6 +152,7 @@ window.UI_PERSONALIZE = function (UI) {
     });
     if (B.debit) T.card1 = B.debit;
     if (B.credit) T.card2 = B.credit;
+    if (typeof T.fxUserLine === "string") T.fxUserLine = T.fxUserLine.replace(/(\d{4}-\d{4})/, "\u2066$1\u2069");
   });
 };
 window.UI_FIX.ar.fxRewardsName = "مكافآت مصرف عجمان";
@@ -164,11 +165,11 @@ window.UI_FIX.ar.fxRewardsName = "مكافآت مصرف عجمان";
     main = (window.BANK && window.BANK.lang) || document.documentElement.lang || "ar";
     if (main === "en") return;
     var st = document.createElement("style");
-    st.textContent = ".lsw{position:fixed;top:16px;right:16px;z-index:19000;display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);font-family:'Plus Jakarta Sans',-apple-system,sans-serif}.lsw button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:rgba(7,3,18,.6);cursor:pointer}.lsw button.on{background:#070312;color:#fff}";
+    st.textContent = ".lsw{position:fixed;top:16px;right:16px;z-index:19000;display:flex;padding:3px;border-radius:999px;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.08);font-family:'Plus Jakarta Sans',-apple-system,sans-serif}.lsw button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font:inherit;font-size:12px;font-weight:600;color:rgba(7,3,18,.6);cursor:pointer}.lsw button.on{background:#070312;color:#fff}@media (max-width:500px){.lsw{top:4px;right:50%;transform:translateX(50%);padding:2px}.lsw button{padding:4px 12px;font-size:11.5px}}";
     document.head.appendChild(st);
     var w = document.createElement("div"); w.className = "lsw"; w.setAttribute("role", "group"); w.setAttribute("aria-label", "Demo language");
     function draw() { var cur = window.DEMO_LANG || main; w.innerHTML = [main, "en"].map(function (l) { return '<button type="button" data-l="' + l + '" class="' + (cur === l ? "on" : "") + '" lang="' + l + '">' + NAMES[l] + "</button>"; }).join(""); }
-    w.onclick = function (e) { var l = e.target.getAttribute && e.target.getAttribute("data-l"); if (!l) return; window.DEMO_LANG = l === main ? null : l; draw(); };
+    w.onclick = function (e) { var l = e.target.getAttribute && e.target.getAttribute("data-l"); if (!l) return; window.DEMO_LANG = l === main ? null : l; draw(); if (window.__oaRender) window.__oaRender(); };
     draw(); document.body.appendChild(w);
   }
   (function wait() { if (document.body && document.documentElement.lang && document.querySelector("[data-theme]")) mount(); else if (tries++ < 200) setTimeout(wait, 50); })();
