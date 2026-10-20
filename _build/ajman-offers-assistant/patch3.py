@@ -422,3 +422,49 @@ t = re.sub(r'(<div style="height: [56]px; border-radius: 999px; overflow: hidden
 # banner's outline button follows the banner text colour too
 R('border: 1px solid rgba(255,255,255,.55); background: rgba(255,255,255,.12); color: #FFFFFF; text-align: center; font-size: 13px; font-weight: 500; white-space: nowrap;" style-hover="background: rgba(255,255,255,.2);">{{ t.statementBtn }}',
   'border: 1px solid color-mix(in srgb, var(--banner-ink) 55%, transparent); background: color-mix(in srgb, var(--banner-ink) 8%, transparent); color: var(--banner-ink); text-align: center; font-size: 13px; font-weight: 500; white-space: nowrap;" style-hover="background: color-mix(in srgb, var(--banner-ink) 16%, transparent);">{{ t.statementBtn }}')
+
+# banner's Redeem button: filled with the banner text colour, label in the banner colour
+R('font-size: 13px; font-weight: 500; background: #FFFFFF; color: var(--accent-text);" style-hover="background: var(--lune-mint);">{{ t.redeem }}</div>',
+  'font-size: 13px; font-weight: 600; background: var(--banner-ink); color: var(--banner);" style-hover="opacity: .9;">{{ t.redeem }}</div>')
+
+# Redeem partners: the airline + hotel programmes asked for, grouped
+_P0 = t.index('const PARTNERS = ['); _P1 = t.index('];', _P0) + 2
+t = t[:_P0] + '''const PARTNERS = [
+  { id: "etihad", kind: "air", name: "Etihad Guest", unit: "Etihad Guest Miles", unitOne: "Guest Mile", logo: "ld:etihad.com", color: "#FFFFFF", fg: "#FFFFFF", initial: "E", account: "EY ···· 8821", rate: 0.5 },
+  { id: "saudia", kind: "air", name: "Saudia AlFursan", unit: "AlFursan miles", unitOne: "AlFursan mile", logo: "ld:saudiairlines.com", color: "#FFFFFF", fg: "#006C35", initial: "S", account: null, rate: 0.5 },
+  { id: "flynas", kind: "air", name: "flynas nasmiles", unit: "SMILE points", unitOne: "SMILE point", logo: "ld:flynas.com", color: "#FFFFFF", fg: "#00A99D", initial: "f", account: null, rate: 0.8 },
+  { id: "qatar", kind: "air", name: "Qatar Airways Privilege Club", unit: "Avios", unitOne: "Avios", logo: "ld:qatarairways.com", color: "#FFFFFF", fg: "#5C0632", initial: "Q", account: null, rate: 0.4 },
+  { id: "airarabia", kind: "air", name: "Air Arabia Airewards", unit: "Airewards points", unitOne: "Airewards point", logo: "ld:airarabia.com", color: "#FFFFFF", fg: "#E3153B", initial: "A", account: null, rate: 0.6 },
+  { id: "cathay", kind: "air", name: "Cathay Asia Miles", unit: "Asia Miles", unitOne: "Asia Mile", logo: "ld:cathaypacific.com", color: "#FFFFFF", fg: "#006564", initial: "C", account: null, rate: 0.4 },
+  { id: "turkish", kind: "air", name: "Turkish Airlines Miles&Smiles", unit: "Miles&Smiles miles", unitOne: "Miles&Smiles mile", logo: "ld:turkishairlines.com", color: "#FFFFFF", fg: "#C70A0C", initial: "T", account: null, rate: 0.5 },
+  { id: "lufthansa", kind: "air", name: "Lufthansa Miles & More", unit: "Miles & More miles", unitOne: "Miles & More mile", logo: "ld:lufthansa.com", color: "#FFFFFF", fg: "#05164D", initial: "L", account: null, rate: 0.4 },
+  { id: "flyingblue", kind: "air", name: "Air France KLM Flying Blue", unit: "Flying Blue Miles", unitOne: "Flying Blue Mile", logo: "ld:flyingblue.com", color: "#FFFFFF", fg: "#0A1A8C", initial: "F", account: null, rate: 0.5 },
+  { id: "indigo", kind: "air", name: "IndiGo BluChip", unit: "BluChips", unitOne: "BluChip", logo: "ld:goindigo.in", color: "#FFFFFF", fg: "#001B94", initial: "I", account: null, rate: 0.3 },
+  { id: "accor", kind: "hotel", name: "Accor ALL", unit: "Reward points", unitOne: "Reward point", logo: "ld:all.accor.com", color: "#FFFFFF", fg: "#1C1C1C", initial: "A", account: "AC ···· 3390", rate: 0.25 },
+  { id: "ihg", kind: "hotel", name: "IHG One Rewards", unit: "IHG points", unitOne: "IHG point", logo: "ld:ihg.com", color: "#FFFFFF", fg: "#1F3A4A", initial: "I", account: null, rate: 1.5 },
+  { id: "gha", kind: "hotel", name: "GHA Discovery", unit: "DISCOVERY Dollars", unitOne: "DISCOVERY Dollar", logo: "ld:ghadiscovery.com", color: "#FFFFFF", fg: "#3B1F5C", initial: "G", account: null, rate: 0.03 },
+  { id: "radisson", kind: "hotel", name: "Radisson Rewards", unit: "Radisson Rewards points", unitOne: "Radisson Rewards point", logo: "ld:radissonhotels.com", color: "#FFFFFF", fg: "#0A2C8C", initial: "R", account: null, rate: 2 },
+  { id: "shangrila", kind: "hotel", name: "Shangri-La Circle", unit: "Circle points", unitOne: "Circle point", logo: "ld:shangri-la.com", color: "#FFFFFF", fg: "#5E4A2E", initial: "S", account: null, rate: 0.3 }
+];''' + t[_P1:]
+R('linked: ["etihad", "bonvoy"]', 'linked: ["etihad", "accor"]')
+R('.map((p, i) => {\n        const unitL = (p.rate === 1 ? p.unitOne : p.unit)', '.map((p, i, arr) => {\n        const unitL = (p.rate === 1 ? p.unitOne : p.unit)')
+R('        return { key: p.id, name: p.name, color: WHITE_LOGOS.indexOf(p.logo) >= 0 ? "#FFFFFF" : p.color, fg: p.fg, initial: p.initial,',
+  '        return { key: p.id, name: p.name, color: WHITE_LOGOS.indexOf(p.logo) >= 0 ? "#FFFFFF" : p.color, fg: p.fg, initial: p.initial, isAir: p.kind === "air", isHotel: p.kind === "hotel", fit: /^ld:/.test(p.logo || "") ? "cover" : "contain", pad: /^ld:/.test(p.logo || "") ? "0" : "3px",')
+t = t.replace('          sep: i < PARTNERS.length - 1 ? "1px solid var(--border-subtle)" : "none",\n          onPick: () => this.setState({ screen: "transfer", xfPartner: p.id,',
+              '          sep: (k => k.indexOf(p) < k.length - 1 ? "1px solid var(--border-subtle)" : "none")(arr.filter(x => x.kind === p.kind)),\n          onPick: () => this.setState({ screen: "transfer", xfPartner: p.id,')
+# list markup: Airlines, then Hotels
+_L0 = t.index('<sc-for list="{{ partners }}"'); _L1 = t.index('</sc-for>', _L0) + len('</sc-for>')
+_row = t[_L0:_L1]
+_row = _row.replace('object-fit: contain; padding: 3px; box-sizing: border-box;', 'object-fit: {{ pt.fit }}; padding: {{ pt.pad }}; box-sizing: border-box;')
+_ri0 = _row.index('<div sc-camel-on-click="{{ pt.onPick }}"'); _ri1 = _row.rindex('</sc-for>')
+_inner = _row[_ri0:_ri1].rstrip()
+_air = _row[:_ri0] + '<sc-if value="{{ pt.isAir }}" hint-placeholder-val="{{ true }}">' + _inner + '</sc-if>\n                  </sc-for>'
+_hot = _row[:_ri0] + '<sc-if value="{{ pt.isHotel }}" hint-placeholder-val="{{ false }}">' + _inner + '</sc-if>\n                  </sc-for>'
+_cardEnd = t.index('</div>', _L1) + len('</div>')
+t = t[:_L0] + _air + t[_L1:_cardEnd] + '''
+                <span style="margin-top: 10px; font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--text-secondary);">{{ t.fxHotels }}</span>
+                <div style="display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; border: 1px solid var(--border-subtle); background: var(--surface-card);">
+                  ''' + _hot + '''
+                </div>''' + t[_cardEnd:]
+_hd = t.index('{{ t.airlines }}</span>\n                  <span style="flex: none; font-size: 11.5px; color: var(--text-tertiary);">{{ t.ptMile }}</span>')
+t = t[:_hd] + '{{ t.fxAirlines }}' + t[_hd + len('{{ t.airlines }}'):]

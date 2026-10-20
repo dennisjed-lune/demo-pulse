@@ -42,9 +42,7 @@ window.LUNE_REGIONS = {
       atlantis: { brand: "Center Parcs", brandColor: "#006B4F", place2: "De Eemhof, Zeewolde", why: "Aqua Mundo pool passes come with the cottage" },
       ritzrak: { brand: "Hilton", brandColor: "#104C97", place2: "Hilton Amsterdam", why: "Canal-side rooms, a staycation in town" }
     },
-    partners: { etihad: { name: "Flying Blue", unit: "Flying Blue Miles", unitOne: "Flying Blue Mile", logo: "ld:flyingblue.com", account: "FB ···· 8821" },
-      qatar: { name: "British Airways Avios", unit: "Avios", unitOne: "Avios", logo: "ld:avios.com" },
-      flydubai: { name: "Lufthansa Miles & More", unit: "Miles & More miles", unitOne: "Miles & More mile", logo: "ld:milesandmore.com" } },
+    partners: {},
     gifts: { talabat: { name: "Thuisbezorgd", logo: "ld:thuisbezorgd.nl" } }
   },
   asia: {
@@ -88,9 +86,7 @@ window.LUNE_REGIONS = {
       atlantis: { brand: "Marina Bay Sands", brandColor: "#1C1C1C", place2: "Marina Bay", why: "SkyPark access comes with the room" },
       ritzrak: { brand: "Fairmont", brandColor: "#1C1C1C", place2: "Fairmont Singapore", why: "A two-night staycation in town" }
     },
-    partners: { etihad: { name: "KrisFlyer", unit: "KrisFlyer miles", unitOne: "KrisFlyer mile", logo: "ld:singaporeair.com", account: "KF ···· 8821" },
-      qatar: { name: "Asia Miles", unit: "Asia Miles", unitOne: "Asia Mile", logo: "ld:cathaypacific.com" },
-      flydubai: null },
+    partners: {},
     gifts: { talabat: { name: "foodpanda", logo: "ld:foodpanda.sg" }, amazon: { name: "Lazada", logo: "ld:lazada.sg" }, uber: { name: "Grab", logo: "ld:grab.com" } }
   }
 };
