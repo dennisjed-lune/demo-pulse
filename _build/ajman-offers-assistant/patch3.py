@@ -336,3 +336,6 @@ t = t.replace('flex: none; background: var(--secondary); color: #FFFFFF; box-sha
 # search-bar assistant button: the bank logo fills the circle
 R('''<img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" alt="Ask Ajman Bank" style="width: 78%; height: 78%; display: block;">''',
   '''<img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" data-fill="1" alt="Ask Ajman Bank" style="width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 50%;">''')
+# notification: round icon, bank logo fills it (runs after data-bankmark was added to the img)
+R('<div style="width: 30px; height: 30px; border-radius: 9px; background: #FFFFFF; border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; flex: none; overflow: hidden;"><img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" alt="" style="width: 78%; height: 78%; display: block;">',
+  '<div style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; border: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: center; flex: none; overflow: hidden;"><img src="0afcc051-4aa5-49be-93ab-ae446bc4fe9b" data-bankmark="1" data-fill="1" alt="" style="width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 50%;">')
