@@ -26,29 +26,26 @@
   ];
   PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
   var COUNTRY_GROUPS = [["Europe", ["gb", "de", "fr", "es", "it", "nl", "ie", "ch", "be", "se", "pl", "is"]], ["Middle East and Africa", ["ae", "sa", "qa", "kw", "bh", "om", "eg", "jo", "tr", "za"]],
-    ["Asia-Pacific", ["in", "pk", "hk", "sg", "my", "id", "jp", "au"]], ["Americas", ["us", "ca", "mx", "br"]]];
+    ["Asia-Pacific", ["in", "pk", "uz", "hk", "sg", "my", "id", "jp", "au"]], ["Americas", ["us", "ca", "mx", "br"]]];
   // where the bank operates / is headquartered: known bank, then website ending, then words in the name
   // country of the bank's (or network's) headquarters. Each country with a catalog has its own brands.
   var COUNTRY = { ae: ["United Arab Emirates", "me"], sa: ["Saudi Arabia", "ksa"], nl: ["Netherlands", "eu"], sg: ["Singapore", "asia"], us: ["United States", "us"],
     qa: ["Qatar"], om: ["Oman"], bh: ["Bahrain"], kw: ["Kuwait"], eg: ["Egypt"], jo: ["Jordan"], gb: ["United Kingdom"], de: ["Germany"], fr: ["France"], es: ["Spain"], it: ["Italy"],
     be: ["Belgium"], ie: ["Ireland"], ch: ["Switzerland"], tr: ["Turkey"], in: ["India"], pk: ["Pakistan"], hk: ["Hong Kong"], my: ["Malaysia"], id: ["Indonesia"], au: ["Australia"], ca: ["Canada"],
-    is: ["Iceland"], se: ["Sweden"], pl: ["Poland"], za: ["South Africa"], jp: ["Japan"], mx: ["Mexico"], br: ["Brazil"] };
+    is: ["Iceland"], se: ["Sweden"], pl: ["Poland"], za: ["South Africa"], jp: ["Japan"], mx: ["Mexico"], br: ["Brazil"], uz: ["Uzbekistan"] };
   // catalog key for a country: the first five use their original keys, every newer catalog is keyed by its ISO code
   var CAT_FROM = { ae: "me", sa: "ksa", nl: "eu", sg: "asia", us: "us" };
   function catOf(c) { return CAT_FROM[c] || (c && window.LUNE_REGIONS && window.LUNE_REGIONS[c] ? c : null); }
   var COUNTRY_CUR = { ae: "AED", sa: "SAR", nl: "EUR", sg: "SGD", us: "USD", qa: "QAR", om: "OMR", bh: "BHD", kw: "KWD", eg: "EGP", jo: "JOD", gb: "GBP", de: "EUR", fr: "EUR", es: "EUR", it: "EUR",
     be: "EUR", ie: "EUR", ch: "CHF", tr: "TRY", in: "INR", pk: "PKR", hk: "HKD", my: "MYR", id: "IDR", au: "AUD", ca: "CAD",
-    is: "ISK", se: "SEK", pl: "PLN", za: "ZAR", jp: "JPY", mx: "MXN", br: "BRL" };
+    is: "ISK", se: "SEK", pl: "PLN", za: "ZAR", jp: "JPY", mx: "MXN", br: "BRL", uz: "UZS" };
   var CAT_COUNTRY = { me: "ae", ksa: "sa", eu: "nl", asia: "sg", us: "us" };
   function countryOfCat(k) { return CAT_COUNTRY[k] || k; }
   function detectCountry(name, domain) {
     var n = (name || "").trim().toLowerCase(), d = (domain || "").toLowerCase();
     var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === n || (d && x.domain === d); })[0];
     if (p) return p.country || countryOfCat(p.region);
-    var t = (/\.(co\.uk|uk|[a-z]{2})$/.exec(d) || [])[1];
-    if (t === "co.uk") t = "uk"; if (t === "uk") t = "gb";
-    if (t && COUNTRY[t]) return t;
-    var K = [["is", /iceland|landsbankinn|arion|[ií]slandsbanki|kvika/], ["se", /swedbank|handelsbanken|\bseb\b|sweden|klarna/], ["pl", /\bpko\b|pekao|mbank|poland|polska|santander bank polska/],
+    var K = [["uz", /uzbek|tashkent|kapitalbank|ipak yuli|hamkorbank|asakabank|\bnbu\b|anorbank/], ["is", /iceland|landsbankinn|arion|[ií]slandsbanki|kvika/], ["se", /swedbank|handelsbanken|\bseb\b|sweden|klarna/], ["pl", /\bpko\b|pekao|mbank|poland|polska|santander bank polska/],
       ["za", /\babsa\b|standard bank|nedbank|capitec|\bfnb\b|south africa/], ["jp", /\bmufg\b|mizuho|sumitomo|rakuten|japan/], ["au", /commonwealth bank|westpac|\banz\b|\bnab\b|australia/],
       ["ca", /\brbc\b|royal bank of canada|\btd bank\b|scotiabank|\bbmo\b|\bcibc\b|canada/], ["mx", /banorte|mexico|m[eé]xico|banamex/], ["br", /ita[uú]|bradesco|nubank|banco do brasil|brasil|brazil/],
       ["ch", /\bubs\b|swiss|zurich|z[uü]rcher|postfinance/], ["ie", /\baib\b|bank of ireland|ireland|permanent tsb/], ["be", /\bkbc\b|belfius|fortis|belgium|argenta/],
@@ -61,6 +58,10 @@
       ["nl", /\bing\b|\babn\b|rabobank|bunq|netherlands|dutch/], ["gb", /barclays|lloyds|natwest|monzo|starling|revolut|\bhsbc\b|nationwide|santander uk/],
       ["de", /deutsche|commerzbank|\bn26\b|sparkasse/], ["fr", /\bbnp\b|soci[eé]t[eé] g[eé]n[eé]rale|cr[eé]dit agricole/], ["es", /santander|bbva|caixa/], ["it", /unicredit|intesa/]];
     for (var i = 0; i < K.length; i++) if (K[i][1].test(n)) return K[i][0];
+    // the website ending only counts after the name: setup guesses websites from the name (e.g. "<name>.ae")
+    var t = (/\.(co\.uk|uk|[a-z]{2})$/.exec(d) || [])[1];
+    if (t === "co.uk") t = "uk"; if (t === "uk") t = "gb";
+    if (t && COUNTRY[t]) return t;
     return "";
   }
   // returns the catalog for the bank's country, or null when that country has no merchant list yet
@@ -180,7 +181,9 @@
     var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === name.trim().toLowerCase(); })[0];
     if (p) return [p.domain];
     var slug = name.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]/g, "");
-    return [slug + ".com", slug + ".ae", slug + "bank.com", slug + ".com.sa", slug + ".sa", slug + ".com.sg", slug + ".co.uk", slug + ".nl", slug + ".de"];
+    var c = detectCountry(name, ""), own = !c ? [] : c === "gb" ? [".co.uk"] : [".com." + c, "." + c];
+    return own.map(function (t) { return slug + t; }).concat([slug + ".com", slug + ".ae", slug + "bank.com", slug + ".com.sa", slug + ".sa", slug + ".com.sg", slug + ".co.uk", slug + ".nl", slug + ".de"])
+      .filter(function (d, i, a) { return a.indexOf(d) === i; });
   }
 
   // ---------- boot: apply saved bank before the app renders ----------
@@ -316,7 +319,7 @@
       var tryNext = function (i) {
         if (i >= domains.length) { S.busy = false; S.logo = ""; S.domain = ""; S.color = ""; S.logoFor = S.en.trim().toLowerCase(); S.msg = "No logo found. Type the bank's website below."; render(); return; }
         fetchLogo(domains[i]).then(function (data) {
-          S.domain = domains[i]; S.logo = data; S.logoFor = S.en.trim().toLowerCase(); if (!S.regionPicked) setRegion(detectRegion(S.en, S.domain));
+          S.domain = domains[i]; S.logo = data; S.logoFor = S.en.trim().toLowerCase(); if (!S.regionPicked) setRegion(detectRegion(S.en, domains.length === 1 ? S.domain : "")); // a guessed website ending says nothing about the country
           dominantColor.second = null; return (keepColor ? Promise.resolve(S.color) : dominantColor(data)).then(function (c) { S.color = c; if (!keepColor) S.color2 = dominantColor.second || ""; S.busy = false; S.msg = "Logo from " + domains[i]; render(); });
         }).catch(function () { tryNext(i + 1); });
       };
