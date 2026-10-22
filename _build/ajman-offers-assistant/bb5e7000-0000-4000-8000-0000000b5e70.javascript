@@ -25,24 +25,35 @@
     { en: "UOB", font: "Noto Sans", fontAr: "", fontSite: "Noto Sans", domain: "uob.com.sg", cur: "SGD", region: "asia" }
   ];
   PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
-  var REGION_OPTS = [["me", "United Arab Emirates"], ["ksa", "Saudi Arabia"], ["eu", "Netherlands"], ["asia", "Singapore"], ["us", "United States"]];
-  var REGION_NAME = { me: ["UAE", "UAE"], ksa: ["Saudi", "Saudi"], eu: ["Dutch", "Dutch"], asia: ["Singapore", "Singapore"], us: ["US", "US"] };
+  var COUNTRY_GROUPS = [["Europe", ["gb", "de", "fr", "es", "it", "nl", "ie", "ch", "be", "se", "pl", "is"]], ["Middle East and Africa", ["ae", "sa", "qa", "kw", "bh", "om", "eg", "jo", "tr", "za"]],
+    ["Asia-Pacific", ["in", "pk", "hk", "sg", "my", "id", "jp", "au"]], ["Americas", ["us", "ca", "mx", "br"]]];
   // where the bank operates / is headquartered: known bank, then website ending, then words in the name
   // country of the bank's (or network's) headquarters. Each country with a catalog has its own brands.
   var COUNTRY = { ae: ["United Arab Emirates", "me"], sa: ["Saudi Arabia", "ksa"], nl: ["Netherlands", "eu"], sg: ["Singapore", "asia"], us: ["United States", "us"],
     qa: ["Qatar"], om: ["Oman"], bh: ["Bahrain"], kw: ["Kuwait"], eg: ["Egypt"], jo: ["Jordan"], gb: ["United Kingdom"], de: ["Germany"], fr: ["France"], es: ["Spain"], it: ["Italy"],
-    be: ["Belgium"], ie: ["Ireland"], ch: ["Switzerland"], tr: ["Turkey"], in: ["India"], pk: ["Pakistan"], hk: ["Hong Kong"], my: ["Malaysia"], id: ["Indonesia"], au: ["Australia"], ca: ["Canada"] };
+    be: ["Belgium"], ie: ["Ireland"], ch: ["Switzerland"], tr: ["Turkey"], in: ["India"], pk: ["Pakistan"], hk: ["Hong Kong"], my: ["Malaysia"], id: ["Indonesia"], au: ["Australia"], ca: ["Canada"],
+    is: ["Iceland"], se: ["Sweden"], pl: ["Poland"], za: ["South Africa"], jp: ["Japan"], mx: ["Mexico"], br: ["Brazil"] };
+  // catalog key for a country: the first five use their original keys, every newer catalog is keyed by its ISO code
+  var CAT_FROM = { ae: "me", sa: "ksa", nl: "eu", sg: "asia", us: "us" };
+  function catOf(c) { return CAT_FROM[c] || (c && window.LUNE_REGIONS && window.LUNE_REGIONS[c] ? c : null); }
   var COUNTRY_CUR = { ae: "AED", sa: "SAR", nl: "EUR", sg: "SGD", us: "USD", qa: "QAR", om: "OMR", bh: "BHD", kw: "KWD", eg: "EGP", jo: "JOD", gb: "GBP", de: "EUR", fr: "EUR", es: "EUR", it: "EUR",
-    be: "EUR", ie: "EUR", ch: "CHF", tr: "TRY", in: "INR", pk: "PKR", hk: "HKD", my: "MYR", id: "IDR", au: "AUD", ca: "CAD" };
+    be: "EUR", ie: "EUR", ch: "CHF", tr: "TRY", in: "INR", pk: "PKR", hk: "HKD", my: "MYR", id: "IDR", au: "AUD", ca: "CAD",
+    is: "ISK", se: "SEK", pl: "PLN", za: "ZAR", jp: "JPY", mx: "MXN", br: "BRL" };
   var CAT_COUNTRY = { me: "ae", ksa: "sa", eu: "nl", asia: "sg", us: "us" };
+  function countryOfCat(k) { return CAT_COUNTRY[k] || k; }
   function detectCountry(name, domain) {
     var n = (name || "").trim().toLowerCase(), d = (domain || "").toLowerCase();
     var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === n || (d && x.domain === d); })[0];
-    if (p) return p.country || CAT_COUNTRY[p.region];
+    if (p) return p.country || countryOfCat(p.region);
     var t = (/\.(co\.uk|uk|[a-z]{2})$/.exec(d) || [])[1];
     if (t === "co.uk") t = "uk"; if (t === "uk") t = "gb";
     if (t && COUNTRY[t]) return t;
-    var K = [["us", /\bvisa\b|mastercard|american express|\bamex\b|\bchase\b|jp ?morgan|\bciti(bank|group)?\b|bank of america|wells fargo|capital one|\bdiscover\b|\bu\.?s\.? bank|goldman sachs|paypal/],
+    var K = [["is", /iceland|landsbankinn|arion|[ií]slandsbanki|kvika/], ["se", /swedbank|handelsbanken|\bseb\b|sweden|klarna/], ["pl", /\bpko\b|pekao|mbank|poland|polska|santander bank polska/],
+      ["za", /\babsa\b|standard bank|nedbank|capitec|\bfnb\b|south africa/], ["jp", /\bmufg\b|mizuho|sumitomo|rakuten|japan/], ["au", /commonwealth bank|westpac|\banz\b|\bnab\b|australia/],
+      ["ca", /\brbc\b|royal bank of canada|\btd bank\b|scotiabank|\bbmo\b|\bcibc\b|canada/], ["mx", /banorte|mexico|m[eé]xico|banamex/], ["br", /ita[uú]|bradesco|nubank|banco do brasil|brasil|brazil/],
+      ["ch", /\bubs\b|swiss|zurich|z[uü]rcher|postfinance/], ["ie", /\baib\b|bank of ireland|ireland|permanent tsb/], ["be", /\bkbc\b|belfius|fortis|belgium|argenta/],
+      ["tr", /garanti|akbank|ziraat|i[sş]bank|t[uü]rkiye|turkey|yap[iı] kredi/], ["pk", /habib|\bhbl\b|meezan|\bubl\b|pakistan/], ["id", /mandiri|\bbca\b|\bbri\b|\bbni\b|indonesia/],
+      ["jo", /arab bank|housing bank|jordan|cairo amman/], ["us", /\bvisa\b|mastercard|american express|\bamex\b|\bchase\b|jp ?morgan|\bciti(bank|group)?\b|bank of america|wells fargo|capital one|\bdiscover\b|\bu\.?s\.? bank|goldman sachs|paypal/],
       ["sa", /saudi|riyad|al ?rajhi|albilad|alinma|\bsnb\b|jazira|\bsab\b|anb\b|\bncb\b/], ["qa", /qatar|doha|\bqnb\b|\bqib\b|dukhan/], ["om", /oman|muscat|sohar|dhofar/],
       ["bh", /bahrain|\bbbk\b|\bnbb\b/], ["kw", /kuwait|\bnbk\b|\bkfh\b|boubyan|burgan/], ["eg", /egypt|banque misr|\bcib\b/],
       ["ae", /emirates|dubai|abu dhabi|sharjah|ajman|\brak\b|fujairah|mashreq|\badib\b|\bfab\b|\bcbd\b|\buae\b|\bwio\b|liv\b/],
@@ -55,8 +66,9 @@
   // returns the catalog for the bank's country, or null when that country has no merchant list yet
   function detectRegion(name, domain) {
     var c = detectCountry(name, domain); detectRegion.country = c;
-    return c && COUNTRY[c] && COUNTRY[c][1] || null;
+    return catOf(c);
   }
+  function defOf(r) { var g = window.LUNE_REGIONS && window.LUNE_REGIONS[r] || {}; return REGION_DEF[r] || { cur: g.cur || "USD", lang: g.lang || "en" }; }
   var REGION_DEF = { me: { cur: "AED", lang: "ar" }, ksa: { cur: "SAR", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" }, us: { cur: "USD", lang: "en" } };
   var LANGS = [["ar", "العربية"], ["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"], ["de", "Deutsch"], ["it", "Italiano"], ["hi", "हिन्दी"], ["ur", "اردو"], ["zh", "中文"], ["ru", "Русский"]];
   var FONT_LIST = ["Source Sans 3", "Inter", "Plus Jakarta Sans", "Open Sans", "DM Sans", "Montserrat", "Cabin", "Rubik", "Poppins", "Space Grotesk", "Nunito Sans", "Roboto", "Manrope", "Noto Sans"];
@@ -232,8 +244,8 @@
   function openSetup() {
     if (document.querySelector(".lsu")) return;
     var st = saved || {};
-    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", country: st.country || CAT_COUNTRY[st.region || "me"], color2: st.color2 || "", unit: st.unit || "cashback", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
-    function setRegion(r, picked) { if (!picked) S.country = detectRegion.country || ""; if (!r) r = "me"; S.region = r; if (picked) { S.regionPicked = true; return; } if (!S.curTouched) S.cur = COUNTRY_CUR[S.country] || REGION_DEF[r].cur; if (!S.langTouched) S.lang = REGION_DEF[r].lang; }
+    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", country: st.country || countryOfCat(st.region || "me"), color2: st.color2 || "", unit: st.unit || "cashback", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
+    function setRegion(r, picked) { if (!picked) S.country = detectRegion.country || ""; if (!r) r = "me"; S.region = r; if (picked) { S.regionPicked = true; return; } if (!S.curTouched) S.cur = COUNTRY_CUR[S.country] || defOf(r).cur; if (!S.langTouched) S.lang = defOf(r).lang; }
     var wrap = el("div", { class: "lsu", role: "dialog", "aria-modal": "true", "aria-label": "Demo setup" });
     wrap.innerHTML = '<div class="lsu-card">\
 <div class="lsu-top"><span class="lsu-dot"></span>Lune · Pulse demo setup</div>\
@@ -246,7 +258,7 @@
 <div class="lsu-brand"><div class="lsu-logo"></div><div class="lsu-meta"><b class="lsu-name">No bank yet</b><span class="lsu-msg"></span>\
 <div class="lsu-col"><input type="color" id="lsu-col" aria-label="Primary colour, for buttons" title="Primary: buttons"><input type="color" id="lsu-col2" aria-label="Secondary colour, for cards and progress" title="Secondary: cards and progress"><span class="lsu-hex"></span></div></div>\
 <div class="lsu-prev"><span class="lsu-pill">Activate</span></div></div>\
-<label class="lsu-lbl" for="lsu-reg">Country (for merchants and airlines)</label><select class="lsu-in lsu-regpick" id="lsu-reg"></select><p class="lsu-msg lsu-regnote" style="margin:-8px 0 14px"></p>\
+<label class="lsu-lbl" for="lsu-reg">Country (for merchants and airlines)</label><select class="lsu-in lsu-regpick" id="lsu-reg" style="margin-bottom:0"></select><p class="lsu-msg lsu-regnote" style="margin:8px 0 18px;line-height:1.4"></p>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-lang">Language</label><select class="lsu-in" id="lsu-lang"></select></div>\
 <div><label class="lsu-lbl" for="lsu-cur">Currency</label><select class="lsu-in" id="lsu-cur"></select></div></div>\
 <div style="margin:0 0 14px"><span class="lsu-lbl">Rewards shown as</span><div class="lsu-seg lsu-unit"></div></div>\
@@ -283,12 +295,21 @@
       $(".lsu-fontnote").textContent = S.fontSite ? (/licensed/.test(S.fontSite) ? "Their website uses " + S.fontSite.replace(" (licensed)", "") + ", a licensed font. Closest free match: " + S.font + "." : "Same font as their website: " + S.fontSite + ".") : "Pick the font closest to the bank's website.";
       $(".lsu-go").disabled = !S.en.trim() || S.busy;
       $(".lsu-unit").innerHTML = [["cashback", "Cashback"], ["points", "Points"]].map(function (x) { return '<button type="button" data-u="' + x[0] + '" class="' + (S.unit === x[0] ? "on" : "") + '">' + x[1] + "</button>"; }).join("");
-      var rn = REGION_NAME[S.region] || REGION_NAME.me;
-      var cn = S.country && COUNTRY[S.country], miss = cn && !cn[1];
+      fillReg(); var rl = (window.LUNE_REGIONS && window.LUNE_REGIONS[S.region] || {}).label || "United Arab Emirates";
+      var cn = S.country && COUNTRY[S.country], miss = cn && !catOf(S.country);
       var the = function (c) { return /^(United|Netherlands)/.test(c) ? "the " + c : c; };
-      var nm = esc(S.en.trim()), own = cn && CAT_COUNTRY[S.region] === S.country;
-      $(".lsu-regnote").innerHTML = !nm || !cn ? "Filled in from the country where the bank is based. Change it if it is wrong." : own ? esc(rn[0]) + " brands and airlines, because " + nm + " is based in " + esc(the(cn[0])) + "." : miss && !S.regionPicked ? "<b style=\"color:#B42318\">No merchant list for " + esc(the(cn[0])) + " yet.</b> " + nm + " is based in " + esc(the(cn[0])) + ". The demo uses the UAE list until you pick another country." : "Using the " + esc(rn[0]) + " list. " + nm + " is based in " + esc(the(cn[0])) + ".";
+      var nm = esc(S.en.trim()), own = cn && countryOfCat(S.region) === S.country;
+      $(".lsu-regnote").innerHTML = !nm || !cn ? "Filled in from the country where the bank is based. Change it if it is wrong." : own ? "Brands and airlines from " + esc(the(cn[0])) + ", where " + nm + " is based." : miss && !S.regionPicked ? "<b style=\"color:#B42318\">No merchant list for " + esc(the(cn[0])) + " yet.</b> " + nm + " is based in " + esc(the(cn[0])) + ". The demo uses the UAE list until you pick another country." : "Using brands from " + esc(the(rl)) + ". " + nm + " is based in " + esc(the(cn[0])) + ".";
       $(".lsu-regpick").value = S.region;
+    }
+    function fillReg() {
+      var rp = $(".lsu-regpick"), R = window.LUNE_REGIONS || {}, n = Object.keys(R).length;
+      if (!rp || rp.__n === n) return; rp.__n = n; rp.innerHTML = "";
+      COUNTRY_GROUPS.forEach(function (g) {
+        var og = el("optgroup", { label: g[0] });
+        g[1].forEach(function (c) { var k = catOf(c); if (k && R[k]) og.appendChild(el("option", { value: k }, (COUNTRY[c] || [R[k].label])[0])); });
+        if (og.children.length) rp.appendChild(og);
+      });
     }
     function lookup(domains, keepColor) {
       S.busy = true; S.msg = ""; render();
@@ -320,7 +341,7 @@
     cur.onchange = function () { if (cur.value) { S.cur = cur.value; S.curTouched = true; } };
     [["#lsu-cust", "customer"], ["#lsu-rw", "rewards"], ["#lsu-db", "debit"], ["#lsu-cr", "credit"]].forEach(function (f) { var i = $(f[0]); i.value = S[f[1]]; i.oninput = function () { S[f[1]] = i.value; }; });
     $(".lsu-unit").onclick = function (e) { var x = e.target.getAttribute && e.target.getAttribute("data-u"); if (x) { S.unit = x; render(); } };
-    var rp = $(".lsu-regpick"); REGION_OPTS.forEach(function (r) { rp.appendChild(el("option", { value: r[0] }, r[1])); });
+    var rp = $(".lsu-regpick");
     rp.onchange = function () { setRegion(rp.value, true); render(); };
     var ls = $("#lsu-lang"); LANGS.forEach(function (l) { ls.appendChild(el("option", { value: l[0] }, l[1])); }); ls.onchange = function () { S.lang = ls.value; S.langTouched = true; };
     var fs = $("#lsu-font"); FONT_LIST.forEach(function (f) { fs.appendChild(el("option", { value: f }, f === "Source Sans 3" ? "Source Sans 3 (default)" : f)); }); fs.onchange = function () { S.font = fs.value; S.fontSite = ""; render(); };

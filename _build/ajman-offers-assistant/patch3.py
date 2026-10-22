@@ -565,3 +565,8 @@ R('      detailLogoUrl: d ? logoUrl(d.logo) : "",', '''      detailLogoUrl: d ? 
       detailCoverInset: d && (window.OFFER_COVERS || {})[d.id] ? "14px" : "0",
       detailLogoLift: d && (window.OFFER_COVERS || {})[d.id] ? "-28px" : "0",
       detailLogoRing: d && (window.OFFER_COVERS || {})[d.id] ? "0 0 0 3px #FFFFFF, 0 2px 8px rgba(0,0,0,.12)" : "none",''')
+
+# 2026-10-22: per-country airline programmes come from the catalogs (window.LUNE_AIRLINES); the flag carrier starts linked
+R('    if (window.REGION_APPLY && !OFFERS.__region) { OFFERS.__region = true; window.REGION_APPLY({ OFFERS, STATEMENT, TXNS, GIFTCARDS, PARTNERS, TRIPS, CATEGORY_RATES, TAGS }); }',
+  '    if (window.REGION_APPLY && !OFFERS.__region) { OFFERS.__region = true; window.REGION_APPLY({ OFFERS, STATEMENT, TXNS, GIFTCARDS, PARTNERS, TRIPS, CATEGORY_RATES, TAGS }); }\n'
+  '    if (window.LUNE_AIRLINES && !PARTNERS.__air) { PARTNERS.__air = true; const hi = PARTNERS.findIndex(p => p.kind === "hotel"); PARTNERS.splice(hi < 0 ? PARTNERS.length : hi, 0, ...window.LUNE_AIRLINES.filter(a => !PARTNERS.some(p => p.id === a.id))); window.LUNE_AIRLINES.forEach(a => { if (a.account && this.state.linked.indexOf(a.id) < 0) this.state.linked.push(a.id); }); }')
