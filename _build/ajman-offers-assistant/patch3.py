@@ -485,3 +485,38 @@ R('linked: ["etihad", "accor"]', 'linked: ["etihad", "saudia", "flyingblue", "ca
 t = t.replace('(FULL_BLEED_LOGOS.indexOf(o.logo) >= 0 || /^ld:/.test(o.logo || "")) ?', '(!o.fitContain && (FULL_BLEED_LOGOS.indexOf(o.logo) >= 0 || /^ld:/.test(o.logo || ""))) ?')
 t = t.replace('nf(Math.round(PTS * p.rate / fxOf()[0] * 100) / 100)', 'nf((v => v >= 10 ? Math.round(v) : Math.round(v * 100) / 100)(PTS * p.rate / fxOf()[0]))')
 t = t.replace('nf(Math.round(PTS * xfP.rate / fxOf()[0] * 100) / 100)', 'nf((v => v >= 10 ? Math.round(v) : Math.round(v * 100) / 100)(PTS * xfP.rate / fxOf()[0]))')
+
+# 2026-10-22: no cashback/points multipliers on tiers (Dennis: "remove the 1.25x")
+_PERKS = {
+ "en": ["Cashback on every offer", "Points on every offer", "Early access to new offers", "Priority partner transfers", "Concierge and airport lounge access"],
+ "ar": ["استرداد نقدي على كل عرض", "نقاط على كل عرض", "وصول مبكر إلى العروض الجديدة", "تحويلات شركاء ذات أولوية", "كونسيرج ودخول صالات المطار"],
+ "fr": ["Cashback sur chaque offre", "Points sur chaque offre", "Accès anticipé aux nouvelles offres", "Transferts partenaires prioritaires", "Conciergerie et salons d'aéroport"],
+ "es": ["Cashback en cada oferta", "Puntos en cada oferta", "Acceso anticipado a nuevas ofertas", "Transferencias prioritarias a socios", "Conserjería y salas VIP"],
+ "pt": ["Cashback em cada oferta", "Pontos em cada oferta", "Acesso antecipado a novas ofertas", "Transferências prioritárias para parceiros", "Concierge e salas VIP"],
+ "de": ["Cashback auf jedes Angebot", "Punkte auf jedes Angebot", "Früher Zugang zu neuen Angeboten", "Bevorzugte Partner-Transfers", "Concierge und Flughafen-Lounges"],
+ "it": ["Cashback su ogni offerta", "Punti su ogni offerta", "Accesso anticipato alle nuove offerte", "Trasferimenti prioritari ai partner", "Concierge e lounge aeroportuali"],
+ "hi": ["हर ऑफ़र पर कैशबैक", "हर ऑफ़र पर पॉइंट्स", "नए ऑफ़र तक पहले पहुँच", "प्राथमिकता पार्टनर ट्रांसफ़र", "कंसीयज और एयरपोर्ट लाउंज"],
+ "ur": ["ہر آفر پر کیش بیک", "ہر آفر پر پوائنٹس", "نئی آفرز تک پہلے رسائی", "ترجیحی پارٹنر ٹرانسفر", "کنسیئرج اور ایئرپورٹ لاؤنج"],
+ "zh": ["每个优惠均可返现", "每个优惠均可获积分", "抢先获取新优惠", "优先合作伙伴转换", "礼宾与机场贵宾厅"],
+ "ru": ["Кешбэк за каждое предложение", "Баллы за каждое предложение", "Ранний доступ к новым предложениям", "Приоритетные переводы партнёрам", "Консьерж и залы ожидания"],
+}
+_FAQ_EN = "Tiers follow what you've earned in the last 12 months. Silver is everyone. Gold starts at AED 600 earned and gives early access to new offers. Platinum starts at AED 2,500 and adds priority partner transfers."
+_FAQ = {
+ "ar": "تتبع الفئات ما كسبتِه خلال آخر 12 شهراً. الفضية للجميع. الذهبية تبدأ من 600 درهم مكتسبة وتمنح وصولاً مبكراً إلى العروض الجديدة. البلاتينية تبدأ من 2,500 درهم وتضيف تحويلات شركاء ذات أولوية.",
+ "fr": "Les niveaux suivent vos gains des 12 derniers mois. Silver est pour tous. Gold commence à 600 AED gagnés et donne un accès anticipé aux nouvelles offres. Platinum commence à 2 500 AED et ajoute les transferts partenaires prioritaires.",
+ "es": "Los niveles siguen lo que has ganado en los últimos 12 meses. Silver es para todos. Gold empieza con 600 AED ganados y da acceso anticipado a nuevas ofertas. Platinum empieza con 2.500 AED y añade transferencias prioritarias a socios.",
+ "pt": "Os níveis seguem o que você ganhou nos últimos 12 meses. Silver é para todos. Gold começa com 600 AED ganhos e dá acesso antecipado a novas ofertas. Platinum começa com 2.500 AED e adiciona transferências prioritárias para parceiros.",
+ "de": "Stufen richten sich nach Ihren Erträgen der letzten 12 Monate. Silver gilt für alle. Gold beginnt ab 600 AED und bietet frühen Zugang zu neuen Angeboten. Platinum beginnt ab 2.500 AED und bietet bevorzugte Partner-Transfers.",
+ "it": "I livelli seguono quanto hai guadagnato negli ultimi 12 mesi. Silver è per tutti. Gold parte da 600 AED guadagnati e dà accesso anticipato alle nuove offerte. Platinum parte da 2.500 AED e aggiunge trasferimenti prioritari ai partner.",
+ "hi": "टियर पिछले 12 महीनों की कमाई पर निर्भर हैं। Silver सबके लिए है। Gold AED 600 की कमाई से शुरू होता है और नए ऑफ़र तक पहले पहुँच देता है। Platinum AED 2,500 से शुरू होता है और प्राथमिकता पार्टनर ट्रांसफ़र जोड़ता है।",
+ "ur": "ٹیئرز پچھلے 12 مہینوں کی کمائی پر چلتے ہیں۔ Silver سب کے لیے ہے۔ Gold AED 600 کی کمائی سے شروع ہوتا ہے اور نئی آفرز تک پہلے رسائی دیتا ہے۔ Platinum AED 2,500 سے شروع ہوتا ہے اور ترجیحی پارٹنر ٹرانسفر شامل کرتا ہے۔",
+ "zh": "等级取决于您过去 12 个月的收益。Silver 面向所有人。Gold 从累计 AED 600 起，可抢先获取新优惠。Platinum 从 AED 2,500 起，增加优先合作伙伴转换。",
+ "ru": "Уровни зависят от того, сколько вы заработали за последние 12 месяцев. Silver доступен всем. Gold начинается с 600 AED и даёт ранний доступ к новым предложениям. Platinum начинается с 2 500 AED и добавляет приоритетные переводы партнёрам.",
+}
+import json as _json
+R('const PERK_CASH = {', 'const PERK_NEW = ' + _json.dumps(_PERKS, ensure_ascii=False) + ';\nconst FAQ_TIER_L10N = ' + _json.dumps({k: {_FAQ_EN: v} for k, v in _FAQ.items()}, ensure_ascii=False) + ';\nconst PERK_CASH = {')
+R('const perkFor = (name, T, pts) => { const i = ["Silver","Gold","Platinum","Black"].indexOf(name);', 'const perkFor = (name, T, pts) => { const i = ["Silver","Gold","Platinum","Black"].indexOf(name); { const p = PERK_NEW[LANG] || PERK_NEW.en; if (i >= 0) return i === 0 ? p[pts ? 1 : 0] : p[i + 1]; }')
+R('pays 1.25x, Platinum starts at AED 2,500 and pays 1.5x with priority partner transfers." },', 'pays 1.25x, Platinum starts at AED 2,500 and pays 1.5x with priority partner transfers.".replace(/.+/, ' + _json.dumps(_FAQ_EN) + ') },')
+R('const MC = () => (window.MERCHANT_L10N && window.MERCHANT_L10N[LANG]) || null;', 'const MC = () => { const m = (window.MERCHANT_L10N && window.MERCHANT_L10N[LANG]) || null; if (m && !m.__tierFaq && FAQ_TIER_L10N[LANG]) { Object.assign(m, FAQ_TIER_L10N[LANG]); m.__tierFaq = 1; } return m; };')
+for _a, _b in [('perk: "1x points on every offer"', 'perk: "Points on every offer"'), ('perk: "1.25x points on every offer"', 'perk: "Early access to new offers"'), ('perk: "1.5x points, priority partner transfers"', 'perk: "Priority partner transfers"'), ('perk: "2x points, concierge and airport lounge access"', 'perk: "Concierge and airport lounge access"')]:
+    R(_a, _b)
