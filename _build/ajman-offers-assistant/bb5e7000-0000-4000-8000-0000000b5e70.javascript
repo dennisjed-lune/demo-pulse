@@ -22,7 +22,8 @@
     { en: "Revolut", font: "Manrope", fontAr: "", fontSite: "Aeonik Pro (licensed)", domain: "revolut.com", cur: "GBP", region: "eu", country: "gb" },
     { en: "DBS", font: "Open Sans", fontAr: "", fontSite: "Open Sans", domain: "dbs.com.sg", cur: "SGD", region: "asia" },
     { en: "OCBC", font: "Open Sans", fontAr: "", fontSite: "Open Sans", domain: "ocbc.com", cur: "SGD", region: "asia" },
-    { en: "UOB", font: "Noto Sans", fontAr: "", fontSite: "Noto Sans", domain: "uob.com.sg", cur: "SGD", region: "asia" }
+    { en: "UOB", font: "Noto Sans", fontAr: "", fontSite: "Noto Sans", domain: "uob.com.sg", cur: "SGD", region: "asia" },
+    { en: "Humo", font: "Montserrat", fontAr: "", fontSite: "", domain: "humocard.uz", cur: "UZS", region: "uz", country: "uz", color: "#243B48", color2: "#C2A447" }
   ];
   PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
   var COUNTRY_GROUPS = [["Europe", ["gb", "de", "fr", "es", "it", "nl", "ie", "ch", "be", "se", "pl", "is"]], ["Middle East and Africa", ["ae", "sa", "qa", "kw", "bh", "om", "eg", "jo", "tr", "za"]],
@@ -45,7 +46,7 @@
     var n = (name || "").trim().toLowerCase(), d = (domain || "").toLowerCase();
     var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === n || (d && x.domain === d); })[0];
     if (p) return p.country || countryOfCat(p.region);
-    var K = [["uz", /uzbek|tashkent|kapitalbank|ipak yuli|hamkorbank|asakabank|\bnbu\b|anorbank/], ["is", /iceland|landsbankinn|arion|[ií]slandsbanki|kvika/], ["se", /swedbank|handelsbanken|\bseb\b|sweden|klarna/], ["pl", /\bpko\b|pekao|mbank|poland|polska|santander bank polska/],
+    var K = [["uz", /\bhumo\b|uzcard|uzbek|tashkent|kapitalbank|ipak yuli|hamkorbank|asakabank|\bnbu\b|anorbank/], ["is", /iceland|landsbankinn|arion|[ií]slandsbanki|kvika/], ["se", /swedbank|handelsbanken|\bseb\b|sweden|klarna/], ["pl", /\bpko\b|pekao|mbank|poland|polska|santander bank polska/],
       ["za", /\babsa\b|standard bank|nedbank|capitec|\bfnb\b|south africa/], ["jp", /\bmufg\b|mizuho|sumitomo|rakuten|japan/], ["au", /commonwealth bank|westpac|\banz\b|\bnab\b|australia/],
       ["ca", /\brbc\b|royal bank of canada|\btd bank\b|scotiabank|\bbmo\b|\bcibc\b|canada/], ["mx", /banorte|mexico|m[eé]xico|banamex/], ["br", /ita[uú]|bradesco|nubank|banco do brasil|brasil|brazil/],
       ["ch", /\bubs\b|swiss|zurich|z[uü]rcher|postfinance/], ["ie", /\baib\b|bank of ireland|ireland|permanent tsb/], ["be", /\bkbc\b|belfius|fortis|belgium|argenta/],

@@ -1605,6 +1605,14 @@ window.LUNE_AIRLINES = (window.LUNE_AIRLINES || []).concat([
     var cfg = window.BANK, r = cfg && window.LUNE_REGIONS[cfg.region];
     if (!r || !r.offers) return null;
     R = r;
+    // the ride slot is "Uber" in the source app: a country with another ride app swaps the Uber logo, name and copy too
+    var ride = R.logos && R.logos.careem;
+    if (ride && ride !== "uber") {
+      if (!R.logos.uber) R.logos.uber = ride;
+      if (ride === "ld:careem.com" && !(R.offers.careem && R.offers.careem.brand)) R.offers.careem = Object.assign({ brand: "Careem" }, R.offers.careem);
+      var rb = R.offers.careem && R.offers.careem.brand;
+      if (rb && rb !== "Uber" && !R.text["Uber"]) { R.text["Uber"] = rb; if (!R.text["Uber Eats"]) R.text["Uber Eats"] = (R.gifts && R.gifts.talabat && R.gifts.talabat.name) || "Uber Eats"; }
+    }
     var keys = Object.keys(R.text).sort(function (a, b) { return b.length - a.length; });
     var esc = function (s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); };
     rx = new RegExp("(^|[^A-Za-z])(" + keys.map(esc).join("|") + ")(?![A-Za-z])", "g");
