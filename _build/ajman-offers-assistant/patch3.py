@@ -520,3 +520,48 @@ R('pays 1.25x, Platinum starts at AED 2,500 and pays 1.5x with priority partner 
 R('const MC = () => (window.MERCHANT_L10N && window.MERCHANT_L10N[LANG]) || null;', 'const MC = () => { const m = (window.MERCHANT_L10N && window.MERCHANT_L10N[LANG]) || null; if (m && !m.__tierFaq && FAQ_TIER_L10N[LANG]) { Object.assign(m, FAQ_TIER_L10N[LANG]); m.__tierFaq = 1; } return m; };')
 for _a, _b in [('perk: "1x points on every offer"', 'perk: "Points on every offer"'), ('perk: "1.25x points on every offer"', 'perk: "Early access to new offers"'), ('perk: "1.5x points, priority partner transfers"', 'perk: "Priority partner transfers"'), ('perk: "2x points, concierge and airport lounge access"', 'perk: "Concierge and airport lounge access"')]:
     R(_a, _b)
+
+# 2026-10-22: airlines are per country, not per region (Dennis: "we need it to be country specific")
+# catalog keys: me = UAE, ksa = Saudi Arabia, eu = Netherlands, asia = Singapore, us = United States
+for _a, _b in [('{ id: "turkish", kind: "air", regions: ["eu"],', '{ id: "turkish", kind: "air", regions: ["tr"],'), ('{ id: "lufthansa", kind: "air", regions: ["eu"],', '{ id: "lufthansa", kind: "air", regions: ["de"],'),
+               ('{ id: "cathay", kind: "air", regions: ["asia"],', '{ id: "cathay", kind: "air", regions: ["hk"],'), ('{ id: "indigo", kind: "air", regions: ["asia"],', '{ id: "indigo", kind: "air", regions: ["in"],')]:
+    R(_a, _b)
+R('  { id: "accor", kind: "hotel",', '''  { id: "krisflyer", kind: "air", regions: ["asia"], name: "Singapore Airlines KrisFlyer", unit: "KrisFlyer miles", unitOne: "KrisFlyer mile", logo: "ld:singaporeair.com", color: "#FFFFFF", fg: "#1D3360", initial: "S", account: "KF ···· 2290", rate: 0.5 },
+  { id: "delta", kind: "air", regions: ["us"], name: "Delta SkyMiles", unit: "SkyMiles", unitOne: "SkyMile", logo: "ld:delta.com", color: "#FFFFFF", fg: "#0B1F4B", initial: "D", account: "DL ···· 7712", rate: 0.5 },
+  { id: "united", kind: "air", regions: ["us"], name: "United MileagePlus", unit: "MileagePlus miles", unitOne: "MileagePlus mile", logo: "ld:united.com", color: "#FFFFFF", fg: "#0033A0", initial: "U", account: null, rate: 0.5 },
+  { id: "accor", kind: "hotel",''')
+R('linked: ["etihad", "saudia", "flyingblue", "cathay", "accor"]', 'linked: ["etihad", "saudia", "flyingblue", "krisflyer", "delta", "accor"]')
+
+# 2026-10-22: category cover photos on offer cards and the offer details screen (window.OFFER_COVERS, keyed by offer id)
+R('<script src="aa0f1c00-0000-4000-8000-0000000f1c00"></script>', '<script src="cc0e5000-0000-4000-8000-00000c0e5000"></script>\n<script src="aa0f1c00-0000-4000-8000-0000000f1c00"></script>')
+R('''      logoUrl: logoUrl(o.logo),
+      hasLogo: !!o.logo,''', '''      logoUrl: logoUrl(o.logo),
+      coverBg: (window.OFFER_COVERS || {})[o.id] ? 'linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,0) 55%), url("' + window.OFFER_COVERS[o.id] + '")' : "none",
+      hasCover: !!(window.OFFER_COVERS || {})[o.id],
+      noCover: !(window.OFFER_COVERS || {})[o.id],
+      hasLogo: !!o.logo,''')
+# list card: 66px colour strip -> 104px photo (brand colour stays as the fallback)
+R('<div style="position: relative; height: 66px; flex: none; background: {{ o.brandColor }};">',
+  '<div style="position: relative; height: 104px; flex: none; background-color: {{ o.brandColor }}; background-image: {{ o.coverBg }}; background-size: cover; background-position: center;">')
+# rail card: photo with the logo as a tile, instead of a big logo
+_r0 = t.index('<div style="position: relative; height: 112px; flex: none; display: flex; align-items: center; justify-content: center; background: {{ r.logoBg }};')
+_r1 = t.index('<sc-if value="{{ r.hasLogo }}"', _r0)
+_r2 = t.index('<span style="position: absolute; top: 8px; left: 8px;', _r1)
+t = (t[:_r0] + '<div style="position: relative; height: 112px; flex: none; display: flex; align-items: center; justify-content: center; background-color: {{ r.logoBg }}; background-image: {{ r.coverBg }}; background-size: cover; background-position: center; color: {{ r.logoFg }}; font-size: 34px; font-weight: 600; letter-spacing: -.02em;">\n'
+     + '                        <sc-if value="{{ r.noCover }}" hint-placeholder-val="{{ false }}">' + t[_r1:_r2].rstrip() + '</sc-if>\n'
+     + '                        <sc-if value="{{ r.hasCover }}" hint-placeholder-val="{{ true }}"><div style="position: absolute; left: 8px; bottom: 8px; width: 36px; height: 36px; border-radius: 11px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 14px; background: {{ r.logoBg }}; box-shadow: 0 0 0 2px #FFFFFF, 0 2px 6px rgba(0,0,0,.25);"><sc-if value="{{ r.hasLogo }}" hint-placeholder-val="{{ true }}"><img src="{{ r.logoUrl }}" alt="" style="width: 100%; height: 100%; object-fit: {{ r.logoFit }}; padding: {{ r.tilePad }}; box-sizing: border-box;"></sc-if><sc-if value="{{ r.noLogo }}" hint-placeholder-val="{{ false }}"><span>{{ r.initial }}</span></sc-if></div></sc-if>\n                        '
+     + t[_r2:])
+R('      hasCover: !!(window.OFFER_COVERS || {})[o.id],', '      hasCover: !!(window.OFFER_COVERS || {})[o.id],\n      tilePad: (!o.fitContain && (FULL_BLEED_LOGOS.indexOf(o.logo) >= 0 || /^ld:/.test(o.logo || ""))) ? "0" : "4px",')
+# offer details: photo on top, logo tile overlaps its lower edge
+R('''            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="position: relative; width: 56px; height: 56px; border-radius: 17px; overflow: hidden;''', '''            <sc-if value="{{ detailHasCover }}" hint-placeholder-val="{{ true }}">
+              <div style="height: 150px; flex: none; margin-bottom: -18px; border-radius: 20px; background-color: {{ detailLogoBg }}; background-image: {{ detailCoverBg }}; background-size: cover; background-position: center;"></div>
+            </sc-if>
+            <div style="display: flex; align-items: flex-start; gap: 14px; padding-left: {{ detailCoverInset }};">
+              <div style="position: relative; width: 56px; height: 56px; margin-top: {{ detailLogoLift }}; border-radius: 17px; overflow: hidden; box-shadow: {{ detailLogoRing }};''')
+R('      detailLogoUrl: d ? logoUrl(d.logo) : "",', '''      detailLogoUrl: d ? logoUrl(d.logo) : "",
+      detailHasCover: !!(d && (window.OFFER_COVERS || {})[d.id]),
+      detailCoverBg: d && (window.OFFER_COVERS || {})[d.id] ? 'url("' + window.OFFER_COVERS[d.id] + '")' : "none",
+      detailCoverInset: d && (window.OFFER_COVERS || {})[d.id] ? "14px" : "0",
+      detailLogoLift: d && (window.OFFER_COVERS || {})[d.id] ? "-28px" : "0",
+      detailLogoRing: d && (window.OFFER_COVERS || {})[d.id] ? "0 0 0 3px #FFFFFF, 0 2px 8px rgba(0,0,0,.12)" : "none",''')

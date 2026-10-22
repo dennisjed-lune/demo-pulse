@@ -19,30 +19,45 @@
     { en: "ING", font: "Nunito Sans", fontAr: "", fontSite: "ING Me (licensed)", domain: "ing.com", cur: "EUR", region: "eu" },
     { en: "ABN AMRO", font: "Roboto", fontAr: "", fontSite: "ABN AMRO Sans (licensed)", domain: "abnamro.nl", cur: "EUR", region: "eu" },
     { en: "bunq", font: "DM Sans", fontAr: "", fontSite: "DM Sans", domain: "bunq.com", cur: "EUR", region: "eu" },
-    { en: "Revolut", font: "Manrope", fontAr: "", fontSite: "Aeonik Pro (licensed)", domain: "revolut.com", cur: "EUR", region: "eu" },
+    { en: "Revolut", font: "Manrope", fontAr: "", fontSite: "Aeonik Pro (licensed)", domain: "revolut.com", cur: "GBP", region: "eu", country: "gb" },
     { en: "DBS", font: "Open Sans", fontAr: "", fontSite: "Open Sans", domain: "dbs.com.sg", cur: "SGD", region: "asia" },
     { en: "OCBC", font: "Open Sans", fontAr: "", fontSite: "Open Sans", domain: "ocbc.com", cur: "SGD", region: "asia" },
     { en: "UOB", font: "Noto Sans", fontAr: "", fontSite: "Noto Sans", domain: "uob.com.sg", cur: "SGD", region: "asia" }
   ];
   PRESETS.forEach(function (p) { p.region = p.region || "me"; p.ar = p.ar || ""; });
-  var REGION_OPTS = [["me", "UAE"], ["ksa", "Saudi Arabia"], ["eu", "Europe"], ["asia", "Asia"]];
-  var REGION_NAME = { me: ["Dubai", "UAE"], ksa: ["Riyadh", "Saudi"], eu: ["Amsterdam", "European"], asia: ["Singapore", "Asian"] };
+  var REGION_OPTS = [["me", "United Arab Emirates"], ["ksa", "Saudi Arabia"], ["eu", "Netherlands"], ["asia", "Singapore"], ["us", "United States"]];
+  var REGION_NAME = { me: ["UAE", "UAE"], ksa: ["Saudi", "Saudi"], eu: ["Dutch", "Dutch"], asia: ["Singapore", "Singapore"], us: ["US", "US"] };
   // where the bank operates / is headquartered: known bank, then website ending, then words in the name
-  function detectRegion(name, domain) {
+  // country of the bank's (or network's) headquarters. Each country with a catalog has its own brands.
+  var COUNTRY = { ae: ["United Arab Emirates", "me"], sa: ["Saudi Arabia", "ksa"], nl: ["Netherlands", "eu"], sg: ["Singapore", "asia"], us: ["United States", "us"],
+    qa: ["Qatar"], om: ["Oman"], bh: ["Bahrain"], kw: ["Kuwait"], eg: ["Egypt"], jo: ["Jordan"], gb: ["United Kingdom"], de: ["Germany"], fr: ["France"], es: ["Spain"], it: ["Italy"],
+    be: ["Belgium"], ie: ["Ireland"], ch: ["Switzerland"], tr: ["Turkey"], in: ["India"], pk: ["Pakistan"], hk: ["Hong Kong"], my: ["Malaysia"], id: ["Indonesia"], au: ["Australia"], ca: ["Canada"] };
+  var COUNTRY_CUR = { ae: "AED", sa: "SAR", nl: "EUR", sg: "SGD", us: "USD", qa: "QAR", om: "OMR", bh: "BHD", kw: "KWD", eg: "EGP", jo: "JOD", gb: "GBP", de: "EUR", fr: "EUR", es: "EUR", it: "EUR",
+    be: "EUR", ie: "EUR", ch: "CHF", tr: "TRY", in: "INR", pk: "PKR", hk: "HKD", my: "MYR", id: "IDR", au: "AUD", ca: "CAD" };
+  var CAT_COUNTRY = { me: "ae", ksa: "sa", eu: "nl", asia: "sg", us: "us" };
+  function detectCountry(name, domain) {
     var n = (name || "").trim().toLowerCase(), d = (domain || "").toLowerCase();
     var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === n || (d && x.domain === d); })[0];
-    if (p) return p.region;
-    if (/\.ae$/.test(d)) return "me";
-    if (/\.sa$/.test(d)) return "ksa";
-    if (/\.(sg|hk|my|in|id|ph|th|vn|jp|kr|cn|tw|au|nz|lk|pk|bd)$/.test(d)) return "asia";
-    if (/\.(nl|de|fr|es|it|be|at|ie|pt|lu|fi|gr|dk|se|no|pl|cz|ch|eu|uk|co\.uk|is|ee|lv|lt|sk|si|hr|ro|bg|hu|mt|cy)$/.test(d)) return "eu";
-    if (/saudi|riyad|al ?rajhi|albilad|alinma|\bsnb\b|jazira|samba|ncb/.test(n)) return "ksa";
-    if (/emirates|dubai|abu dhabi|sharjah|ajman|rak\b|fujairah|mashreq|\badib\b|\bfab\b|\bcbd\b|uae/.test(n)) return "me";
-    if (/singapore|hong kong|malaysia|india|indonesia|philippines|thai|vietnam|japan|korea|asia|dbs|ocbc|uob|hsbc asia/.test(n)) return "asia";
-    if (/europe|deutsche|bnp|societe|ing\b|abn|rabobank|santander|unicredit|intesa|commerzbank|bunq|revolut|n26|monzo|starling|barclays|lloyds|natwest|hsbc uk/.test(n)) return "eu";
-    return "me";
+    if (p) return p.country || CAT_COUNTRY[p.region];
+    var t = (/\.(co\.uk|uk|[a-z]{2})$/.exec(d) || [])[1];
+    if (t === "co.uk") t = "uk"; if (t === "uk") t = "gb";
+    if (t && COUNTRY[t]) return t;
+    var K = [["us", /\bvisa\b|mastercard|american express|\bamex\b|\bchase\b|jp ?morgan|\bciti(bank|group)?\b|bank of america|wells fargo|capital one|\bdiscover\b|\bu\.?s\.? bank|goldman sachs|paypal/],
+      ["sa", /saudi|riyad|al ?rajhi|albilad|alinma|\bsnb\b|jazira|\bsab\b|anb\b|\bncb\b/], ["qa", /qatar|doha|\bqnb\b|\bqib\b|dukhan/], ["om", /oman|muscat|sohar|dhofar/],
+      ["bh", /bahrain|\bbbk\b|\bnbb\b/], ["kw", /kuwait|\bnbk\b|\bkfh\b|boubyan|burgan/], ["eg", /egypt|banque misr|\bcib\b/],
+      ["ae", /emirates|dubai|abu dhabi|sharjah|ajman|\brak\b|fujairah|mashreq|\badib\b|\bfab\b|\bcbd\b|\buae\b|\bwio\b|liv\b/],
+      ["sg", /singapore|\bdbs\b|ocbc|\buob\b/], ["hk", /hong kong|hang seng/], ["in", /india|hdfc|icici|axis bank|kotak/], ["my", /malaysia|maybank|\bcimb\b/],
+      ["nl", /\bing\b|\babn\b|rabobank|bunq|netherlands|dutch/], ["gb", /barclays|lloyds|natwest|monzo|starling|revolut|\bhsbc\b|nationwide|santander uk/],
+      ["de", /deutsche|commerzbank|\bn26\b|sparkasse/], ["fr", /\bbnp\b|soci[eé]t[eé] g[eé]n[eé]rale|cr[eé]dit agricole/], ["es", /santander|bbva|caixa/], ["it", /unicredit|intesa/]];
+    for (var i = 0; i < K.length; i++) if (K[i][1].test(n)) return K[i][0];
+    return "";
   }
-  var REGION_DEF = { me: { cur: "AED", lang: "ar" }, ksa: { cur: "SAR", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" } };
+  // returns the catalog for the bank's country, or null when that country has no merchant list yet
+  function detectRegion(name, domain) {
+    var c = detectCountry(name, domain); detectRegion.country = c;
+    return c && COUNTRY[c] && COUNTRY[c][1] || null;
+  }
+  var REGION_DEF = { me: { cur: "AED", lang: "ar" }, ksa: { cur: "SAR", lang: "ar" }, eu: { cur: "EUR", lang: "en" }, asia: { cur: "SGD", lang: "en" }, us: { cur: "USD", lang: "en" } };
   var LANGS = [["ar", "العربية"], ["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"], ["de", "Deutsch"], ["it", "Italiano"], ["hi", "हिन्दी"], ["ur", "اردو"], ["zh", "中文"], ["ru", "Русский"]];
   var FONT_LIST = ["Source Sans 3", "Inter", "Plus Jakarta Sans", "Open Sans", "DM Sans", "Montserrat", "Cabin", "Rubik", "Poppins", "Space Grotesk", "Nunito Sans", "Roboto", "Manrope", "Noto Sans"];
   var FONT_AR = ["IBM Plex Sans Arabic", "Tajawal", "Cairo", "Noto Kufi Arabic", "Noto Naskh Arabic", "Vazirmatn", "Rubik"];
@@ -217,8 +232,8 @@
   function openSetup() {
     if (document.querySelector(".lsu")) return;
     var st = saved || {};
-    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", color2: st.color2 || "", unit: st.unit || "cashback", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
-    function setRegion(r, picked) { if (!r) return; S.region = r; if (picked) S.regionPicked = true; if (!S.curTouched) S.cur = REGION_DEF[r].cur; if (!S.langTouched) S.lang = REGION_DEF[r].lang; }
+    var S = { logoFor: (st.en || "").toLowerCase(), en: st.en || "", ar: st.ar || "", domain: st.domain || "", logo: st.logo || "", color: st.color || "", lang: st.lang || "ar", cur: st.cur || "AED", region: st.region || "me", country: st.country || CAT_COUNTRY[st.region || "me"], color2: st.color2 || "", unit: st.unit || "cashback", font: st.font || "", fontAr: st.fontAr || "", fontSite: st.fontSite || "", customer: st.customer || "", rewards: st.rewards || "", debit: st.debit || "", credit: st.credit || "", busy: false, msg: "" };
+    function setRegion(r, picked) { if (!picked) S.country = detectRegion.country || ""; if (!r) r = "me"; S.region = r; if (picked) { S.regionPicked = true; return; } if (!S.curTouched) S.cur = COUNTRY_CUR[S.country] || REGION_DEF[r].cur; if (!S.langTouched) S.lang = REGION_DEF[r].lang; }
     var wrap = el("div", { class: "lsu", role: "dialog", "aria-modal": "true", "aria-label": "Demo setup" });
     wrap.innerHTML = '<div class="lsu-card">\
 <div class="lsu-top"><span class="lsu-dot"></span>Lune · Pulse demo setup</div>\
@@ -231,7 +246,7 @@
 <div class="lsu-brand"><div class="lsu-logo"></div><div class="lsu-meta"><b class="lsu-name">No bank yet</b><span class="lsu-msg"></span>\
 <div class="lsu-col"><input type="color" id="lsu-col" aria-label="Primary colour, for buttons" title="Primary: buttons"><input type="color" id="lsu-col2" aria-label="Secondary colour, for cards and progress" title="Secondary: cards and progress"><span class="lsu-hex"></span></div></div>\
 <div class="lsu-prev"><span class="lsu-pill">Activate</span></div></div>\
-<p class="lsu-msg lsu-regnote" style="margin:-4px 0 14px"></p><select class="lsu-in lsu-regpick" aria-label="Country for merchants" style="display:none;margin:-6px 0 14px"></select>\
+<label class="lsu-lbl" for="lsu-reg">Country (for merchants and airlines)</label><select class="lsu-in lsu-regpick" id="lsu-reg"></select><p class="lsu-msg lsu-regnote" style="margin:-8px 0 14px"></p>\
 <div class="lsu-row"><div><label class="lsu-lbl" for="lsu-lang">Language</label><select class="lsu-in" id="lsu-lang"></select></div>\
 <div><label class="lsu-lbl" for="lsu-cur">Currency</label><select class="lsu-in" id="lsu-cur"></select></div></div>\
 <div style="margin:0 0 14px"><span class="lsu-lbl">Rewards shown as</span><div class="lsu-seg lsu-unit"></div></div>\
@@ -269,7 +284,10 @@
       $(".lsu-go").disabled = !S.en.trim() || S.busy;
       $(".lsu-unit").innerHTML = [["cashback", "Cashback"], ["points", "Points"]].map(function (x) { return '<button type="button" data-u="' + x[0] + '" class="' + (S.unit === x[0] ? "on" : "") + '">' + x[1] + "</button>"; }).join("");
       var rn = REGION_NAME[S.region] || REGION_NAME.me;
-      $(".lsu-regnote").innerHTML = S.en.trim() ? esc(rn[0]) + " merchants and " + esc(rn[1]) + " airlines, based on where " + esc(S.en.trim()) + " operates. <a href=\"#\" class=\"lsu-regchange\" style=\"color:#0A634D;font-weight:600\">Change</a>" : "Merchants and airlines follow the bank's country.";
+      var cn = S.country && COUNTRY[S.country], miss = cn && !cn[1];
+      var the = function (c) { return /^(United|Netherlands)/.test(c) ? "the " + c : c; };
+      var nm = esc(S.en.trim()), own = cn && CAT_COUNTRY[S.region] === S.country;
+      $(".lsu-regnote").innerHTML = !nm || !cn ? "Filled in from the country where the bank is based. Change it if it is wrong." : own ? esc(rn[0]) + " brands and airlines, because " + nm + " is based in " + esc(the(cn[0])) + "." : miss && !S.regionPicked ? "<b style=\"color:#B42318\">No merchant list for " + esc(the(cn[0])) + " yet.</b> " + nm + " is based in " + esc(the(cn[0])) + ". The demo uses the UAE list until you pick another country." : "Using the " + esc(rn[0]) + " list. " + nm + " is based in " + esc(the(cn[0])) + ".";
       $(".lsu-regpick").value = S.region;
     }
     function lookup(domains, keepColor) {
@@ -285,14 +303,14 @@
     }
     PRESETS.forEach(function (p) {
       var b = el("button", { type: "button", class: "lsu-chip", "data-region": p.region }, '<img alt="" src="' + logoUrl(p.domain) + '">' + esc(p.en));
-      b.onclick = function () { S.regionPicked = false; S.en = p.en; S.ar = p.ar; setRegion(p.region); if (!S.curTouched) S.cur = p.cur; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; lookup([p.domain], !!p.color); };
+      b.onclick = function () { S.regionPicked = false; S.en = p.en; S.ar = p.ar; setRegion(detectRegion(p.en, p.domain)); if (!S.curTouched) S.cur = p.cur; S.color = p.color || ""; S.color2 = p.color2 || ""; S.font = p.font || ""; S.fontAr = p.fontAr || ""; S.fontSite = p.fontSite || ""; lookup([p.domain], !!p.color); };
       $(".lsu-chips").appendChild(b);
     });
     en.oninput = function () { S.en = en.value; render(); };
     en.onchange = function () {
       var name = S.en.trim(); if (!name || name.toLowerCase() === S.logoFor) return; S.regionPicked = false;
       var p = PRESETS.filter(function (x) { return x.en.toLowerCase() === name.toLowerCase(); })[0];
-      S.ar = p ? p.ar : ""; S.color = p && p.color ? p.color : ""; S.font = p ? p.font : ""; S.fontAr = p ? p.fontAr : ""; S.fontSite = p ? p.fontSite : ""; setRegion(p ? p.region : detectRegion(name, ""));
+      S.ar = p ? p.ar : ""; S.color = p && p.color ? p.color : ""; S.font = p ? p.font : ""; S.fontAr = p ? p.fontAr : ""; S.fontSite = p ? p.fontSite : ""; setRegion(detectRegion(name, p ? p.domain : ""));
       lookup(guessDomains(name), !!(p && p.color));
     };
     ar.oninput = function () { S.ar = ar.value; };
@@ -304,7 +322,6 @@
     $(".lsu-unit").onclick = function (e) { var x = e.target.getAttribute && e.target.getAttribute("data-u"); if (x) { S.unit = x; render(); } };
     var rp = $(".lsu-regpick"); REGION_OPTS.forEach(function (r) { rp.appendChild(el("option", { value: r[0] }, r[1])); });
     rp.onchange = function () { setRegion(rp.value, true); render(); };
-    wrap.addEventListener("click", function (e) { if (e.target && e.target.classList && e.target.classList.contains("lsu-regchange")) { e.preventDefault(); rp.style.display = rp.style.display === "none" ? "" : "none"; } });
     var ls = $("#lsu-lang"); LANGS.forEach(function (l) { ls.appendChild(el("option", { value: l[0] }, l[1])); }); ls.onchange = function () { S.lang = ls.value; S.langTouched = true; };
     var fs = $("#lsu-font"); FONT_LIST.forEach(function (f) { fs.appendChild(el("option", { value: f }, f === "Source Sans 3" ? "Source Sans 3 (default)" : f)); }); fs.onchange = function () { S.font = fs.value; S.fontSite = ""; render(); };
     var fa = $("#lsu-far"); FONT_AR.forEach(function (f) { fa.appendChild(el("option", { value: f }, f === "IBM Plex Sans Arabic" ? "IBM Plex Sans Arabic (default)" : f)); }); fa.onchange = function () { S.fontAr = fa.value; render(); };
@@ -313,7 +330,7 @@
       var go = $(".lsu-go"); go.disabled = true; go.textContent = "Getting the " + S.cur + " rate…";
       var done = false, finish = function (fx) {
         if (done) return; done = true;
-        var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", color2: S.color2, lang: S.lang, unit: S.unit, cur: S.cur, fx: fx || (window.FX_RATES || {})[S.cur] || null, region: S.region, font: S.font, fontAr: S.fontAr, fontSite: S.fontSite, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
+        var cfg = { en: S.en.trim(), ar: S.ar.trim(), domain: S.domain, logo: S.logo, color: S.color || "#1D1D1F", color2: S.color2, lang: S.lang, unit: S.unit, cur: S.cur, fx: fx || (window.FX_RATES || {})[S.cur] || null, region: S.region, country: S.country, font: S.font, fontAr: S.fontAr, fontSite: S.fontSite, customer: S.customer.trim(), rewards: S.rewards.trim(), debit: S.debit.trim(), credit: S.credit.trim() };
         try { sessionStorage.setItem(KEY + "-go", "1"); } catch (e) {}
         try { localStorage.setItem(KEY, JSON.stringify(cfg)); } catch (e) { alert("This browser blocked saving the setup. Try a normal (non-private) window."); return; }
         location.reload();

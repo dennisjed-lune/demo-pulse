@@ -1,7 +1,7 @@
 // Regional offer catalogs for the sales setup. Offer ids stay the same (every flow keys on them);
 // only brand, logo, place and local copy change. "ld:<domain>" logos load from logo.dev.
 window.LUNE_REGIONS = {
-  me: { label: "UAE", city: "Dubai", cur: "AED" },
+  me: { label: "United Arab Emirates", city: "Dubai", cur: "AED" },
   ksa: {
     label: "Saudi Arabia", city: "Riyadh", cur: "SAR", lang: "ar",
     text: {
@@ -38,7 +38,7 @@ window.LUNE_REGIONS = {
     partners: {}, gifts: { talabat: { name: "HungerStation", logo: "ld:hungerstation.com" } }
   },
   eu: {
-    label: "Europe", city: "Amsterdam", cur: "EUR", lang: "en",
+    label: "Netherlands", city: "Amsterdam", cur: "EUR", lang: "en",
     text: {
       "Waitrose": "Lidl", "Shake Shack": "Five Guys", "Dubai Mall": "Kalverstraat", "Mall of the Emirates": "Zuidoost",
       "noon Food": "Zalando Lounge", "noon.com": "zalando.com", "noon": "Zalando", "Justlife": "Helpling", "Careem": "Uber",
@@ -81,7 +81,7 @@ window.LUNE_REGIONS = {
     gifts: { talabat: { name: "Thuisbezorgd", logo: "ld:thuisbezorgd.nl" } }
   },
   asia: {
-    label: "Asia", city: "Singapore", cur: "SGD", lang: "en",
+    label: "Singapore", city: "Singapore", cur: "SGD", lang: "en",
     text: {
       "Waitrose": "FairPrice", "Dubai Mall": "VivoCity", "Mall of the Emirates": "Junction 8", "noon Food": "ShopeeFood", "noon.com": "shopee.sg",
       "noon": "Shopee", "Justlife": "Sendhelper", "Careem": "Grab", "Uber Eats": "GrabFood", "Uber": "Grab", "Deliveroo Plus": "pandapro",
@@ -123,6 +123,47 @@ window.LUNE_REGIONS = {
     },
     partners: {},
     gifts: { talabat: { name: "foodpanda", logo: "ld:foodpanda.sg" }, amazon: { name: "Lazada", logo: "ld:lazada.sg" }, uber: { name: "Grab", logo: "ld:grab.com" } }
+  },
+  us: {
+    label: "United States", city: "New York", cur: "USD", lang: "en",
+    text: {
+      "Waitrose": "Whole Foods Market", "Dubai Mall": "Hudson Yards", "Mall of the Emirates": "Brooklyn", "noon Food": "Walmart+", "noon.com": "walmart.com",
+      "noon": "Walmart", "Justlife": "TaskRabbit", "Careem": "Uber", "Deliveroo Plus": "DashPass", "Deliveroo": "DoorDash", "spinneys.com": "traderjoes.com",
+      "Spinneys": "Trader Joe's", "Carrefour": "Target", "VOX Cinemas": "AMC Theatres", "VOX": "AMC", "Etihad Guest Miles": "SkyMiles", "Etihad Guest": "Delta SkyMiles",
+      "etihad.com": "delta.com", "Etihad": "Delta", "Talabat": "Grubhub", "KidZania": "LEGO Store", "OliOli": "Bronx Zoo", "Yas Waterworld": "Universal Orlando Resort",
+      "Warner Bros. World": "SeaWorld Orlando", "Coca-Cola Arena": "Madison Square Garden", "Platinumlist": "Ticketmaster", "Atlantis The Palm": "Kalahari Resorts",
+      "Atlantis": "Kalahari Resorts", "Aquaventure": "the indoor water park", "Ritz-Carlton": "Four Seasons", "Ras Al Khaimah": "the Hamptons", "Abu Dhabi": "New York",
+      "Dubai": "New York", "Palm Jumeirah": "the Poconos", "Yas Island": "Orlando", "Al Quoz": "Chelsea", "City Walk": "SoHo", "Financial Centre": "Midtown",
+      "Grand Atrium": "Times Square", "Al Barsha": "Upper West Side", "GOLD, THEATRE by Rhodes and IMAX": "Dolby Cinema and IMAX",
+      "Qatar Privilege Club": "United MileagePlus", "flydubai OPEN": "JetBlue TrueBlue", "summer heat": "winter cold", "Wizz Air Abu Dhabi": "JetBlue"
+    },
+    logos: { waitrose: "ld:wholefoodsmarket.com", noon: "ld:walmart.com", justmop: "ld:taskrabbit.com", careem: "uber", deliveroo: "ld:doordash.com",
+      spinneys: "ld:traderjoes.com", carrefour: "ld:target.com", vox: "ld:amctheatres.com", etihad: "ld:delta.com", kidzania: "ld:lego.com",
+      olioli: "ld:bronxzoo.com", yas: "ld:universalorlando.com", wbworld: "ld:seaworld.com", cocacolaarena: "ld:msg.com", platinumlist: "ld:ticketmaster.com",
+      atlantis: "ld:kalahariresorts.com", ritzrak: "ld:fourseasons.com", talabat: "ld:grubhub.com", qatar: "ld:united.com", flydubai: "ld:jetblue.com", wizz: "ld:jetblue.com" },
+    offers: {
+      waitrose: { brand: "Whole Foods Market", brandColor: "#00674B", place: "Hudson Yards, Manhattan", place2: "Hudson Yards" },
+      noon: { brand: "Walmart", brandColor: "#0071CE" },
+      justmop: { brand: "TaskRabbit", brandColor: "#1D7A5F", why: "Cleaning runs AED 1,600 a month" },
+      careem: { brand: "Uber" },
+      namshi: { brand: "DoorDash", brandColor: "#FF3008" },
+      spinneys: { brand: "Trader Joe's", brandColor: "#C8102E", place: "All New York stores" },
+      carrefour: { brand: "Target", brandColor: "#CC0000", place: "Atlantic Terminal, Brooklyn", place2: "Brooklyn" },
+      vox: { brand: "AMC Theatres", brandColor: "#E31837", place: "AMC Lincoln Square 13, Upper West Side", place2: "Upper West Side" },
+      shakeshack: { place: "Madison Square Park, Manhattan", place2: "Madison Square Park", qualifies: ["Dine-in, takeaway and Shake Shack app orders", "Madison Square Park branch only"] },
+      emirates: { brand: "Delta", brandColor: "#0B1F4B" },
+      wizz: { brand: "JetBlue" },
+      kidzania: { brand: "LEGO Store", brandColor: "#E3000B", place: "Fifth Avenue, Manhattan", place2: "Fifth Avenue", deal: "12% back on toys", valueNote: "back on toys and sets, up to AED 80 a visit", qualifies: ["Toys and sets bought in store", "Paid with your Ajman Bank card ···· 4417"], excludes: ["Gift cards", "Events and workshops"], game: { kind: "stamps", done: 0, target: 3, unit: "visits", reward: "18% back", note: "Three visits this term gets you 18% back on toys." } },
+      olioli: { brand: "Bronx Zoo", brandColor: "#1E7B4F", place: "2300 Southern Boulevard, Bronx", place2: "Bronx", why: "A day out for the family, half an hour away" },
+      yas: { brand: "Universal Orlando Resort", brandColor: "#1B3A8C", place2: "Orlando, Florida", why: "A long weekend for four, a short flight away" },
+      wbworld: { brand: "SeaWorld Orlando", brandColor: "#0B4DA2", place2: "Orlando, Florida", why: "Shows, rides and aquariums, four tickets in one booking" },
+      cocacolaarena: { brand: "Madison Square Garden", brandColor: "#14325C", place2: "Midtown, Manhattan" },
+      platinumlist: { brand: "Ticketmaster", brandColor: "#026CDF" },
+      atlantis: { brand: "Kalahari Resorts", brandColor: "#0E2B4F", place2: "The Poconos, Pennsylvania", why: "Indoor water park passes come with the room" },
+      ritzrak: { brand: "Four Seasons", brandColor: "#1C1C1C", place2: "Four Seasons New York Downtown", why: "A weekend staycation in town" }
+    },
+    partners: {},
+    gifts: { talabat: { name: "Grubhub", logo: "ld:grubhub.com" } }
   }
 };
 
