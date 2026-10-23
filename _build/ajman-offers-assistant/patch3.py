@@ -574,3 +574,120 @@ R('    if (window.REGION_APPLY && !OFFERS.__region) { OFFERS.__region = true; wi
 R('if (window.LUNE_AIRLINES && !PARTNERS.__air) { PARTNERS.__air = true;', 'if (window.LUNE_AIRLINES && !PARTNERS.__air) { PARTNERS.__air = true; window.LUNE_AIRLINES.forEach(a => PARTNERS.forEach(p => { if (p.logo === a.logo && p.regions) p.regions = p.regions.filter(r => (a.regions || []).indexOf(r) < 0); }));')
 # a country can hide a rail offer (e.g. no Amazon in Bahrain)
 R('const railSrc = ["talabat", "emirates", "amazon", "namshi", "booking", "washmen"].map(id => OFFERS.filter(o => o.id === id)[0]);', 'const railSrc = ["talabat", "emirates", "amazon", "namshi", "booking", "washmen"].map(id => OFFERS.filter(o => o.id === id)[0]).filter(Boolean);')
+
+# 2026-10-23: Redeem "To account": move cashback (or points as cash) to the bank account or credit card
+_CASH = {
+ "en": {"tab": "To account", "sendTo": "Send to", "debitSub": "Lands in your account instantly", "creditSub": "Pays down your card balance", "all": "All", "youGet": "You get", "instantly": "Instantly", "fee": "Fee", "none": "None", "left": "Left after", "btn": "Move {v} to ···· {l}", "ask": "Move {v} to ···· {l}?", "askSub": "The money is yours to spend straight away. This can't be undone.", "done": "{v} is in your account ···· {l}", "doneCard": "{v} paid to your card ···· {l}", "doneSub": "Balance left: {b}", "min": "Minimum {v}", "over": "More than your balance"},
+ "ar": {"tab": "إلى الحساب", "sendTo": "إرسال إلى", "debitSub": "يصل إلى حسابك فوراً", "creditSub": "يخفض رصيد بطاقتك", "all": "الكل", "youGet": "تحصل على", "instantly": "فوراً", "fee": "الرسوم", "none": "لا شيء", "left": "المتبقي بعد", "btn": "حوّل {v} إلى ···· {l}", "ask": "تحويل {v} إلى ···· {l}؟", "askSub": "المبلغ لك تنفقه فوراً. لا يمكن التراجع عن ذلك.", "done": "وصل {v} إلى حسابك ···· {l}", "doneCard": "تم دفع {v} لبطاقتك ···· {l}", "doneSub": "الرصيد المتبقي: {b}", "min": "الحد الأدنى {v}", "over": "أكثر من رصيدك"},
+ "fr": {"tab": "Vers le compte", "sendTo": "Envoyer vers", "debitSub": "Arrive sur votre compte immédiatement", "creditSub": "Réduit le solde de votre carte", "all": "Tout", "youGet": "Vous recevez", "instantly": "Immédiatement", "fee": "Frais", "none": "Aucun", "left": "Reste après", "btn": "Virer {v} vers ···· {l}", "ask": "Virer {v} vers ···· {l} ?", "askSub": "L'argent est disponible tout de suite. Cette action est définitive.", "done": "{v} est sur votre compte ···· {l}", "doneCard": "{v} versés sur votre carte ···· {l}", "doneSub": "Solde restant : {b}", "min": "Minimum {v}", "over": "Plus que votre solde"},
+ "es": {"tab": "A la cuenta", "sendTo": "Enviar a", "debitSub": "Llega a tu cuenta al instante", "creditSub": "Reduce el saldo de tu tarjeta", "all": "Todo", "youGet": "Recibes", "instantly": "Al instante", "fee": "Comisión", "none": "Ninguna", "left": "Queda después", "btn": "Pasar {v} a ···· {l}", "ask": "¿Pasar {v} a ···· {l}?", "askSub": "El dinero es tuyo para gastar al momento. No se puede deshacer.", "done": "{v} ya está en tu cuenta ···· {l}", "doneCard": "{v} abonados a tu tarjeta ···· {l}", "doneSub": "Saldo restante: {b}", "min": "Mínimo {v}", "over": "Más que tu saldo"},
+ "pt": {"tab": "Para a conta", "sendTo": "Enviar para", "debitSub": "Cai na sua conta na hora", "creditSub": "Abate o saldo do seu cartão", "all": "Tudo", "youGet": "Você recebe", "instantly": "Na hora", "fee": "Taxa", "none": "Nenhuma", "left": "Sobra depois", "btn": "Enviar {v} para ···· {l}", "ask": "Enviar {v} para ···· {l}?", "askSub": "O dinheiro fica disponível na hora. Não dá para desfazer.", "done": "{v} está na sua conta ···· {l}", "doneCard": "{v} pagos no seu cartão ···· {l}", "doneSub": "Saldo restante: {b}", "min": "Mínimo {v}", "over": "Mais que o seu saldo"},
+ "de": {"tab": "Aufs Konto", "sendTo": "Senden an", "debitSub": "Sofort auf Ihrem Konto", "creditSub": "Senkt Ihren Kartensaldo", "all": "Alles", "youGet": "Sie erhalten", "instantly": "Sofort", "fee": "Gebühr", "none": "Keine", "left": "Danach übrig", "btn": "{v} an ···· {l} senden", "ask": "{v} an ···· {l} senden?", "askSub": "Das Geld ist sofort verfügbar. Das lässt sich nicht rückgängig machen.", "done": "{v} ist auf Ihrem Konto ···· {l}", "doneCard": "{v} auf Ihre Karte ···· {l} gezahlt", "doneSub": "Restguthaben: {b}", "min": "Mindestens {v}", "over": "Mehr als Ihr Guthaben"},
+ "it": {"tab": "Sul conto", "sendTo": "Invia a", "debitSub": "Arriva sul conto subito", "creditSub": "Riduce il saldo della carta", "all": "Tutto", "youGet": "Ricevi", "instantly": "Subito", "fee": "Commissione", "none": "Nessuna", "left": "Resta dopo", "btn": "Sposta {v} su ···· {l}", "ask": "Spostare {v} su ···· {l}?", "askSub": "I soldi sono subito disponibili. L'operazione non si può annullare.", "done": "{v} è sul tuo conto ···· {l}", "doneCard": "{v} versati sulla carta ···· {l}", "doneSub": "Saldo residuo: {b}", "min": "Minimo {v}", "over": "Più del tuo saldo"},
+ "hi": {"tab": "खाते में", "sendTo": "भेजें", "debitSub": "तुरंत आपके खाते में", "creditSub": "आपके कार्ड का बकाया घटाता है", "all": "सभी", "youGet": "आपको मिलेगा", "instantly": "तुरंत", "fee": "शुल्क", "none": "कोई नहीं", "left": "बाद में शेष", "btn": "{v} ···· {l} में भेजें", "ask": "{v} ···· {l} में भेजें?", "askSub": "पैसा तुरंत खर्च के लिए उपलब्ध है। इसे वापस नहीं किया जा सकता।", "done": "{v} आपके खाते ···· {l} में है", "doneCard": "{v} आपके कार्ड ···· {l} में जमा", "doneSub": "शेष बैलेंस: {b}", "min": "न्यूनतम {v}", "over": "आपके बैलेंस से अधिक"},
+ "ur": {"tab": "اکاؤنٹ میں", "sendTo": "بھیجیں", "debitSub": "فوراً آپ کے اکاؤنٹ میں", "creditSub": "آپ کے کارڈ کا بیلنس کم کرتا ہے", "all": "سب", "youGet": "آپ کو ملے گا", "instantly": "فوراً", "fee": "فیس", "none": "کوئی نہیں", "left": "بعد میں باقی", "btn": "{v} ···· {l} میں بھیجیں", "ask": "{v} ···· {l} میں بھیجیں؟", "askSub": "رقم فوراً خرچ کے لیے دستیاب ہے۔ اسے واپس نہیں کیا جا سکتا۔", "done": "{v} آپ کے اکاؤنٹ ···· {l} میں ہے", "doneCard": "{v} آپ کے کارڈ ···· {l} میں ادا", "doneSub": "باقی بیلنس: {b}", "min": "کم از کم {v}", "over": "آپ کے بیلنس سے زیادہ"},
+ "zh": {"tab": "转入账户", "sendTo": "转入", "debitSub": "立即到账", "creditSub": "抵扣信用卡余额", "all": "全部", "youGet": "到账", "instantly": "立即", "fee": "手续费", "none": "免费", "left": "剩余", "btn": "转 {v} 到 ···· {l}", "ask": "确定转 {v} 到 ···· {l}？", "askSub": "资金立即可用。此操作无法撤销。", "done": "{v} 已转入账户 ···· {l}", "doneCard": "{v} 已还入信用卡 ···· {l}", "doneSub": "剩余余额：{b}", "min": "最低 {v}", "over": "超过余额"},
+ "ru": {"tab": "На счёт", "sendTo": "Куда", "debitSub": "Сразу на ваш счёт", "creditSub": "Уменьшает долг по карте", "all": "Всё", "youGet": "Вы получите", "instantly": "Сразу", "fee": "Комиссия", "none": "Нет", "left": "Останется", "btn": "Перевести {v} на ···· {l}", "ask": "Перевести {v} на ···· {l}?", "askSub": "Деньги можно тратить сразу. Отменить перевод нельзя.", "done": "{v} на вашем счёте ···· {l}", "doneCard": "{v} зачислено на карту ···· {l}", "doneSub": "Остаток: {b}", "min": "Минимум {v}", "over": "Больше вашего баланса"},
+}
+import json as _json2
+R('const PERK_NEW = ', 'const CASH_T = ' + _json2.dumps(_CASH, ensure_ascii=False) + ';\nconst PERK_NEW = ')
+R('redeemTab: "transfer",', 'redeemTab: "cash", cashTo: "c1", cashAmt: 100, cashCustom: "", cashAsk: false, cashDone: false, cashLast: null,')
+R('    const gcOk = gcAed >= 10 && gcAed <= balance;', '''    const gcOk = gcAed >= 10 && gcAed <= balance;
+    const CXT = CASH_T[LANG] || CASH_T.en;
+    const cashNum = parseFloat(s.cashCustom || "0") || 0;
+    const cashAed = s.cashCustom ? (pts ? cashNum / PTS / (fxOf())[0] : cashNum / (fxOf())[0]) : (s.cashAmt === "all" ? balance : s.cashAmt);
+    const cashOk = cashAed >= 10 && cashAed <= balance + 0.001;
+    const cashL4 = s.cashTo === "c2" ? "9102" : "4417";''')
+R('      redeemTabs: [["transfer", T.airlines], ["gift", T.giftCards]].map(([k, label]) => ({', '      redeemTabs: [["cash", CXT.tab], ["transfer", T.airlines], ["gift", T.giftCards]].map(([k, label]) => ({')
+R('      isGift: s.redeemTab === "gift",', '''      isGift: s.redeemTab === "gift",
+      isCash: s.redeemTab === "cash",
+      ct: CXT,
+      cashNotDone: !s.cashDone,
+      cashDone: !!s.cashDone,
+      cashTargets: [["c1", T.card1 + " ···· 4417", CXT.debitSub], ["c2", T.card2 + " ···· 9102", CXT.creditSub]].map(([k, name, sub]) => ({ key: k, name, sub,
+        dot: s.cashTo === k ? "var(--accent)" : "transparent", ring: s.cashTo === k ? "var(--accent)" : "var(--border-default)",
+        border: s.cashTo === k ? "var(--accent)" : "var(--border-subtle)", onPick: () => this.setState({ cashTo: k, cashAsk: false }) })),
+      cashChips: [50, 100, 250, "all"].map(v => { const on = !s.cashCustom && s.cashAmt === v; return { key: "k" + v, label: v === "all" ? CXT.all + " · " + fmt(balance, pts) : fmt(v, pts),
+        bg: on ? "var(--surface-emerald)" : "transparent", border: on ? "var(--accent)" : "var(--border-default)", fg: on ? "var(--accent)" : "var(--text-secondary)",
+        onPick: () => this.setState({ cashAmt: v, cashCustom: "", cashAsk: false }) }; }),
+      cashCustom: s.cashCustom,
+      cashCustomHint: pts ? T.pts : CUR,
+      cashCustomBorder: s.cashCustom ? "var(--accent)" : "transparent",
+      onCashCustom: e => this.setState({ cashCustom: e.target.value.replace(/[^0-9]/g, ""), cashAsk: false }),
+      cashGet: money(Math.max(0, cashAed)),
+      cashLeft: fmt(Math.max(0, balance - cashAed), pts),
+      cashNote: cashAed > balance + 0.001 ? CXT.over : cashAed < 10 ? fill(CXT.min, { v: fmt(10, pts) }) : "",
+      cashHasNote: !cashOk,
+      cashBtnBg: cashOk ? "var(--accent)" : "var(--surface-muted)",
+      cashBtnFg: cashOk ? "#FFFFFF" : "var(--text-tertiary)",
+      cashBtn: fill(CXT.btn, { v: money(Math.max(0, cashAed)), l: cashL4 }),
+      cashShowBtn: !s.cashAsk && !s.cashDone,
+      cashAsk: !!s.cashAsk && !s.cashDone,
+      cashAskTitle: fill(CXT.ask, { v: money(cashAed), l: cashL4 }),
+      askCash: () => { if (cashOk) this.setState({ cashAsk: true }); },
+      cancelCash: () => this.setState({ cashAsk: false }),
+      confirmCash: () => this.setState(st => ({ cashAsk: false, cashDone: true, redeemed: st.redeemed + cashAed, cashLast: { v: money(cashAed), l: cashL4, card: st.cashTo === "c2" }, cashCustom: "", cashAmt: 100 })),
+      cashDoneTitle: s.cashLast ? fill(s.cashLast.card ? CXT.doneCard : CXT.done, { v: s.cashLast.v, l: s.cashLast.l }) : "",
+      cashDoneSub: fill(CXT.doneSub, { b: fmt(balance, pts) }),
+      cashAgain: () => this.setState({ cashDone: false, cashLast: null }),''')
+_CASH_HTML = '''<sc-if value="{{ isCash }}" hint-placeholder-val="{{ true }}">
+              <sc-if value="{{ cashNotDone }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-direction: column; gap: 10px; flex: none;">
+                <span style="font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--text-secondary);">{{ ct.sendTo }}</span>
+                <sc-for list="{{ cashTargets }}" as="ctg" hint-placeholder-count="2">
+                  <div sc-camel-on-click="{{ ctg.onPick }}" role="radio" tabindex="0" style="cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 16px; background: var(--surface-card); border: 1px solid; border-color: {{ ctg.border }};">
+                    <span style="flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid; border-color: {{ ctg.ring }}; display: flex; align-items: center; justify-content: center; box-sizing: border-box;"><span style="width: 10px; height: 10px; border-radius: 50%; background: {{ ctg.dot }};"></span></span>
+                    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0;">
+                      <span style="font-size: 14px; font-weight: 500; color: var(--text-primary);">{{ ctg.name }}</span>
+                      <span style="font-size: 12px; color: var(--text-secondary);">{{ ctg.sub }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 20px; background: var(--surface-card); border: 1px solid var(--border-subtle); flex: none;">
+                <span style="font-size: 11.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--text-secondary);">{{ t.amount }}</span>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                  <sc-for list="{{ cashChips }}" as="cch" hint-placeholder-count="4">
+                    <div sc-camel-on-click="{{ cch.onPick }}" style="cursor: pointer; padding: 8px 13px; border-radius: 999px; border: 1px solid; border-color: {{ cch.border }}; background: {{ cch.bg }}; font-size: 12px; font-weight: 500; white-space: nowrap; color: {{ cch.fg }};">{{ cch.label }}</div>
+                  </sc-for>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 12px; background: var(--surface-muted); border: 1px solid; border-color: {{ cashCustomBorder }};">
+                  <span style="flex: none; font-size: 12px; font-weight: 500; color: var(--text-secondary);">{{ t.anyAmount }}</span>
+                  <input value="{{ cashCustom }}" sc-camel-on-change="{{ onCashCustom }}" inputmode="numeric" enterkeyhint="done" autocomplete="off" placeholder="{{ cashCustomHint }}" aria-label="{{ t.anyAmount }}" style="flex: 1; min-width: 0; text-align: right; border: none; outline: none; background: transparent; font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--text-primary);">
+                </div>
+                <sc-if value="{{ cashHasNote }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: var(--urgent);">{{ cashNote }}</span></sc-if>
+              </div>
+              <div style="flex: none; display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-subtle);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px;"><span style="font-size: 12.5px; color: var(--text-secondary);">{{ ct.youGet }}</span><span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">{{ cashGet }}</span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-top: 1px solid var(--border-subtle);"><span style="font-size: 12.5px; color: var(--text-secondary);">{{ t.arrives }}</span><span style="font-size: 12.5px; font-weight: 500; color: var(--text-primary);">{{ ct.instantly }}</span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-top: 1px solid var(--border-subtle);"><span style="font-size: 12.5px; color: var(--text-secondary);">{{ ct.fee }}</span><span style="font-size: 12.5px; font-weight: 500; color: var(--text-primary);">{{ ct.none }}</span></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; border-top: 1px solid var(--border-subtle);"><span style="font-size: 12.5px; color: var(--text-secondary);">{{ ct.left }}</span><span style="font-size: 12.5px; font-weight: 500; color: var(--text-primary);">{{ cashLeft }}</span></div>
+              </div>
+              <sc-if value="{{ cashShowBtn }}" hint-placeholder-val="{{ true }}">
+                <div sc-camel-on-click="{{ askCash }}" role="button" tabindex="0" style="cursor: pointer; flex: none; padding: 15px; border-radius: 999px; text-align: center; font-size: 15px; font-weight: 500; background: {{ cashBtnBg }}; color: {{ cashBtnFg }};">{{ cashBtn }}</div>
+              </sc-if>
+              <sc-if value="{{ cashAsk }}" hint-placeholder-val="{{ false }}">
+                <div style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 18px; background: var(--surface-muted); animation: msgIn .25s ease both;">
+                  <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 15px; font-weight: 600; color: var(--text-primary);">{{ cashAskTitle }}</span>
+                    <span style="font-size: 12.5px; line-height: 1.45; color: var(--text-secondary);">{{ ct.askSub }}</span>
+                  </div>
+                  <div style="display: flex; gap: 10px;">
+                    <div sc-camel-on-click="{{ cancelCash }}" role="button" tabindex="0" style="cursor: pointer; flex: 1; padding: 13px; border-radius: 999px; border: 1px solid var(--border-default); text-align: center; font-size: 14px; font-weight: 500; color: var(--text-primary);">{{ t.fxCancel }}</div>
+                    <div sc-camel-on-click="{{ confirmCash }}" role="button" tabindex="0" style="cursor: pointer; flex: 1; padding: 13px; border-radius: 999px; background: var(--accent); color: #FFFFFF; text-align: center; font-size: 14px; font-weight: 500;" style-hover="background: var(--accent-hover);">{{ t.fxConfirmBtn }}</div>
+                  </div>
+                </div>
+              </sc-if>
+              </sc-if>
+              <sc-if value="{{ cashDone }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 30px 18px; border-radius: 20px; background: var(--surface-emerald); border: 1px solid var(--primary-30); text-align: center; flex: none;">
+                  <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: #FFFFFF; font-size: 22px; font-weight: 500; display: flex; align-items: center; justify-content: center; animation: popIn .45s cubic-bezier(.22,1,.36,1) both;">✓</div>
+                  <span style="font-size: 17px; font-weight: 600; color: var(--text-primary); text-wrap: pretty;">{{ cashDoneTitle }}</span>
+                  <span style="font-size: 12.5px; color: var(--text-secondary);">{{ cashDoneSub }}</span>
+                  <div sc-camel-on-click="{{ cashAgain }}" role="button" tabindex="0" style="cursor: pointer; margin-top: 4px; padding: 12px 22px; border-radius: 999px; border: 1px solid var(--border-default); background: var(--surface-card); font-size: 14px; font-weight: 500; color: var(--text-primary);">{{ t.done }}</div>
+                </div>
+              </sc-if>
+            </sc-if>
+
+            '''
+R('<sc-if value="{{ isTransfer }}" hint-placeholder-val="{{ true }}">', _CASH_HTML + '<sc-if value="{{ isTransfer }}" hint-placeholder-val="{{ false }}">')
