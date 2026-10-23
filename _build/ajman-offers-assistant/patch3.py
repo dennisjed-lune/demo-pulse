@@ -591,11 +591,11 @@ _CASH = {
 }
 import json as _json2
 R('const PERK_NEW = ', 'const CASH_T = ' + _json2.dumps(_CASH, ensure_ascii=False) + ';\nconst PERK_NEW = ')
-R('redeemTab: "transfer",', 'redeemTab: "cash", cashTo: "c1", cashAmt: 100, cashCustom: "", cashAsk: false, cashDone: false, cashLast: null,')
+R('redeemTab: "transfer",', 'redeemTab: "cash", cashTo: "c1", cashAmt: 0.5, cashCustom: "", cashAsk: false, cashDone: false, cashLast: null,')
 R('    const gcOk = gcAed >= 10 && gcAed <= balance;', '''    const gcOk = gcAed >= 10 && gcAed <= balance;
     const CXT = CASH_T[LANG] || CASH_T.en;
     const cashNum = parseFloat(s.cashCustom || "0") || 0;
-    const cashAed = s.cashCustom ? (pts ? cashNum / PTS / (fxOf())[0] : cashNum / (fxOf())[0]) : (s.cashAmt === "all" ? balance : s.cashAmt);
+    const cashAed = s.cashCustom ? (pts ? cashNum / PTS / (fxOf())[0] : cashNum / (fxOf())[0]) : balance * s.cashAmt;
     const cashOk = cashAed >= 10 && cashAed <= balance + 0.001;
     const cashL4 = s.cashTo === "c2" ? "9102" : "4417";''')
 R('      redeemTabs: [["transfer", T.airlines], ["gift", T.giftCards]].map(([k, label]) => ({', '      redeemTabs: [["cash", CXT.tab], ["transfer", T.airlines], ["gift", T.giftCards]].map(([k, label]) => ({')
@@ -607,7 +607,7 @@ R('      isGift: s.redeemTab === "gift",', '''      isGift: s.redeemTab === "gif
       cashTargets: [["c1", T.card1 + " ···· 4417", CXT.debitSub], ["c2", T.card2 + " ···· 9102", CXT.creditSub]].map(([k, name, sub]) => ({ key: k, name, sub,
         dot: s.cashTo === k ? "var(--accent)" : "transparent", ring: s.cashTo === k ? "var(--accent)" : "var(--border-default)",
         border: s.cashTo === k ? "var(--accent)" : "var(--border-subtle)", onPick: () => this.setState({ cashTo: k, cashAsk: false }) })),
-      cashChips: [50, 100, 250, "all"].map(v => { const on = !s.cashCustom && s.cashAmt === v; return { key: "k" + v, label: v === "all" ? CXT.all + " · " + fmt(balance, pts) : fmt(v, pts),
+      cashChips: [0.1, 0.5, 1].map(v => { const on = !s.cashCustom && s.cashAmt === v; return { key: "k" + v, label: v === 1 ? CXT.all : Math.round(v * 100) + "%",
         bg: on ? "var(--surface-emerald)" : "transparent", border: on ? "var(--accent)" : "var(--border-default)", fg: on ? "var(--accent)" : "var(--text-secondary)",
         onPick: () => this.setState({ cashAmt: v, cashCustom: "", cashAsk: false }) }; }),
       cashCustom: s.cashCustom,
@@ -626,7 +626,7 @@ R('      isGift: s.redeemTab === "gift",', '''      isGift: s.redeemTab === "gif
       cashAskTitle: fill(CXT.ask, { v: money(cashAed), l: cashL4 }),
       askCash: () => { if (cashOk) this.setState({ cashAsk: true }); },
       cancelCash: () => this.setState({ cashAsk: false }),
-      confirmCash: () => this.setState(st => ({ cashAsk: false, cashDone: true, redeemed: st.redeemed + cashAed, cashLast: { v: money(cashAed), l: cashL4, card: st.cashTo === "c2" }, cashCustom: "", cashAmt: 100 })),
+      confirmCash: () => this.setState(st => ({ cashAsk: false, cashDone: true, redeemed: st.redeemed + cashAed, cashLast: { v: money(cashAed), l: cashL4, card: st.cashTo === "c2" }, cashCustom: "", cashAmt: 0.5 })),
       cashDoneTitle: s.cashLast ? fill(s.cashLast.card ? CXT.doneCard : CXT.done, { v: s.cashLast.v, l: s.cashLast.l }) : "",
       cashDoneSub: fill(CXT.doneSub, { b: fmt(balance, pts) }),
       cashAgain: () => this.setState({ cashDone: false, cashLast: null }),''')
